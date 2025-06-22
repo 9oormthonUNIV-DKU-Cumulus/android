@@ -10,6 +10,7 @@ import CommunityScreen from "./screens/community/CommunityScreen";
 import MyPageScreen from "./screens/myPage/MyPageScreen";
 import CategoryScreen from "./screens/category/CategoryScreen";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import LoginScreen from "./screens/LoginScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -59,78 +60,76 @@ function CategoryStack() {
   );
 }
 
-function App(): React.JSX.Element {
+function MainTab() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        {/* 하단 네비게이션바 */}
-        <Tab.Navigator screenOptions={{ headerShown: false }}>
-          <Tab.Screen
-            name="홈"
-            component={HomeStack}
-            options={{
-              tabBarIcon: ({ focused }) => (
-                <Image
-                  source={
-                    focused
-                      ? require("./assets/icons/home_active.png") // 색 있는 이미지
-                      : require("./assets/icons/home_inactive.png") // 회색/흑백 이미지
-                  }
-                  style={{ width: 24, height: 24, resizeMode: "contain" }}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="카테고리"
-            component={CategoryStack}
-            options={{
-              tabBarIcon: ({ focused }) => (
-                <Image
-                  source={
-                    focused
-                      ? require("./assets/icons/category_active.png") // 색 있는 이미지
-                      : require("./assets/icons/category_inactive.png") // 회색/흑백 이미지
-                  }
-                  style={{ width: 24, height: 24, resizeMode: "contain" }}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="커뮤니티"
-            component={CommunityStack}
-            options={{
-              tabBarIcon: ({ focused }) => (
-                <Image
-                  source={
-                    focused
-                      ? require("./assets/icons/community_active.png") // 색 있는 이미지
-                      : require("./assets/icons/community_inactive.png") // 회색/흑백 이미지
-                  }
-                  style={{ width: 24, height: 24, resizeMode: "contain" }}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="마이페이지"
-            component={MyPageStack}
-            options={{
-              tabBarIcon: ({ focused }) => (
-                <Image
-                  source={
-                    focused
-                      ? require("./assets/icons/mypage_active.png") // 색 있는 이미지
-                      : require("./assets/icons/mypage_inactive.png") // 회색/흑백 이미지
-                  }
-                  style={{ width: 24, height: 24, resizeMode: "contain" }}
-                />
-              ),
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
+    <>
+      {/* 하단 네비게이션바 */}
+      <Tab.Navigator screenOptions={{ headerShown: false }}>
+        <Tab.Screen
+          name="홈"
+          component={HomeStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={
+                  focused
+                    ? require("./assets/icons/home_active.png") // 색 있는 이미지
+                    : require("./assets/icons/home_inactive.png") // 회색/흑백 이미지
+                }
+                style={{ width: 24, height: 24, resizeMode: "contain" }}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="카테고리"
+          component={CategoryStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={
+                  focused
+                    ? require("./assets/icons/category_active.png") // 색 있는 이미지
+                    : require("./assets/icons/category_inactive.png") // 회색/흑백 이미지
+                }
+                style={{ width: 24, height: 24, resizeMode: "contain" }}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="커뮤니티"
+          component={CommunityStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={
+                  focused
+                    ? require("./assets/icons/community_active.png") // 색 있는 이미지
+                    : require("./assets/icons/community_inactive.png") // 회색/흑백 이미지
+                }
+                style={{ width: 24, height: 24, resizeMode: "contain" }}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="마이페이지"
+          component={MyPageStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={
+                  focused
+                    ? require("./assets/icons/mypage_active.png") // 색 있는 이미지
+                    : require("./assets/icons/mypage_inactive.png") // 회색/흑백 이미지
+                }
+                style={{ width: 24, height: 24, resizeMode: "contain" }}
+              />
+            ),
+          }}
+        />
+      </Tab.Navigator>
 
       {/* 플로팅 버튼 */}
       <TouchableOpacity style={styles.fab}>
@@ -139,6 +138,19 @@ function App(): React.JSX.Element {
           style={{ width: 50, height: 50 }}
         />
       </TouchableOpacity>
+    </>
+  );
+}
+
+function App(): React.JSX.Element {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Main" component={MainTab} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 }

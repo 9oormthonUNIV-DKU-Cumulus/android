@@ -9,7 +9,7 @@ import CategoryListScreen from "./screens/category/CategoryListScreen";
 import CommunityScreen from "./screens/community/CommunityScreen";
 import MyPageScreen from "./screens/myPage/MyPageScreen";
 import CategoryScreen from "./screens/category/CategoryScreen";
-import { Image } from "react-native";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -131,8 +131,33 @@ function App(): React.JSX.Element {
           />
         </Tab.Navigator>
       </NavigationContainer>
+
+      {/* 플로팅 버튼 */}
+      <TouchableOpacity style={styles.fab}>
+        <Image
+          source={require("./assets/icons/floatingIcon.png")}
+          style={{ width: 50, height: 50 }}
+        />
+      </TouchableOpacity>
     </GestureHandlerRootView>
   );
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  fab: {
+    position: "absolute",
+    bottom: 80, // 탭바 위에 살짝 떠 있게
+    right: 20,
+    borderRadius: 28,
+    backgroundColor: "#3B82F6",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5, // Android 그림자
+    shadowColor: "#000", // iOS 그림자
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+});

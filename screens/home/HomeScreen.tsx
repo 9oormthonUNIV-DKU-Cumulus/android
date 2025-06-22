@@ -42,11 +42,6 @@ export default function HomeScreen({ navigation }: Props) {
       {/* 헤더 */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          {/* <Image
-            source={require('../../assets/images/logo2x.png')}
-            style={styles.logo}
-          />
-          <Text style={styles.title}>Dmatch</Text> */}
           <Image
             source={require("../../assets/images/logoTitle.png")}
             style={styles.logo}

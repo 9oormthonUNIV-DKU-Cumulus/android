@@ -49,10 +49,16 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.headerButton}>
-            <Image source={require("../../assets/images/search.png")} />
+            <Image
+              source={require("../../assets/images/search.png")}
+              style={styles.img}
+            />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Image source={require("../../assets/images/notification.png")} />
+            <Image
+              source={require("../../assets/images/notification.png")}
+              style={styles.img}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -100,14 +106,24 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   headerLeft: { flexDirection: "row" },
-  headerRight: { flexDirection: "row", marginRight: 15 },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingRight: 20,
+  },
   logo: {
     width: screenWidth * 0.3,
     height: 30,
     resizeMode: "contain",
     marginLeft: 15,
   },
-  headerButton: { marginRight: 15 },
+  headerButton: { marginRight: 20 },
+  img: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+  },
   title: {
     height: 40,
     fontWeight: "bold",

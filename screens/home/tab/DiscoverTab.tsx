@@ -11,6 +11,7 @@ import {
   MatchingItem,
   MatchingListItem,
 } from "../../../components/MatchingList";
+import { useState } from "react";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -18,41 +19,73 @@ const recommendedData: MatchingItem[] = [
   {
     id: "1",
     title: "주말 풋살 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
   {
     id: "2",
     title: "주말 사진 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
   {
     id: "3",
     title: "맛집 탐방 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
   {
     id: "4",
-    title: "맛집 탐방 모임",
+    title: "사진 찍기 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
   {
     id: "5",
-    title: "맛집 탐방 모임",
+    title: "사진 찍기 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
   {
     id: "6",
-    title: "맛집 탐방 모임",
+    title: "사진 찍기 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
   {
     id: "7",
-    title: "맛집 탐방 모임",
+    title: "사진 찍기 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
   {
     id: "8",
-    title: "맛집 탐방 모임",
+    title: "사진 찍기 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
+    imageUrl: "https://via.placeholder.com/150",
+  },
+  {
+    id: "9",
+    title: "사진 찍기 모임",
+    category: "독서/글",
+    description: "수업 끝나고 7시부터 9시까지",
+    member: "45",
     imageUrl: "https://via.placeholder.com/150",
   },
 ];
@@ -83,13 +116,27 @@ const secondRow = [
 ];
 
 const DiscoverTab = ({ navigation }) => {
+  const [likedItems, setLikedItems] = useState<string[]>([]);
+
+  const handleToggleLike = (item: MatchingItem) => {
+    setLikedItems((prev) =>
+      prev.includes(item.id)
+        ? prev.filter((id) => id !== item.id)
+        : [...prev, item.id]
+    );
+  };
   const handleItemPress = (item: MatchingItem) => {
     console.log("추천 모임 클릭:", item);
     // navigation.navigate("MatchingDetail", { id: item.id });
   };
 
   const renderItem = ({ item }: { item: MatchingItem }) => (
-    <MatchingListItem item={item} onPress={handleItemPress} />
+    <MatchingListItem
+      item={item}
+      onPress={handleItemPress}
+      likedItems={likedItems}
+      onToggleLike={handleToggleLike}
+    />
   );
 
   const renderHeader = () => (

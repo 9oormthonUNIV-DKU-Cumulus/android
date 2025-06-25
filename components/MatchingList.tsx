@@ -1,4 +1,5 @@
 import { TouchableOpacity, Text, Image, StyleSheet, View } from "react-native";
+import { getCategoryLabel } from "../utils/category";
 
 export type MatchingItem = {
   id: string;
@@ -48,7 +49,7 @@ export const MatchingListItem = ({
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.text}>{item.description}</Text>
       <View style={styles.row}>
-        <Text style={styles.text}>{item.category}</Text>
+        <Text style={styles.text}>{getCategoryLabel(item.category)}</Text>
         <Text style={styles.text}>멤버 {item.member}</Text>
       </View>
     </TouchableOpacity>

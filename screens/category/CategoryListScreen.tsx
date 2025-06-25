@@ -5,6 +5,7 @@ import IndividualTab from "./tabs/IndividualTab";
 import ClubTab from "./tabs/ClubTab";
 import SortButtons from "../../components/SortButtons";
 import { useNavigation } from "@react-navigation/native";
+import { getCategoryId } from "../../utils/category";
 
 type RootStackParamList = {
   CategoryListScreen: { label: string };
@@ -14,21 +15,7 @@ const CategoryListScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList, "CategoryListScreen">>();
   const { label } = route.params;
 
-  // label -> api 파라미터용 Id로 변경
-  const categoryMap: Record<string, string> = {
-    스포츠: "sports",
-    "외국/언어": "language",
-    댄스: "dance",
-    봉사활동: "volunteer",
-    자기계발: "self-dev",
-    "독서/글": "book",
-    "문화/공연": "festival",
-    "음악/악기": "music",
-    여행: "trip",
-    "업종/직무": "work",
-  };
-
-  const categoryId = categoryMap[label];
+  const categoryId = getCategoryId(label);
 
   // 전체,인기,최신 상태(기본 상태는 전체)
   // const [sort, setSort] = useState<"latest" | "popular" | "all">("all");

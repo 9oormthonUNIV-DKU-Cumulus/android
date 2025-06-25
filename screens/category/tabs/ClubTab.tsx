@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { MatchingListItem } from "../../../components/MatchingList";
 import { FlatList } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
+import SortButtons from "../../../components/SortButtons";
 
 // 목업 데이터 (api 연결 시 삭제)
 // const clubData = [
@@ -126,6 +127,7 @@ const ClubTab = ({
   return (
     <View style={styles.body}>
       <Text style={styles.contentTitle}>동아리 둘러보기</Text>
+      <SortButtons />
       <FlatList
         data={clubData}
         keyExtractor={(item) => item.id}
@@ -153,6 +155,8 @@ const styles = StyleSheet.create({
   },
   contentTitle: {
     margin: 15,
+    marginLeft: 20,
+    fontWeight: "bold",
     fontSize: 20,
     color: "#333C4A",
   },

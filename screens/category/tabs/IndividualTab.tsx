@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { MatchingListItem } from "../../../components/MatchingList";
 import { FlatList } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
+import SortButtons from "../../../components/SortButtons";
 
 // 목업 데이터 (api 연결 시 삭제)
 // const individualData = [
@@ -126,6 +127,7 @@ const IndividualTab = ({
   return (
     <View style={styles.body}>
       <Text style={styles.contentTitle}>개인 모임 둘러보기</Text>
+      <SortButtons />
       <FlatList
         data={individualData}
         keyExtractor={(item) => item.id}
@@ -152,7 +154,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFAFA",
   },
   contentTitle: {
+    fontWeight: "bold",
     margin: 15,
+    marginLeft: 20,
     fontSize: 20,
     color: "#333C4A",
   },

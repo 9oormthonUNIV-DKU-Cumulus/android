@@ -31,6 +31,54 @@
       "description": "매주 토요일 7시",
       "member": "12",
       "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "5",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "6",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "7",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "8",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "9",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "10",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
     }
   ],
   "clubs": [

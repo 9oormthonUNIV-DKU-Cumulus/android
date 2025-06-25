@@ -64,13 +64,13 @@ const CategoryListScreen = () => {
       {/* 탭별 컴포넌트 */}
       {selectedType === "개인" && (
         <>
-          <SortButtons />
+          {/* <SortButtons /> */}
           <IndividualTab categoryId={categoryId} />
         </>
       )}
       {selectedType === "동아리" && (
         <>
-          <SortButtons />
+          {/* <SortButtons /> */}
           <ClubTab categoryId={categoryId} />
         </>
       )}

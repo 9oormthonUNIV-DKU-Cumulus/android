@@ -125,15 +125,10 @@ const DiscoverTab = ({ navigation }) => {
         : [...prev, item.id]
     );
   };
-  const handleItemPress = (item: MatchingItem) => {
-    console.log("추천 모임 클릭:", item);
-    // navigation.navigate("MatchingDetail", { id: item.id });
-  };
 
   const renderItem = ({ item }: { item: MatchingItem }) => (
     <MatchingListItem
       item={item}
-      onPress={handleItemPress}
       likedItems={likedItems}
       onToggleLike={handleToggleLike}
     />
@@ -219,7 +214,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     marginBottom: 15,
   },
   iconContainer: {

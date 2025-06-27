@@ -11,6 +11,7 @@ import MyPageScreen from "./screens/myPage/MyPageScreen";
 import CategoryScreen from "./screens/category/CategoryScreen";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import LoginScreen from "./screens/LoginScreen";
+import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -23,6 +24,7 @@ function HomeStack() {
     >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="CategoryListScreen" component={CategoryListScreen} />
+      <Stack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
     </Stack.Navigator>
   );
 }

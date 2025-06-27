@@ -120,10 +120,6 @@ const ClubTab = ({
     );
   };
 
-  // 특정 모임 클릭 시 액션
-  const handleItemPress = (item: any) => {
-    console.log("Pressed item:", item); // 나중에 navigation 연결도 가능
-  };
   return (
     <View style={styles.body}>
       <Text style={styles.contentTitle}>동아리 둘러보기</Text>
@@ -134,7 +130,6 @@ const ClubTab = ({
         renderItem={({ item }) => (
           <MatchingListItem
             item={item}
-            onPress={handleItemPress}
             likedItems={likedItems}
             onToggleLike={handleToggleLike}
           />

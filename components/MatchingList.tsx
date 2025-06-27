@@ -1,5 +1,8 @@
 import { TouchableOpacity, Text, Image, StyleSheet, View } from "react-native";
 import { getCategoryLabel } from "../utils/category";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../screens/category/CategoryListScreen"; // 여기 경로는 MatchingListItem 기준
 
 export type MatchingItem = {
   id: string;
@@ -12,49 +15,53 @@ export type MatchingItem = {
 
 type MatchingListItemProps = {
   item: MatchingItem;
-  onPress: (item: MatchingItem) => void;
   likedItems: string[];
   onToggleLike: (item: MatchingItem) => void;
 };
 
 export const MatchingListItem = ({
   item,
-  onPress,
   onToggleLike,
   likedItems,
-}: MatchingListItemProps) => (
-  <View style={styles.item}>
-    <View style={styles.imageWrapper}>
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+}: MatchingListItemProps) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  return (
+    <View style={styles.item}>
+      <View style={styles.imageWrapper}>
+        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+        <TouchableOpacity
+          style={styles.likeButton}
+          onPress={() => onToggleLike(item)}
+        >
+          {/* 좋아요 버튼 */}
+          <Image
+            source={
+              likedItems.includes(item.id)
+                ? require("../assets/images/like-btn-filled.png")
+                : require("../assets/images/like-btn.png")
+            }
+            style={styles.likeIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      {/* 모임 내용 */}
+      {/* 항목 클릭 시 상세 화면 이동 */}
       <TouchableOpacity
-        style={styles.likeButton}
-        onPress={() => onToggleLike(item)}
+        style={styles.textContainer}
+        onPress={() => navigation.navigate("MeetingDetail", { id: item.id })}
       >
-        {/* 좋아요 버튼 */}
-        <Image
-          source={
-            likedItems.includes(item.id)
-              ? require("../assets/images/like-btn-filled.png")
-              : require("../assets/images/like-btn.png")
-          }
-          style={styles.likeIcon}
-        />
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.text}>{item.description}</Text>
+        <View style={styles.row}>
+          <Text style={styles.text}>{getCategoryLabel(item.category)}</Text>
+          <Text style={styles.text}>멤버 {item.member}</Text>
+        </View>
       </TouchableOpacity>
     </View>
-    {/* 모임 내용 */}
-    <TouchableOpacity
-      style={styles.textContainer}
-      onPress={() => onPress(item)}
-    >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.text}>{item.description}</Text>
-      <View style={styles.row}>
-        <Text style={styles.text}>{getCategoryLabel(item.category)}</Text>
-        <Text style={styles.text}>멤버 {item.member}</Text>
-      </View>
-    </TouchableOpacity>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   textContainer: {

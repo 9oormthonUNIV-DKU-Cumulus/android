@@ -79,6 +79,14 @@
       "description": "매주 토요일 7시",
       "member": "12",
       "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "11",
+      "title": "주말 독서 모임",
+      "category": "language",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
     }
   ],
   "clubs": [

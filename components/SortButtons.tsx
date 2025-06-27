@@ -1,57 +1,49 @@
-import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { useState } from "react";
+import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 
-/** CategoryListScreen 쪽에서 재사용할 공통 타입 */
-export type SortKey = string;
+const SORT_OPTIONS = ["전체", "추천", "인기", "최신"];
 
-export interface SortOption {
-  key: SortKey;
-  label: string;
-}
+const SortButtons = () => {
+  const [selectedSort, setSelectedSort] = useState("전체");
 
-interface SortButtonsProps {
-  /** 버튼 배열 (key / label) */
-  options: readonly SortOption[];
-  /** 현재 선택된 key */
-  selected: SortKey;
-  /** 클릭 시 호출 */
-  onChange: (key: SortKey) => void;
-}
-
-const SortButtons: React.FC<SortButtonsProps> = ({
-  options,
-  selected,
-  onChange,
-}) => (
-  <View style={styles.row}>
-    {options.map((opt) => {
-      const active = selected === opt.key;
-      return (
+  return (
+    <View style={styles.row}>
+      {SORT_OPTIONS.map((option) => (
         <TouchableOpacity
-          key={opt.key}
-          style={[styles.button, active && styles.selectedButton]}
-          onPress={() => onChange(opt.key)}>
-          <Text style={active ? styles.selectedText : styles.text}>
-            {opt.label}
+          key={option}
+          style={[
+            styles.button,
+            selectedSort === option && styles.selectedButton,
+          ]}
+          onPress={() => setSelectedSort(option)}
+        >
+          <Text
+            style={selectedSort === option ? styles.selectedText : styles.text}
+          >
+            {option}
           </Text>
         </TouchableOpacity>
-      );
-    })}
-  </View>
-);
+      ))}
+    </View>
+  );
+};
 
 export default SortButtons;
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', marginVertical: 8, marginHorizontal: 10 },
+  row: {
+    flexDirection: "row",
+    marginLeft: 10,
+  },
   button: {
-    marginRight: 8,
-    backgroundColor: '#ddd',
+    marginBottom: 20,
+    marginLeft: 10,
+    backgroundColor: "#ddd",
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 16,
   },
-  selectedButton: { backgroundColor: '#5498FF' },
-  text: { color: '#68696D', fontSize: 14 },
-  selectedText: { color: '#FAFAFA', fontSize: 14, fontWeight: '600' },
+  selectedButton: { backgroundColor: "#5498FF" },
+  selectedText: { color: "#FAFAFA" },
+  text: { color: "#68696D" },
 });

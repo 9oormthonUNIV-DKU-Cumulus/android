@@ -1,154 +1,128 @@
-// ----------------- screens/category/CategoryListScreen.tsx -----------------
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  FlatList,
-  ListRenderItem,
-} from 'react-native';
-import {
-  RouteProp,
-  useRoute,
-  useNavigation,
-} from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import IndividualTab from "./tabs/IndividualTab";
+import ClubTab from "./tabs/ClubTab";
+// import SortButtons from "../../components/SortButtons";
+import { useNavigation } from "@react-navigation/native";
+import { getCategoryId } from "../../utils/category";
 
-import SortButtons, { SortOption } from '../../components/SortButtons';
-import { MatchingItem, MatchingListItem } from '../../components/MatchingList';
-import { getCategoryId } from '../../utils/category';
-
-/* ───────── 네비게이션 타입 (HomeStack과 동일하게 정의) ───────── */
-export type HomeStackParamList = {
-  Home: undefined;
+export type RootStackParamList = {
   CategoryListScreen: { label: string };
   MeetingDetail: { id: string };
 };
 
-type NavProp  = NativeStackNavigationProp<HomeStackParamList, 'CategoryListScreen'>;
-type RouteT   = RouteProp<HomeStackParamList, 'CategoryListScreen'>;
+const CategoryListScreen = () => {
+  const route = useRoute<RouteProp<RootStackParamList, "CategoryListScreen">>();
+  const { label } = route.params;
 
-/* ───────── 표시용 더미 데이터 ───────── */
-const { width } = Dimensions.get('window');
-const dummyData: MatchingItem[] = Array.from({ length: 8 }).map((_, i) => ({
-  id: `${i + 1}`,
-  title      : '단국대 운동 동아리',
-  category   : '독서/글',
-  description: '수업 끝나고 7시부터 9시까지',
-  member     : '45',
-  imageUrl   : 'https://via.placeholder.com/150',
-}));
-
-/* ───────── 정렬 옵션 ───────── */
-const SORT_OPTIONS = [
-  { key: 'all',       label: '전체' },
-  { key: 'recommend', label: '추천' },
-  { key: 'popular',   label: '인기' },
-  { key: 'latest',    label: '최신' },
-] as const satisfies readonly SortOption[];
-type SortKeyUnion = (typeof SORT_OPTIONS)[number]['key'];
-
-export default function CategoryListScreen() {
-  const navigation = useNavigation<NavProp>();
-  const route      = useRoute<RouteT>();
-  const { label }  = route.params;
   const categoryId = getCategoryId(label);
 
-  const TYPES = ['개인', '동아리'] as const;
-  const [selectedType, setSelectedType] = useState<typeof TYPES[number]>('개인');
-  const [sort, setSort]                 = useState<SortKeyUnion>('all');
-  const [likedItems, setLikedItems]     = useState<string[]>([]);
+  // 전체,인기,최신 상태(기본 상태는 전체)
+  // const [sort, setSort] = useState<"latest" | "popular" | "all">("all");
 
-  /* 하트 토글 */
-  const handleToggleLike = (item: MatchingItem) => {
-    setLikedItems((prev) =>
-      prev.includes(item.id) ? prev.filter((id) => id !== item.id) : [...prev, item.id],
-    );
-  };
-
-  /* 게시물 클릭 → MeetingDetail 이동 */
-  const handlePressItem = (item: MatchingItem) => {
-    navigation.navigate('MeetingDetail', { id: item.id });
-  };
-
-  const renderItem: ListRenderItem<MatchingItem> = ({ item }) => (
-    <MatchingListItem
-      item={item}
-      onPress={handlePressItem}
-      likedItems={likedItems}
-      onToggleLike={handleToggleLike}
-    />
-  );
+  const types = ["개인", "동아리"];
+  const [selectedType, setSelectedType] = useState("개인");
+  const navigation = useNavigation();
 
   return (
     <View style={styles.body}>
-      {/* ── 헤더 ── */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.side} onPress={navigation.goBack}>
-          <Image
-            source={require('../../assets/images/goback.png')}
-            style={styles.goBackImg}
-          />
-        </TouchableOpacity>
+        {/* 상단 제목 */}
+        <View style={styles.side}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require("../../assets/images/goback.png")}
+              style={styles.goBackImg}
+            />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.center}>
           <Text style={styles.categoryTitle}>{label}</Text>
         </View>
+
         <View style={styles.side} />
       </View>
-
-      {/* ── 개인/동아리 탭 ── */}
+      {/* 개인 & 동아리 탭바 */}
       <View style={styles.tabContainer}>
-        {TYPES.map((type) => (
+        {types.map((type) => (
           <TouchableOpacity
             key={type}
             onPress={() => setSelectedType(type)}
-            style={[styles.tab, selectedType === type && styles.activeTab]}>
-            <Text style={selectedType === type ? styles.activeTabText : styles.tabText}>
+            style={[styles.tab, selectedType === type && styles.activeTab]}
+          >
+            <Text
+              style={
+                selectedType === type ? styles.activeTabText : styles.tabText
+              }
+            >
               {type}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-
-      {/* ── 정렬 버튼 ── */}
-      <SortButtons
-        options={SORT_OPTIONS}
-        selected={sort}
-        onChange={(key) => setSort(key as SortKeyUnion)}
-      />
-
-      {/* ── 게시물 리스트 ── */}
-      <FlatList
-        data={dummyData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
-      />
+      {/* 탭별 컴포넌트 */}
+      {selectedType === "개인" && <IndividualTab categoryId={categoryId} />}
+      {selectedType === "동아리" && <ClubTab categoryId={categoryId} />}
     </View>
   );
-}
+};
 
-/* ───────── 스타일 ───────── */
+export default CategoryListScreen;
+
 const styles = StyleSheet.create({
-  body: { flex: 1, backgroundColor: '#FAFAFA' },
-  header: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
-  side: { width: 40, justifyContent: 'center', paddingLeft: 12 },
-  center: { flex: 1, alignItems: 'center' },
-  goBackImg: { width: 20, height: 20, resizeMode: 'contain' },
-  categoryTitle: { fontSize: 20, fontWeight: 'bold' },
-
-  tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderBottomWidth: 2,
-    borderColor: '#ccc',
+  body: {
+    flex: 1,
+    backgroundColor: "#FAFAFA",
   },
-  tab: { paddingVertical: 10, paddingHorizontal: width * 0.15 },
-  activeTab: { borderBottomWidth: 2, borderColor: '#5498FF' },
-  tabText: { color: '#868686' },
-  activeTabText: { color: '#000' },
+  side: {
+    width: 40, // 아이콘 하나 정도의 너비 확보
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingLeft: 10,
+  },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#FAFAFA",
+  },
+  goBackImg: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+  },
+  categoryTitle: {
+    height: 40,
+    paddingTop: 5,
+    fontSize: 20,
+    fontWeight: "bold",
+    backgroundColor: "#FAFAFA",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    borderBottomWidth: 2,
+    borderColor: "#ccc",
+  },
+  tab: {
+    paddingVertical: 10,
+    paddingHorizontal: 65,
+    backgroundColor: "#FAFAFA",
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderColor: "#5498FF",
+  },
+  tabText: {
+    color: "#868686",
+  },
+  activeTabText: {
+    color: "#000 ",
+  },
 });

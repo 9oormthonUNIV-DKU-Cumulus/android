@@ -88,11 +88,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
+    marginTop: 14,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#FAFAFA",
   },
   goBackImg: {
+    marginLeft: 12,
     width: 20,
     height: 20,
     resizeMode: "contain",
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
     height: 40,
     paddingTop: 5,
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "600",
     backgroundColor: "#FAFAFA",
   },
   tabContainer: {

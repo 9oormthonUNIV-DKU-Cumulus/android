@@ -78,7 +78,8 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     position: "relative",
-    marginRight: 12,
+    marginRight: 10,
+    marginLeft: 10,
   },
   likeButton: {
     position: "absolute",
@@ -97,8 +98,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   image: {
-    width: 60,
-    height: 60,
+    width: 71,
+    height: 71,
     borderRadius: 8,
     marginLeft: 15,
   },
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-    marginTop: 3,
+    marginTop: 5,
     color: "#868686",
   },
 });

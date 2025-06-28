@@ -143,7 +143,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     margin: 15,
     marginLeft: 20,
-    fontSize: 20,
+    marginTop: 20,
+    fontSize: 17,
     color: "#333C4A",
   },
 });

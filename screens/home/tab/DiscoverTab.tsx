@@ -171,6 +171,8 @@ const DiscoverTab = ({ navigation }) => {
         </View>
       </View>
 
+      <View style={styles.divider} />
+
       {/* 추천 타이틀 */}
       <Text style={styles.recommendTitle}>
         <Text style={{ color: "#5498FF" }}>단웅</Text>님께 추천하는 모임
@@ -205,16 +207,18 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     marginBottom: 15,
+    flexWrap: "wrap",
+    marginLeft: 15,
   },
   iconContainer: {
     alignItems: "center",
-    width: screenWidth / 5,
+    width: screenWidth / 5.5,
   },
   iconWrap: {
     backgroundColor: "#F5F5F5",
-    padding: 10,
+    padding: 13,
     borderRadius: 7,
     alignItems: "center",
     justifyContent: "center",
@@ -226,16 +230,21 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "contain",
   },
-  categoryTitle: { color: "#37404C" },
+  categoryTitle: { color: "#37404C", fontSize: 12 },
   content: {
     marginTop: 30,
     alignItems: "center",
+  },
+  divider: {
+    height: 8,
+    backgroundColor: "#F5F5F5",
+    marginVertical: 12,
   },
   recommendTitle: {
     fontWeight: "bold",
     fontSize: 15,
     marginHorizontal: 15,
     marginTop: 20,
-    marginBottom: 10,
+    marginBottom: 28,
   },
 });

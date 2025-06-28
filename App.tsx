@@ -7,7 +7,7 @@ import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
-import SignupFormScreen from "./screens/SignupFormScreen"; 
+import SignupFormScreen from "./screens/SignupFormScreen";
 import HomeScreen from "./screens/home/HomeScreen";
 import CategoryScreen from "./screens/category/CategoryScreen";
 import CategoryListScreen from "./screens/category/CategoryListScreen";
@@ -20,7 +20,10 @@ const Tab = createBottomTabNavigator();
 
 function HomeStack() {
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="CategoryListScreen" component={CategoryListScreen} />
       <Stack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
@@ -30,7 +33,10 @@ function HomeStack() {
 
 function CategoryStack() {
   return (
-    <Stack.Navigator initialRouteName="Category" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      initialRouteName="Category"
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="Category" component={CategoryScreen} />
     </Stack.Navigator>
   );
@@ -38,7 +44,10 @@ function CategoryStack() {
 
 function CommunityStack() {
   return (
-    <Stack.Navigator initialRouteName="Community" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      initialRouteName="Community"
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="Community" component={CommunityScreen} />
     </Stack.Navigator>
   );
@@ -46,7 +55,10 @@ function CommunityStack() {
 
 function MyPageStack() {
   return (
-    <Stack.Navigator initialRouteName="MyPage" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      initialRouteName="MyPage"
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="MyPage" component={MyPageScreen} />
     </Stack.Navigator>
   );
@@ -55,7 +67,16 @@ function MyPageStack() {
 function MainTab() {
   return (
     <>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            height: 80, // 높이 조절
+            paddingBottom: 12, // 아래 여백
+            paddingTop: 10, // 위 여백
+          },
+        }}
+      >
         <Tab.Screen
           name="홈"
           component={HomeStack}
@@ -152,16 +173,11 @@ export default function App(): React.JSX.Element {
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    bottom: 80,
+    bottom: 110,
     right: 20,
     borderRadius: 28,
-    backgroundColor: "#3B82F6",
+    backgroundColor: "#5498FF",
     justifyContent: "center",
     alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
 });

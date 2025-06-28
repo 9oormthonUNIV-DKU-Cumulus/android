@@ -19,74 +19,65 @@ const recommendedData: MatchingItem[] = [
   {
     id: "1",
     title: "주말 풋살 모임",
-    category: "독서/글",
+    category: "스포츠",
     description: "수업 끝나고 7시부터 9시까지",
     member: "45",
-    imageUrl: "https://via.placeholder.com/150",
+    // imageUrl: "https://via.placeholder.com/150",
+    imageUrl: require("../../../assets/mockImg/activity1.png"),
   },
   {
     id: "2",
-    title: "주말 사진 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
+    title: "골프 모임",
+    category: "스포츠",
+    description: "금요일 6시부터 자유롭게",
     member: "45",
-    imageUrl: "https://via.placeholder.com/150",
+    // imageUrl: "https://via.placeholder.com/150",
+    imageUrl: require("../../../assets/mockImg/activity2.png"),
   },
   {
     id: "3",
-    title: "맛집 탐방 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
+    title: "단국대 축구 모임",
+    category: "스포츠",
+    description: "주말에 모임",
     member: "45",
-    imageUrl: "https://via.placeholder.com/150",
+    // imageUrl: "https://via.placeholder.com/150",
+    imageUrl: require("../../../assets/mockImg/activity3.png"),
   },
   {
     id: "4",
-    title: "사진 찍기 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
+    title: "테니스 모임",
+    category: "스포츠",
+    description: "주말 / 학교 테니스장",
     member: "45",
-    imageUrl: "https://via.placeholder.com/150",
+    // imageUrl: "https://via.placeholder.com/150",
+    imageUrl: require("../../../assets/mockImg/activity4.png"),
   },
   {
     id: "5",
-    title: "사진 찍기 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
+    title: "단국대 헬스 모임",
+    category: "스포츠",
+    description: "학교 근처 헬스장에 모임",
     member: "45",
-    imageUrl: "https://via.placeholder.com/150",
+    // imageUrl: "https://via.placeholder.com/150",
+    imageUrl: require("../../../assets/mockImg/activity5.png"),
   },
   {
     id: "6",
-    title: "사진 찍기 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
+    title: "필라테스 모임",
+    category: "스포츠",
+    description: "학교 앞 필라테스 장",
     member: "45",
-    imageUrl: "https://via.placeholder.com/150",
+    // imageUrl: "https://via.placeholder.com/150",
+    imageUrl: require("../../../assets/mockImg/activity6.png"),
   },
   {
     id: "7",
-    title: "사진 찍기 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
+    title: "단국대 조깅 모임",
+    category: "스포츠",
+    description: "금요일 7시 조깅",
     member: "45",
-    imageUrl: "https://via.placeholder.com/150",
-  },
-  {
-    id: "8",
-    title: "사진 찍기 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
-    member: "45",
-    imageUrl: "https://via.placeholder.com/150",
-  },
-  {
-    id: "9",
-    title: "사진 찍기 모임",
-    category: "독서/글",
-    description: "수업 끝나고 7시부터 9시까지",
-    member: "45",
-    imageUrl: "https://via.placeholder.com/150",
+    // imageUrl: "https://via.placeholder.com/150",
+    imageUrl: require("../../../assets/mockImg/activity7.png"),
   },
 ];
 
@@ -125,15 +116,10 @@ const DiscoverTab = ({ navigation }) => {
         : [...prev, item.id]
     );
   };
-  const handleItemPress = (item: MatchingItem) => {
-    console.log("추천 모임 클릭:", item);
-    // navigation.navigate("MatchingDetail", { id: item.id });
-  };
 
   const renderItem = ({ item }: { item: MatchingItem }) => (
     <MatchingListItem
       item={item}
-      onPress={handleItemPress}
       likedItems={likedItems}
       onToggleLike={handleToggleLike}
     />
@@ -219,7 +205,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     marginBottom: 15,
   },
   iconContainer: {
@@ -227,13 +213,13 @@ const styles = StyleSheet.create({
     width: screenWidth / 5,
   },
   iconWrap: {
-    backgroundColor: "#ECECEC",
-    padding: 15,
+    backgroundColor: "#F5F5F5",
+    padding: 10,
     borderRadius: 7,
     alignItems: "center",
     justifyContent: "center",
-    width: screenWidth / 6,
-    height: screenWidth / 6,
+    width: screenWidth / 7,
+    height: screenWidth / 7,
   },
   iconImage: {
     width: "100%",

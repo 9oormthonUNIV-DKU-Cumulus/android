@@ -3,12 +3,13 @@ import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import IndividualTab from "./tabs/IndividualTab";
 import ClubTab from "./tabs/ClubTab";
-import SortButtons from "../../components/SortButtons";
+// import SortButtons from "../../components/SortButtons";
 import { useNavigation } from "@react-navigation/native";
 import { getCategoryId } from "../../utils/category";
 
-type RootStackParamList = {
+export type RootStackParamList = {
   CategoryListScreen: { label: string };
+  MeetingDetail: { id: string };
 };
 
 const CategoryListScreen = () => {
@@ -43,7 +44,7 @@ const CategoryListScreen = () => {
 
         <View style={styles.side} />
       </View>
-      {/* 탭바 */}
+      {/* 개인 & 동아리 탭바 */}
       <View style={styles.tabContainer}>
         {types.map((type) => (
           <TouchableOpacity
@@ -62,18 +63,8 @@ const CategoryListScreen = () => {
         ))}
       </View>
       {/* 탭별 컴포넌트 */}
-      {selectedType === "개인" && (
-        <>
-          {/* <SortButtons /> */}
-          <IndividualTab categoryId={categoryId} />
-        </>
-      )}
-      {selectedType === "동아리" && (
-        <>
-          {/* <SortButtons /> */}
-          <ClubTab categoryId={categoryId} />
-        </>
-      )}
+      {selectedType === "개인" && <IndividualTab categoryId={categoryId} />}
+      {selectedType === "동아리" && <ClubTab categoryId={categoryId} />}
     </View>
   );
 };

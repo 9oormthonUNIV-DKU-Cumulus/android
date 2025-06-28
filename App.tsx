@@ -13,6 +13,7 @@ import CategoryScreen from "./screens/category/CategoryScreen";
 import CategoryListScreen from "./screens/category/CategoryListScreen";
 import CommunityScreen from "./screens/community/CommunityScreen";
 import MyPageScreen from "./screens/myPage/MyPageScreen";
+import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,6 +23,7 @@ function HomeStack() {
     <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="CategoryListScreen" component={CategoryListScreen} />
+      <Stack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
     </Stack.Navigator>
   );
 }

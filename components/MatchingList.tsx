@@ -10,7 +10,7 @@ export type MatchingItem = {
   category: string;
   description: string;
   member: string;
-  imageUrl: string;
+  imageUrl: string | number;
 };
 
 type MatchingListItemProps = {
@@ -30,7 +30,15 @@ export const MatchingListItem = ({
   return (
     <View style={styles.item}>
       <View style={styles.imageWrapper}>
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+        {/* <Image source={{ uri: item.imageUrl }} style={styles.image} /> */}
+        <Image
+          source={
+            typeof item.imageUrl === "string"
+              ? { uri: item.imageUrl }
+              : item.imageUrl
+          }
+          style={styles.image}
+        />
         <TouchableOpacity
           style={styles.likeButton}
           onPress={() => onToggleLike(item)}
@@ -91,7 +99,6 @@ const styles = StyleSheet.create({
   image: {
     width: 60,
     height: 60,
-    borderWidth: 2,
     borderRadius: 8,
     marginLeft: 15,
   },

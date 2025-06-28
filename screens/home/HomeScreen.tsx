@@ -1,0 +1,154 @@
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from "react-native";
+import DiscoverTab from "./tab/DiscoverTab";
+import PopularTab from "./tab/PopularTab";
+import NewTab from "./tab/NewTab";
+import ContestTab from "./tab/ContestTab";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+// 네비게이션 스택 타입 정의
+type RootStackParamList = {
+  HomeScreen: undefined;
+  CategoryListScreen: { label: string };
+  // 여기에 필요한 스크린들 추가
+};
+
+// HomeScreen에서 navigation prop 타입 정의
+type HomeScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "HomeScreen"
+>;
+
+interface Props {
+  navigation: HomeScreenNavigationProp;
+}
+
+const screenWidth = Dimensions.get("window").width;
+
+const categories = ["발견", "인기모임", "신규모임", "공모전"];
+
+export default function HomeScreen({ navigation }: Props) {
+  const [selectedCatagory, setSelectedCategory] = useState("발견");
+
+  return (
+    <View style={styles.body}>
+      {/* 헤더 */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Image
+            source={require("../../assets/images/logoTitle.png")}
+            style={styles.logo}
+          />
+        </View>
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.headerButton}>
+            <Image
+              source={require("../../assets/images/search.png")}
+              style={styles.img}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image
+              source={require("../../assets/images/notification.png")}
+              style={styles.img}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* 홈 화면 상단 탭바 */}
+      <View style={styles.tabContainer}>
+        {categories.map((category) => (
+          <TouchableOpacity
+            key={category}
+            onPress={() => setSelectedCategory(category)}
+            style={[
+              styles.tab,
+              selectedCatagory === category && styles.activeTab,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                selectedCatagory === category && styles.activeTabText,
+              ]}
+            >
+              {category}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      {/* 탭별 콘텐츠 */}
+      {selectedCatagory === "발견" && <DiscoverTab navigation={navigation} />}
+      {selectedCatagory === "인기모임" && (
+        <PopularTab navigation={navigation} />
+      )}
+      {selectedCatagory === "신규모임" && <NewTab navigation={navigation} />}
+      {selectedCatagory === "공모전" && <ContestTab navigation={navigation} />}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  body: {
+    backgroundColor: "#FAFAFA",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  headerLeft: { flexDirection: "row" },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingRight: 20,
+  },
+  logo: {
+    width: screenWidth * 0.3,
+    height: 30,
+    resizeMode: "contain",
+    marginLeft: 15,
+  },
+  headerButton: { marginRight: 20 },
+  img: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+  },
+  title: {
+    height: 40,
+    fontWeight: "bold",
+    paddingTop: 10,
+
+    fontSize: 20,
+  },
+  tab: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  tabText: {
+    color: "#868686",
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderColor: "#5498FF",
+  },
+  activeTabText: {
+    color: "#000 ",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    borderBottomWidth: 2,
+    borderColor: "#FAFAFA",
+  },
+});

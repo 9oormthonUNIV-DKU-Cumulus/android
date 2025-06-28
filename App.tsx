@@ -1,61 +1,66 @@
+// App.tsx ─ 최상위 네비게이션 설정
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationProp,
-} from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
-/* ───── 스크린 컴포넌트 ───── */
-import LoginScreen           from "./screens/LoginScreen";
-import SignupScreen          from "./screens/SignupScreen";
-import SignupFormScreen      from "./screens/SignupFormScreen";
-import HomeScreen            from "./screens/home/HomeScreen";
-import CategoryScreen        from "./screens/category/CategoryScreen";
-import CategoryListScreen    from "./screens/category/CategoryListScreen";
-import CommunityScreen       from "./screens/community/CommunityScreen";
-import MyPageScreen          from "./screens/myPage/MyPageScreen";
-import MeetingDetailScreen   from "./screens/meeting/MeetingDetailScreen";
+/* ───── 화면 컴포넌트 ───── */
+import LoginScreen            from "./screens/LoginScreen";
+import SignupScreen           from "./screens/SignupScreen";
+import SignupFormScreen       from "./screens/SignupFormScreen";
 
-/* ───────────────────────── 타입 정의 (Navigation ParamList) */
+import HomeScreen             from "./screens/home/HomeScreen";
+import CategoryScreen         from "./screens/category/CategoryScreen";
+import CategoryListScreen     from "./screens/category/CategoryListScreen";
+import CommunityScreen        from "./screens/community/CommunityScreen";
+import MyPageScreen           from "./screens/myPage/MyPageScreen";
 
-/** RootStack – App 전역에서 사용 */
+import MeetingDetailScreen    from "./screens/meeting/MeetingDetailScreen";
+import JoinConfirmScreen      from "./screens/meeting/JoinConfirmScreen";
+import MeetingApplyScreen     from "./screens/meeting/MeetingApplyScreen";
+import ApplicantInfoScreen    from "./screens/meeting/ApplicantInfoScreen";   // “신청정보” 화면
+
+/* ───── 타입 정의 ───── */
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   SignupForm: undefined;
   Main: undefined;
 };
-
-/** HomeStack – 하단 탭 중 “홈” 탭에서만 사용 */
 export type HomeStackParamList = {
   Home: undefined;
   CategoryListScreen: { label?: string } | undefined;
   MeetingDetail: undefined;
+  JoinConfirm: undefined;
+  MeetingApply: undefined;
+  ApplicantInfo: { id: string };                      // ← 신청자 id 전달
 };
 
-/* ───────────────────────── 네비게이터 생성 */
-const RootStack   = createNativeStackNavigator<RootStackParamList>();
-const HomeStack   = createNativeStackNavigator<HomeStackParamList>();
-const CategoryStk = createNativeStackNavigator();
-const CommunityStk= createNativeStackNavigator();
-const MyPageStk   = createNativeStackNavigator();
-const Tab         = createBottomTabNavigator();
+/* ───── 네비게이터 생성 ───── */
+const RootStack    = createNativeStackNavigator<RootStackParamList>();
+const HomeStack    = createNativeStackNavigator<HomeStackParamList>();
+const CategoryStk  = createNativeStackNavigator();
+const CommunityStk = createNativeStackNavigator();
+const MyPageStk    = createNativeStackNavigator();
+const Tab          = createBottomTabNavigator();
 
-/* ====== HomeStack 구성 ====== */
+/* ===== HomeStack ===== */
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Home">
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="Home"               component={HomeScreen} />
       <HomeStack.Screen name="CategoryListScreen" component={CategoryListScreen} />
       <HomeStack.Screen name="MeetingDetail"      component={MeetingDetailScreen} />
+      <HomeStack.Screen name="JoinConfirm"        component={JoinConfirmScreen} />
+      <HomeStack.Screen name="MeetingApply"       component={MeetingApplyScreen} />
+      <HomeStack.Screen name="ApplicantInfo"      component={ApplicantInfoScreen} />
     </HomeStack.Navigator>
   );
 }
 
-/* ====== 나머지 탭 Stack ====== */
+/* ===== 기타 스택 ===== */
 function CategoryStackScreen() {
   return (
     <CategoryStk.Navigator screenOptions={{ headerShown: false }}>
@@ -78,7 +83,7 @@ function MyPageStackScreen() {
   );
 }
 
-/* ====== 하단 탭 네비게이터 ====== */
+/* ===== 하단 탭 ===== */
 function MainTab() {
   return (
     <>
@@ -149,7 +154,7 @@ function MainTab() {
         />
       </Tab.Navigator>
 
-      {/* floating 버튼 (예: 글쓰기) */}
+      {/* FAB (글쓰기 등) */}
       <TouchableOpacity style={styles.fab}>
         <Image
           source={require("./assets/icons/floatingIcon.png")}
@@ -160,7 +165,7 @@ function MainTab() {
   );
 }
 
-/* ====== App 컴포넌트 ====== */
+/* ===== App ===== */
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -176,7 +181,7 @@ export default function App() {
   );
 }
 
-/* ───────────────────────── 스타일 (FAB 전용) */
+/* ===== 공용 스타일 ===== */
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",

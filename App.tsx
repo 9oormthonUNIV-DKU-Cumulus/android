@@ -1,64 +1,91 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
-import LoginScreen from "./screens/LoginScreen";
-import SignupScreen from "./screens/SignupScreen";
-import SignupFormScreen from "./screens/SignupFormScreen"; 
-import HomeScreen from "./screens/home/HomeScreen";
-import CategoryScreen from "./screens/category/CategoryScreen";
-import CategoryListScreen from "./screens/category/CategoryListScreen";
-import CommunityScreen from "./screens/community/CommunityScreen";
-import MyPageScreen from "./screens/myPage/MyPageScreen";
-import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
+/* ───── 스크린 컴포넌트 ───── */
+import LoginScreen           from "./screens/LoginScreen";
+import SignupScreen          from "./screens/SignupScreen";
+import SignupFormScreen      from "./screens/SignupFormScreen";
+import HomeScreen            from "./screens/home/HomeScreen";
+import CategoryScreen        from "./screens/category/CategoryScreen";
+import CategoryListScreen    from "./screens/category/CategoryListScreen";
+import CommunityScreen       from "./screens/community/CommunityScreen";
+import MyPageScreen          from "./screens/myPage/MyPageScreen";
+import MeetingDetailScreen   from "./screens/meeting/MeetingDetailScreen";
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+/* ───────────────────────── 타입 정의 (Navigation ParamList) */
 
-function HomeStack() {
+/** RootStack – App 전역에서 사용 */
+export type RootStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+  SignupForm: undefined;
+  Main: undefined;
+};
+
+/** HomeStack – 하단 탭 중 “홈” 탭에서만 사용 */
+export type HomeStackParamList = {
+  Home: undefined;
+  CategoryListScreen: { label?: string } | undefined;
+  MeetingDetail: undefined;
+};
+
+/* ───────────────────────── 네비게이터 생성 */
+const RootStack   = createNativeStackNavigator<RootStackParamList>();
+const HomeStack   = createNativeStackNavigator<HomeStackParamList>();
+const CategoryStk = createNativeStackNavigator();
+const CommunityStk= createNativeStackNavigator();
+const MyPageStk   = createNativeStackNavigator();
+const Tab         = createBottomTabNavigator();
+
+/* ====== HomeStack 구성 ====== */
+function HomeStackScreen() {
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="CategoryListScreen" component={CategoryListScreen} />
-      <Stack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
-    </Stack.Navigator>
+    <HomeStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Home">
+      <HomeStack.Screen name="Home"               component={HomeScreen} />
+      <HomeStack.Screen name="CategoryListScreen" component={CategoryListScreen} />
+      <HomeStack.Screen name="MeetingDetail"      component={MeetingDetailScreen} />
+    </HomeStack.Navigator>
   );
 }
 
-function CategoryStack() {
+/* ====== 나머지 탭 Stack ====== */
+function CategoryStackScreen() {
   return (
-    <Stack.Navigator initialRouteName="Category" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Category" component={CategoryScreen} />
-    </Stack.Navigator>
+    <CategoryStk.Navigator screenOptions={{ headerShown: false }}>
+      <CategoryStk.Screen name="Category" component={CategoryScreen} />
+    </CategoryStk.Navigator>
+  );
+}
+function CommunityStackScreen() {
+  return (
+    <CommunityStk.Navigator screenOptions={{ headerShown: false }}>
+      <CommunityStk.Screen name="Community" component={CommunityScreen} />
+    </CommunityStk.Navigator>
+  );
+}
+function MyPageStackScreen() {
+  return (
+    <MyPageStk.Navigator screenOptions={{ headerShown: false }}>
+      <MyPageStk.Screen name="MyPage" component={MyPageScreen} />
+    </MyPageStk.Navigator>
   );
 }
 
-function CommunityStack() {
-  return (
-    <Stack.Navigator initialRouteName="Community" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Community" component={CommunityScreen} />
-    </Stack.Navigator>
-  );
-}
-
-function MyPageStack() {
-  return (
-    <Stack.Navigator initialRouteName="MyPage" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="MyPage" component={MyPageScreen} />
-    </Stack.Navigator>
-  );
-}
-
+/* ====== 하단 탭 네비게이터 ====== */
 function MainTab() {
   return (
     <>
       <Tab.Navigator screenOptions={{ headerShown: false }}>
         <Tab.Screen
           name="홈"
-          component={HomeStack}
+          component={HomeStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -74,7 +101,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="카테고리"
-          component={CategoryStack}
+          component={CategoryStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -90,7 +117,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="커뮤니티"
-          component={CommunityStack}
+          component={CommunityStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -106,7 +133,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="마이페이지"
-          component={MyPageStack}
+          component={MyPageStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -122,6 +149,7 @@ function MainTab() {
         />
       </Tab.Navigator>
 
+      {/* floating 버튼 (예: 글쓰기) */}
       <TouchableOpacity style={styles.fab}>
         <Image
           source={require("./assets/icons/floatingIcon.png")}
@@ -132,23 +160,23 @@ function MainTab() {
   );
 }
 
-export default function App(): React.JSX.Element {
+/* ====== App 컴포넌트 ====== */
+export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Group>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Signup" component={SignupScreen} />
-            <Stack.Screen name="SignupForm" component={SignupFormScreen} />
-            <Stack.Screen name="Main" component={MainTab} />
-          </Stack.Group>
-        </Stack.Navigator>
+        <RootStack.Navigator screenOptions={{ headerShown: false }}>
+          <RootStack.Screen name="Login"      component={LoginScreen} />
+          <RootStack.Screen name="Signup"     component={SignupScreen} />
+          <RootStack.Screen name="SignupForm" component={SignupFormScreen} />
+          <RootStack.Screen name="Main"       component={MainTab} />
+        </RootStack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
   );
 }
 
+/* ───────────────────────── 스타일 (FAB 전용) */
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",

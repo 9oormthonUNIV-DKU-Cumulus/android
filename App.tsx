@@ -1,3 +1,7 @@
+import { useNavigationContainerRef } from "@react-navigation/native";
+import { useState, useRef } from "react";
+
+// App.tsx ─ 최상위 네비게이션 설정
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -5,66 +9,95 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
+/* ───── 화면 컴포넌트 ───── */
 import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
 import SignupFormScreen from "./screens/SignupFormScreen";
+
 import HomeScreen from "./screens/home/HomeScreen";
 import CategoryScreen from "./screens/category/CategoryScreen";
 import CategoryListScreen from "./screens/category/CategoryListScreen";
 import CommunityScreen from "./screens/community/CommunityScreen";
 import MyPageScreen from "./screens/myPage/MyPageScreen";
-import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 
-const Stack = createNativeStackNavigator();
+import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
+import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
+import MeetingApplyScreen from "./screens/meeting/MeetingApplyScreen";
+import ApplicantInfoScreen from "./screens/meeting/ApplicantInfoScreen"; // “신청정보” 화면
+
+/* ───── 타입 정의 ───── */
+export type RootStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+  SignupForm: undefined;
+  Main: undefined;
+};
+export type HomeStackParamList = {
+  Home: undefined;
+  CategoryListScreen: { label?: string } | undefined;
+  MeetingDetail: undefined;
+  JoinConfirm: undefined;
+  MeetingApply: undefined;
+  ApplicantInfo: { id: string }; // ← 신청자 id 전달
+};
+
+/* ───── 네비게이터 생성 ───── */
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const CategoryStk = createNativeStackNavigator();
+const CommunityStk = createNativeStackNavigator();
+const MyPageStk = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function HomeStack() {
+/* ===== HomeStack ===== */
+function HomeStackScreen() {
   return (
-    <Stack.Navigator
-      initialRouteName="Home"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="CategoryListScreen" component={CategoryListScreen} />
-      <Stack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
-    </Stack.Navigator>
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen
+        name="CategoryListScreen"
+        component={CategoryListScreen}
+      />
+      <HomeStack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
+      <HomeStack.Screen name="JoinConfirm" component={JoinConfirmScreen} />
+      <HomeStack.Screen name="MeetingApply" component={MeetingApplyScreen} />
+      <HomeStack.Screen name="ApplicantInfo" component={ApplicantInfoScreen} />
+    </HomeStack.Navigator>
   );
 }
 
-function CategoryStack() {
+/* ===== 기타 스택 ===== */
+function CategoryStackScreen() {
   return (
-    <Stack.Navigator
-      initialRouteName="Category"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="Category" component={CategoryScreen} />
-    </Stack.Navigator>
+    <CategoryStk.Navigator screenOptions={{ headerShown: false }}>
+      <CategoryStk.Screen name="Category" component={CategoryScreen} />
+    </CategoryStk.Navigator>
+  );
+}
+function CommunityStackScreen() {
+  return (
+    <CommunityStk.Navigator screenOptions={{ headerShown: false }}>
+      <CommunityStk.Screen name="Community" component={CommunityScreen} />
+    </CommunityStk.Navigator>
+  );
+}
+function MyPageStackScreen() {
+  return (
+    <MyPageStk.Navigator screenOptions={{ headerShown: false }}>
+      <MyPageStk.Screen name="MyPage" component={MyPageScreen} />
+    </MyPageStk.Navigator>
   );
 }
 
-function CommunityStack() {
-  return (
-    <Stack.Navigator
-      initialRouteName="Community"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="Community" component={CommunityScreen} />
-    </Stack.Navigator>
-  );
-}
+/* ===== 하단 탭 ===== */
+function MainTab({ currentRoute }: { currentRoute?: string }) {
+  const hideFabRoutes = [
+    "MeetingDetail",
+    "JoinConfirm",
+    "MeetingApply",
+    "ApplicantInfo",
+  ];
 
-function MyPageStack() {
-  return (
-    <Stack.Navigator
-      initialRouteName="MyPage"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="MyPage" component={MyPageScreen} />
-    </Stack.Navigator>
-  );
-}
-
-function MainTab() {
   return (
     <>
       <Tab.Navigator
@@ -79,7 +112,7 @@ function MainTab() {
       >
         <Tab.Screen
           name="홈"
-          component={HomeStack}
+          component={HomeStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -95,7 +128,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="카테고리"
-          component={CategoryStack}
+          component={CategoryStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -111,7 +144,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="커뮤니티"
-          component={CommunityStack}
+          component={CommunityStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -127,7 +160,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="마이페이지"
-          component={MyPageStack}
+          component={MyPageStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -143,33 +176,50 @@ function MainTab() {
         />
       </Tab.Navigator>
 
-      <TouchableOpacity style={styles.fab}>
-        <Image
-          source={require("./assets/icons/floatingIcon.png")}
-          style={{ width: 50, height: 50 }}
-        />
-      </TouchableOpacity>
+      {/* FAB 조건부 렌더링 */}
+      {!hideFabRoutes.includes(currentRoute || "") && (
+        <TouchableOpacity style={styles.fab}>
+          <Image
+            source={require("./assets/icons/floatingIcon.png")}
+            style={{ width: 50, height: 50 }}
+          />
+        </TouchableOpacity>
+      )}
     </>
   );
 }
 
-export default function App(): React.JSX.Element {
+/* ===== App ===== */
+export default function App() {
+  const navigationRef = useNavigationContainerRef();
+  const [currentRoute, setCurrentRoute] = useState<string | undefined>();
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Group>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Signup" component={SignupScreen} />
-            <Stack.Screen name="SignupForm" component={SignupFormScreen} />
-            <Stack.Screen name="Main" component={MainTab} />
-          </Stack.Group>
-        </Stack.Navigator>
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() => {
+          setCurrentRoute(navigationRef.getCurrentRoute()?.name);
+        }}
+        onStateChange={() => {
+          setCurrentRoute(navigationRef.getCurrentRoute()?.name);
+        }}
+      >
+        <RootStack.Navigator screenOptions={{ headerShown: false }}>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+          <RootStack.Screen name="Signup" component={SignupScreen} />
+          <RootStack.Screen name="SignupForm" component={SignupFormScreen} />
+          <RootStack.Screen
+            name="Main"
+            children={() => <MainTab currentRoute={currentRoute} />}
+          />
+        </RootStack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
   );
 }
 
+/* ===== 공용 스타일 ===== */
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",

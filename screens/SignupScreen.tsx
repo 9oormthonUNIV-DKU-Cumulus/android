@@ -115,7 +115,7 @@ const BOX = 24;
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#fff",
   },
   side: {
     width: 40,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    height: 60,
+    height: 50,
     paddingHorizontal: 14,
     backgroundColor: "#fff",
     // borderBottomWidth: StyleSheet.hairlineWidth,

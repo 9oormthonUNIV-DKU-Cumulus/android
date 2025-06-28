@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    height: 64,
+    height: 50,
     paddingHorizontal: 14,
     backgroundColor: "#fff",
     // borderBottomWidth: StyleSheet.hairlineWidth,

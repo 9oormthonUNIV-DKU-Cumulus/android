@@ -19,7 +19,7 @@ type Props = NativeStackScreenProps<HomeStackParamList, "ApplicantInfo">;
 
 /* ───── 상수 · 리소스 */
 const BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
-const BACK_ICON      = require("../../assets/images/goback.png");
+const BACK_ICON = require("../../assets/images/goback.png");
 
 export default function ApplicantInfoScreen({ navigation, route }: Props) {
   const { applicant } = route.params as { applicant: Applicant };
@@ -32,12 +32,14 @@ export default function ApplicantInfoScreen({ navigation, route }: Props) {
       {/* 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={BACK_ICON} style={styles.backIcon} />
+          <Image source={BACK_ICON} style={styles.goBackImg} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>신청 정보</Text>
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
+      >
         {/* 신청일 · 이름 */}
         <Text style={styles.dateTxt}>{applicant.appliedDate}</Text>
         <Text style={styles.nameTxt}>{applicant.name}</Text>
@@ -57,8 +59,8 @@ export default function ApplicantInfoScreen({ navigation, route }: Props) {
         <View style={styles.hr} />
 
         {/* 기본 정보 */}
-        <InfoRow label="소속"       value={applicant.dept}      />
-        <InfoRow label="연락처"     value={applicant.phone}     />
+        <InfoRow label="소속" value={applicant.dept} />
+        <InfoRow label="연락처" value={applicant.phone} />
         <InfoRow label="포트폴리오" value={applicant.portfolio} />
 
         <View style={styles.hr} />
@@ -102,11 +104,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: BAR ? BAR + 12 : 12,
+    paddingTop: BAR - 20,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
-  backIcon: { width: 24, height: 24, tintColor: GREY },
+  goBackImg: {
+    marginLeft: 12,
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+  },
   headerTitle: {
     flex: 1,
     textAlign: "center",
@@ -121,8 +128,14 @@ const styles = StyleSheet.create({
   nameTxt: { fontSize: 26, fontWeight: "700", color: DARK, marginTop: 8 },
 
   /* 섹션 헤더 + 본문 */
-  secTitle: { fontSize: 17, fontWeight: "700", color: DARK, marginTop: 28, marginBottom: 8 },
-  secBody:  { fontSize: 15, color: GREY, lineHeight: 22 },
+  secTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: DARK,
+    marginTop: 28,
+    marginBottom: 8,
+  },
+  secBody: { fontSize: 15, color: GREY, lineHeight: 22 },
 
   /* 구분선 */
   hr: { height: 1, backgroundColor: "#E5E7EB", marginTop: 28 },

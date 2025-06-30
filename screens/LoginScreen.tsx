@@ -16,13 +16,13 @@ import {
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
 
 // ── 2) Figma 픽셀값 그대로 top 계산 ──────────────────────────────
-const LOGO_TOP = STATUS_BAR + 176;               // Figma: 176px
-const INPUT_TOP = LOGO_TOP + 119 + 32;           // logo.height(119) + margin(32)
-const SECOND_INPUT_TOP = INPUT_TOP + 46 + 12;    // input.height(46) + gap(12)
-const LOGIN_TOP = SECOND_INPUT_TOP + 46 + 12;    // same gap
-const LINK_ROW_TOP = LOGIN_TOP + 46 + 8;         // loginButton.height(46) + gap(8)
-const EASY_TITLE_TOP = LINK_ROW_TOP + 20 + 32;   // linkRow.height(20) + gap(32)
-const EASY_BUTTONS_TOP = EASY_TITLE_TOP + 20 + 8;// title.height(20) + gap(8)
+const LOGO_TOP = STATUS_BAR + 146; // Figma: 176px
+const INPUT_TOP = LOGO_TOP + 119 + 32; // logo.height(119) + margin(32)
+const SECOND_INPUT_TOP = INPUT_TOP + 46 + 12; // input.height(46) + gap(12)
+const LOGIN_TOP = SECOND_INPUT_TOP + 46 + 12; // same gap
+const LINK_ROW_TOP = LOGIN_TOP + 46 + 8; // loginButton.height(46) + gap(8)
+const EASY_TITLE_TOP = LINK_ROW_TOP + 20 + 32; // linkRow.height(20) + gap(32)
+const EASY_BUTTONS_TOP = EASY_TITLE_TOP + 20 + 8; // title.height(20) + gap(8)
 
 export default function LoginScreen({ navigation }) {
   return (
@@ -75,39 +75,39 @@ export default function LoginScreen({ navigation }) {
       </View>
 
       {/* 6) 간편 로그인 타이틀 */}
-      <Text style={[styles.easyTitle, { top: EASY_TITLE_TOP }]}>
+      {/* <Text style={[styles.easyTitle, { top: EASY_TITLE_TOP }]}>
         간편 로그인
-      </Text>
+      </Text> */}
 
       {/* 7) 간편 로그인 버튼들 */}
-      <View style={[styles.easyButtons, { top: EASY_BUTTONS_TOP }]}>
-        {/* Kakao */}
-        <TouchableOpacity activeOpacity={0.8}>
+      {/* <View style={[styles.easyButtons, { top: EASY_BUTTONS_TOP }]}> */}
+      {/* Kakao */}
+      {/* <TouchableOpacity activeOpacity={0.8}>
           <Image
             source={require("../assets/images/kakao-login.png")}
             style={styles.easyImage}
             resizeMode="contain"
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        {/* Naver */}
-        <TouchableOpacity activeOpacity={0.8}>
+      {/* Naver */}
+      {/* <TouchableOpacity activeOpacity={0.8}>
           <Image
             source={require("../assets/images/naver-login.png")}
             style={styles.easyImage}
             resizeMode="contain"
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        {/* Apple */}
-        <TouchableOpacity activeOpacity={0.8}>
+      {/* Apple */}
+      {/* <TouchableOpacity activeOpacity={0.8}>
           <Image
             source={require("../assets/images/apple-login.png")}
             style={styles.easyImage}
             resizeMode="contain"
           />
         </TouchableOpacity>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 }
@@ -121,8 +121,8 @@ const styles = StyleSheet.create({
   logoWrapper: {
     position: "absolute",
     alignSelf: "center",
-    width: 145,
-    height: 119,
+    width: 116,
+    height: 95,
   },
   logo: {
     width: "100%",
@@ -135,10 +135,10 @@ const styles = StyleSheet.create({
     width: 288,
     height: 46,
     paddingHorizontal: 16,
-    borderRadius: 23,
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: "#DDD",
-    fontSize: 16,
+    fontSize: 12,
   },
   // 4) 로그인 버튼
   loginButton: {
@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: 288,
     height: 46,
-    backgroundColor: "#3366FF",
-    borderRadius: 24,
+    backgroundColor: "#428DFF",
+    borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
   },
   loginText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "600",
   },
   // 5) 링크 행
@@ -164,9 +164,10 @@ const styles = StyleSheet.create({
     height: 20,
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
   },
   link: {
-    fontSize: 14,
+    fontSize: 10,
     color: "#666",
   },
   divider: {

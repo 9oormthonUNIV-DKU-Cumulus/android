@@ -103,20 +103,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginTop: 12,
   },
   headerLeft: { flexDirection: "row" },
   headerRight: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    paddingRight: 20,
+    marginRight: 24,
   },
   logo: {
+    marginTop: 10,
+    marginBottom: 8,
     width: screenWidth * 0.3,
     height: 30,
     resizeMode: "contain",
-    marginLeft: 15,
+    marginLeft: 24,
   },
   headerButton: { marginRight: 20 },
   img: {
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
   },
   tabText: {
     color: "#868686",

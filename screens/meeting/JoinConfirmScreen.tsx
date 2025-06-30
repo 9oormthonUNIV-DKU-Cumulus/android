@@ -18,8 +18,8 @@ import { HomeStackParamList } from "../../App";
 /* ───────────── 상수 · 리소스 */
 const BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
 const { width } = Dimensions.get("window");
-const ARROW_ICON = require("../../assets/images/backback.png");
-const BACK_ICON      = require("../../assets/images/goback.png");
+// const ARROW_ICON = require("../../assets/images/backback.png");
+const BACK_ICON = require("../../assets/images/goback.png");
 
 /* ───────────── 타입 */
 export interface Applicant {
@@ -90,7 +90,7 @@ export default function JoinConfirmScreen({ navigation }: Props) {
       {/* 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={ARROW_ICON} style={styles.backIcon} />
+          <Image source={BACK_ICON} style={styles.goBackImg} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>가입확인</Text>
       </View>
@@ -144,7 +144,7 @@ export default function JoinConfirmScreen({ navigation }: Props) {
                 style={[styles.button, styles.rejectBtn]}
                 onPress={() => onReject(item.id)}
               >
-                <Text style={[styles.btnTxt, { color: "#6B7280" }]}>거절</Text>
+                <Text style={[styles.btnTxt, { color: "#5498FF" }]}>거절</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.approveBtn]}
@@ -166,18 +166,23 @@ const GREY = "#6B7280";
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#F3F4F6" },
-  backIcon:{ width:24, height:24, resizeMode:"contain" },
+  backIcon: { width: 24, height: 24, resizeMode: "contain" },
 
   /* 헤더 */
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: BAR ? BAR + 12 : 12,
+    paddingTop: BAR - 20,
     paddingBottom: 12,
     paddingHorizontal: 16,
     backgroundColor: "#F3F4F6",
   },
-  backIcon: { width: 24, height: 24, tintColor: GREY },
+  goBackImg: {
+    marginLeft: 12,
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+  },
   headerTitle: {
     flex: 1,
     textAlign: "center",
@@ -191,11 +196,11 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 24,
-    padding: 20,
-    marginBottom: 16,
+    padding: 15,
+    marginBottom: 12,
   },
   row: { flexDirection: "row" },
-  profileImg: { width: 72, height: 72, borderRadius: 36, marginRight: 16 },
+  profileImg: { width: 72, height: 72, borderRadius: 36, marginRight: 20 },
 
   /* 이름 + 자세히보기 라인 */
   nameRow: {
@@ -204,15 +209,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // 왼·오른쪽 정렬
     marginBottom: 6,
   },
-  nameGroup: { flexDirection: "row", alignItems: "center" },
-  nameTxt: { fontSize: 17, fontWeight: "700", color: "#1F2937" },
-  metaTxt: { fontSize: 14, color: GREY },
-  moreTxt: { fontSize: 13, color: GREY },
+  nameGroup: { flexDirection: "row", alignItems: "center", marginTop: 5 },
+  nameTxt: { fontSize: 14, fontWeight: "700", color: "#1F2937" },
+  metaTxt: { fontSize: 11, color: GREY },
+  moreTxt: { fontSize: 9, color: GREY },
 
   /* 학과/신청일 */
   infoRow: { flexDirection: "row", marginBottom: 2 },
-  infoLabel: { width: 50, fontSize: 13, color: GREY },
-  infoValue: { fontSize: 14, color: "#1F2937" },
+  infoLabel: { width: 50, fontSize: 11, color: GREY },
+  infoValue: { fontSize: 11, color: "#1F2937" },
 
   /* 버튼 */
   btnRow: { flexDirection: "row", marginTop: 18 },
@@ -223,7 +228,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  rejectBtn: { backgroundColor: "#E5E7EB", marginRight: 12 },
+  rejectBtn: { backgroundColor: "#E2EDFF", marginRight: 12 },
   approveBtn: { backgroundColor: BLUE },
-  btnTxt: { fontSize: 16, fontWeight: "600" },
+  btnTxt: { fontSize: 14, fontWeight: "500" },
 });

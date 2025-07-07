@@ -43,9 +43,10 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Image
-            source={require("../../assets/images/logoTitle.png")}
+            source={require("../../assets/images/dmoim-logo.png")}
             style={styles.logo}
           />
+          <Text style={styles.logoText}>moim</Text>
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.headerButton}>
@@ -105,7 +106,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 12,
   },
-  headerLeft: { flexDirection: "row" },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center", // ✅ 이미지와 텍스트 수직 가운데 정렬
+    // marginLeft: 24,
+  },
   headerRight: {
     flexDirection: "row",
     alignItems: "center",
@@ -115,10 +120,15 @@ const styles = StyleSheet.create({
   logo: {
     marginTop: 10,
     marginBottom: 8,
-    width: screenWidth * 0.3,
-    height: 30,
+    width: screenWidth * 0.1,
+    height: 40,
     resizeMode: "contain",
-    marginLeft: 24,
+    marginLeft: 12,
+  },
+  logoText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    // marginLeft: 8,
   },
   headerButton: { marginRight: 20 },
   img: {

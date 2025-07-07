@@ -82,28 +82,28 @@ const recommendedData: MatchingItem[] = [
 ];
 
 const firstRow = [
-  { label: "스포츠", icon: require("../../../assets/images/sport2x.png") },
+  { label: "스포츠", icon: require("../../../assets/images/sport.png") },
   {
     label: "외국/언어",
-    icon: require("../../../assets/images/language2x.png"),
+    icon: require("../../../assets/images/language.png"),
   },
-  { label: "댄스", icon: require("../../../assets/images/dance2x.png") },
+  { label: "댄스", icon: require("../../../assets/images/dance.png") },
   {
     label: "봉사활동",
-    icon: require("../../../assets/images/volunteer2x.png"),
+    icon: require("../../../assets/images/volunteer.png"),
   },
-  { label: "자기계발", icon: require("../../../assets/images/self-dev2x.png") },
+  { label: "자기계발", icon: require("../../../assets/images/goal.png") },
 ];
 
 const secondRow = [
-  { label: "독서/글", icon: require("../../../assets/images/book2x.png") },
+  { label: "독서/글", icon: require("../../../assets/images/book.png") },
   {
-    label: "문화/공연",
-    icon: require("../../../assets/images/festival2x.png"),
+    label: "문화/댄스",
+    icon: require("../../../assets/images/dance.png"),
   },
-  { label: "음악/연기", icon: require("../../../assets/images/music2x.png") },
-  { label: "여행", icon: require("../../../assets/images/trip2x.png") },
-  { label: "업종/직무", icon: require("../../../assets/images/work2x.png") },
+  { label: "음악/악기", icon: require("../../../assets/images/song.png") },
+  { label: "여행", icon: require("../../../assets/images/trip.png") },
+  { label: "업종/직무", icon: require("../../../assets/images/work.png") },
 ];
 
 const DiscoverTab = ({ navigation }) => {
@@ -127,12 +127,6 @@ const DiscoverTab = ({ navigation }) => {
 
   const renderHeader = () => (
     <View>
-      {/* 배너 */}
-      <Image
-        source={require("../../../assets/images/firstBanner2.png")}
-        style={styles.bannerImg}
-      />
-
       {/* 카테고리 */}
       <View style={styles.categories}>
         <View style={styles.row}>
@@ -196,12 +190,7 @@ export default DiscoverTab;
 
 const styles = StyleSheet.create({
   container: { backgroundColor: "#FAFAFA" },
-  bannerImg: {
-    height: undefined,
-    width: screenWidth,
-    aspectRatio: 3,
-    resizeMode: "cover",
-  },
+
   categories: {
     marginTop: 20,
   },

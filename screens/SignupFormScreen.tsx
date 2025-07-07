@@ -16,7 +16,7 @@ import {
 import { api } from "../utils/api";
 
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
-const PASSWORD_RULE = "* 영문, 숫자, 특수문자 포함 8자 이상";
+const PASSWORD_RULE = "* 영문 대소문자, 숫자, 특수문자 포함 8자 이상";
 
 export default function SignupFormScreen({ navigation }) {
   const [name, setName] = useState("");

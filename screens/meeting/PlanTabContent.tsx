@@ -1,9 +1,16 @@
+import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { HomeStackParamList } from "../../App";
 
 export default function PlanTabContent() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -50,7 +57,10 @@ export default function PlanTabContent() {
       </ScrollView>
       {/* ─── 하단 바 ─── */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.createBtn}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("MoimForm")}
+          style={styles.createBtn}
+        >
           <Text style={styles.createBtnTxt}>모임 만들기</Text>
         </TouchableOpacity>
       </View>

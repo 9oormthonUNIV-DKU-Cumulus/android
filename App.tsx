@@ -24,6 +24,7 @@ import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
 import MeetingApplyScreen from "./screens/meeting/MeetingApplyScreen";
 import ApplicantInfoScreen from "./screens/meeting/ApplicantInfoScreen"; // “신청정보” 화면
+import MoimFormScreen from "./screens/meeting/MoimFormScreen";
 
 /* ───── 타입 정의 ───── */
 export type RootStackParamList = {
@@ -39,6 +40,7 @@ export type HomeStackParamList = {
   JoinConfirm: undefined;
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
+  MoimForm: undefined;
 };
 
 /* ───── 네비게이터 생성 ───── */
@@ -62,6 +64,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="JoinConfirm" component={JoinConfirmScreen} />
       <HomeStack.Screen name="MeetingApply" component={MeetingApplyScreen} />
       <HomeStack.Screen name="ApplicantInfo" component={ApplicantInfoScreen} />
+      <HomeStack.Screen name="MoimForm" component={MoimFormScreen} />
     </HomeStack.Navigator>
   );
 }

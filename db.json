@@ -1,0 +1,134 @@
+{
+  "activities": [
+    {
+      "id": "1",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "2",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "3",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "4",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "5",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "6",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "7",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "8",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "9",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "10",
+      "title": "주말 독서 모임",
+      "category": "book",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "11",
+      "title": "주말 독서 모임",
+      "category": "language",
+      "description": "매주 토요일 7시",
+      "member": "12",
+      "imageUrl": "https://via.placeholder.com/150"
+    }
+  ],
+  "clubs": [
+    {
+      "id": "1",
+      "title": "책 읽는 동아리",
+      "category": "book",
+      "description": "매주 2회 활동",
+      "member": "25",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "2",
+      "title": "책 읽는 동아리",
+      "category": "book",
+      "description": "매주 2회 활동",
+      "member": "25",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "3",
+      "title": "책 읽는 동아리",
+      "category": "book",
+      "description": "매주 2회 활동",
+      "member": "2",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "4",
+      "title": "책 읽는 동아리",
+      "category": "book",
+      "description": "매주 2회 활동",
+      "member": "25",
+      "imageUrl": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "5",
+      "title": "책 읽는 동아리",
+      "category": "book",
+      "description": "매주 2회 활동",
+      "member": "45",
+      "imageUrl": "https://via.placeholder.com/150"
+    }
+  ]
+}

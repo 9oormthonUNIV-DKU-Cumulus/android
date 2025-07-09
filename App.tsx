@@ -99,6 +99,7 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
     "JoinConfirm",
     "MeetingApply",
     "ApplicantInfo",
+    "MoimForm",
   ];
 
   return (

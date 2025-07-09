@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
@@ -6,10 +6,35 @@ import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HomeStackParamList } from "../../App";
+import PlanCard from "../../components/PlanCard";
 
 export default function PlanTabContent() {
   const navigation =
     useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+
+  // 모임 목업 데이터
+  const [plans, setPlans] = useState({
+    정기: [
+      {
+        id: 1,
+        title: "매주 금요일 독서모임",
+        location: "인문관 102호",
+        date: "2025-07-13",
+        peopleCount: 5,
+        content: "책 읽고 토론 진행",
+      },
+    ],
+    자유: [
+      {
+        id: 1,
+        title: "화요일 영화팟",
+        location: "오리역 CGV",
+        date: "2025-07-19",
+        peopleCount: 3,
+        content: "영화 보고 밥 먹을 사람 구함",
+      },
+    ],
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -43,15 +68,39 @@ export default function PlanTabContent() {
           {/* 정기 모임 만들기 */}
           <View>
             <Text style={styles.planTitle}>정기 모임</Text>
-            <Text style={styles.planDescription}>아직 정기 모임이 없어요!</Text>
-            <Text style={styles.planSubText}>정기 모임을 만들어보세요.</Text>
+            {plans["정기"].length > 0 ? (
+              plans["정기"].map((plan) => (
+                <PlanCard key={plan.id} data={plan} />
+              ))
+            ) : (
+              <>
+                <Text style={styles.planDescription}>
+                  아직 정기 모임이 없어요!
+                </Text>
+                <Text style={styles.planSubText}>
+                  정기 모임을 만들어보세요.
+                </Text>
+              </>
+            )}
           </View>
           <View style={styles.hr} />
           {/* 자유 모임 만들기 */}
           <View>
             <Text style={styles.planTitle}>자유 모임</Text>
-            <Text style={styles.planDescription}>아직 자유 모임이 없어요!</Text>
-            <Text style={styles.planSubText}>자유 모임을 만들어보세요.</Text>
+            {plans["자유"].length > 0 ? (
+              plans["자유"].map((plan) => (
+                <PlanCard key={plan.id} data={plan} />
+              ))
+            ) : (
+              <>
+                <Text style={styles.planDescription}>
+                  아직 지유 모임이 없어요!
+                </Text>
+                <Text style={styles.planSubText}>
+                  자유 모임을 만들어보세요.
+                </Text>
+              </>
+            )}
           </View>
         </View>
       </ScrollView>

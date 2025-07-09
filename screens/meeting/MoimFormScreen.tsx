@@ -1,3 +1,4 @@
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import {
   View,
@@ -14,6 +15,9 @@ export default function MoimFormScreen({ navigation }) {
   const [selectedType, setSelectedType] = useState<"정기" | "자유" | null>(
     "정기"
   );
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
 
   return (
     <View style={styles.body}>
@@ -70,7 +74,28 @@ export default function MoimFormScreen({ navigation }) {
 
           {/* 날짜 */}
           <Text style={styles.label}>날짜</Text>
-          <TextInput style={styles.input} placeholder="날짜를 입력해주세요" />
+          <TouchableOpacity
+            style={styles.date}
+            onPress={() => setShowPicker(true)}
+          >
+            <Text style={{ color: selectedDate ? "#000" : "#999" }}>
+              {selectedDate
+                ? selectedDate.toISOString().split("T")[0]
+                : "날짜를 선택해주세요"}
+            </Text>
+          </TouchableOpacity>
+
+          {showPicker && (
+            <DateTimePicker
+              value={selectedDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={(event, date) => {
+                setShowPicker(false);
+                if (date) setSelectedDate(date);
+              }}
+            />
+          )}
 
           {/* 내용 */}
           <Text style={styles.label}>내용</Text>
@@ -193,7 +218,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     backgroundColor: "#FAFAFA",
   },
-
+  date: {
+    width: "100%",
+    height: 30,
+    borderWidth: 1,
+    borderColor: "#DDD",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingTop: 4,
+  },
   checkboxGroup: {
     marginTop: 10,
     flexDirection: "row",

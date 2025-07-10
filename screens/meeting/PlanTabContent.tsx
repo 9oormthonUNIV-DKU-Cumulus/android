@@ -12,6 +12,37 @@ export default function PlanTabContent() {
   const navigation =
     useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
 
+  // 모임이 있는 날짜 마킹
+  const getMarkedDates = () => {
+    const marked: { [date: string]: any } = {};
+
+    // 정기 모임
+    plans["정기"].forEach((plan) => {
+      const date = plan.date;
+      if (!marked[date]) {
+        marked[date] = { dots: [] };
+      }
+      marked[date].dots.push({
+        key: `정기-${plan.id}`,
+        color: "#428DFF",
+      });
+    });
+
+    //자유 모임
+    // 정기 모임
+    plans["자유"].forEach((plan) => {
+      const date = plan.date;
+      if (!marked[date]) {
+        marked[date] = { dots: [] };
+      }
+      marked[date].dots.push({
+        key: `자유-${plan.id}`,
+        color: "#FFA500",
+      });
+    });
+    return marked;
+  };
+
   // 모임 목업 데이터
   const [plans, setPlans] = useState({
     정기: [
@@ -20,6 +51,14 @@ export default function PlanTabContent() {
         title: "매주 금요일 독서모임",
         location: "인문관 102호",
         date: "2025-07-13",
+        peopleCount: 5,
+        content: "책 읽고 토론 진행",
+      },
+      {
+        id: 2,
+        title: "동아리 MT",
+        location: "가평",
+        date: "2025-07-15",
         peopleCount: 5,
         content: "책 읽고 토론 진행",
       },
@@ -44,16 +83,18 @@ export default function PlanTabContent() {
           onDayPress={(day) => {
             console.log("선택한 날짜:", day.dateString); // 예: "2025-07-14"
           }}
-          markedDates={{
-            "2025-07-14": {
-              selected: true,
-              selectedColor: "#428DFF",
-            },
-            "2025-07-23": {
-              marked: true,
-              dotColor: "#428DFF",
-            },
-          }}
+          markingType="multi-dot"
+          markedDates={
+            getMarkedDates()
+            // "2025-07-14": {
+            //   selected: true,
+            //   selectedColor: "#428DFF",
+            // },
+            // "2025-07-23": {
+            //   marked: true,
+            //   dotColor: "#428DFF",
+            // },
+          }
           theme={{
             selectedDayBackgroundColor: "#428DFF",
             todayTextColor: "#428DFF",
@@ -70,7 +111,9 @@ export default function PlanTabContent() {
             <Text style={styles.planTitle}>정기 모임</Text>
             {plans["정기"].length > 0 ? (
               plans["정기"].map((plan) => (
-                <PlanCard key={plan.id} data={plan} />
+                <TouchableOpacity key={plan.id}>
+                  <PlanCard data={plan} />
+                </TouchableOpacity>
               ))
             ) : (
               <>
@@ -89,7 +132,9 @@ export default function PlanTabContent() {
             <Text style={styles.planTitle}>자유 모임</Text>
             {plans["자유"].length > 0 ? (
               plans["자유"].map((plan) => (
-                <PlanCard key={plan.id} data={plan} />
+                <TouchableOpacity key={plan.id}>
+                  <PlanCard data={plan} />
+                </TouchableOpacity>
               ))
             ) : (
               <>

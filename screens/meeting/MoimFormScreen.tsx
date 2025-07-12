@@ -1,4 +1,5 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useState } from "react";
 import {
   View,
@@ -10,8 +11,18 @@ import {
   TextInput,
   Image,
 } from "react-native";
+import { HomeStackParamList } from "../../App";
 
-export default function MoimFormScreen({ navigation }) {
+type MoimFormScreenNavigationProp = NativeStackNavigationProp<
+  HomeStackParamList,
+  "MoimForm"
+>;
+
+type Props = {
+  navigation: MoimFormScreenNavigationProp;
+};
+
+export default function MoimFormScreen({ navigation }: Props) {
   const [selectedType, setSelectedType] = useState<"정기" | "자유" | null>(
     "정기"
   );

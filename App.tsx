@@ -24,9 +24,20 @@ import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
 import MeetingApplyScreen from "./screens/meeting/MeetingApplyScreen";
 import ApplicantInfoScreen from "./screens/meeting/ApplicantInfoScreen"; // “신청정보” 화면
-import MoimFormScreen from "./screens/meeting/MoimFormScreen";
+import MoimFormScreen from "./screens/meeting/MoimFormScreen"; // 모임 신청 폼 화면
+import JoinMoimScreen from "./screens/meeting/JoinMoimScreen";
 
 /* ───── 타입 정의 ───── */
+// 모임 타입
+export type PlanType = {
+  id: number;
+  title: string;
+  location: string;
+  date: string;
+  peopleCount: number;
+  content: string;
+};
+
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
@@ -41,6 +52,7 @@ export type HomeStackParamList = {
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
   MoimForm: undefined;
+  JoinMoim: { plan: PlanType };
 };
 
 /* ───── 네비게이터 생성 ───── */
@@ -65,6 +77,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="MeetingApply" component={MeetingApplyScreen} />
       <HomeStack.Screen name="ApplicantInfo" component={ApplicantInfoScreen} />
       <HomeStack.Screen name="MoimForm" component={MoimFormScreen} />
+      <HomeStack.Screen name="JoinMoim" component={JoinMoimScreen} />
     </HomeStack.Navigator>
   );
 }
@@ -100,6 +113,7 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
     "MeetingApply",
     "ApplicantInfo",
     "MoimForm",
+    "JoinMoim",
   ];
 
   return (

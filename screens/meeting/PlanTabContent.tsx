@@ -111,7 +111,10 @@ export default function PlanTabContent() {
             <Text style={styles.planTitle}>정기 모임</Text>
             {plans["정기"].length > 0 ? (
               plans["정기"].map((plan) => (
-                <TouchableOpacity key={plan.id}>
+                <TouchableOpacity
+                  key={plan.id}
+                  onPress={() => navigation.navigate("JoinMoim", { plan })}
+                >
                   <PlanCard data={plan} />
                 </TouchableOpacity>
               ))
@@ -132,7 +135,10 @@ export default function PlanTabContent() {
             <Text style={styles.planTitle}>자유 모임</Text>
             {plans["자유"].length > 0 ? (
               plans["자유"].map((plan) => (
-                <TouchableOpacity key={plan.id}>
+                <TouchableOpacity
+                  key={plan.id}
+                  onPress={() => navigation.navigate("JoinMoim", { plan })}
+                >
                   <PlanCard data={plan} />
                 </TouchableOpacity>
               ))

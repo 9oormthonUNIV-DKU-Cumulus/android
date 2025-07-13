@@ -113,7 +113,7 @@ const IndividualTab = ({
 
   return (
     <View style={styles.body}>
-      <Text style={styles.contentTitle}>개인 모임 둘러보기</Text>
+      <Text style={styles.contentTitle}>둘러보기</Text>
       <SortButtons />
       <FlatList
         data={individualData}

@@ -10,8 +10,8 @@ import {
 import DiscoverTab from "./tab/DiscoverTab";
 import PopularTab from "./tab/PopularTab";
 import NewTab from "./tab/NewTab";
-import ContestTab from "./tab/ContestTab";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import CommunityTab from "./tab/CommunityTab";
 
 // 네비게이션 스택 타입 정의
 type RootStackParamList = {
@@ -32,7 +32,7 @@ interface Props {
 
 const screenWidth = Dimensions.get("window").width;
 
-const categories = ["발견", "인기모임", "신규모임", "공모전"];
+const categories = ["발견", "인기모임", "신규모임", "커뮤니티"];
 
 export default function HomeScreen({ navigation }: Props) {
   const [selectedCatagory, setSelectedCategory] = useState("발견");
@@ -91,7 +91,9 @@ export default function HomeScreen({ navigation }: Props) {
         <PopularTab navigation={navigation} />
       )}
       {selectedCatagory === "신규모임" && <NewTab navigation={navigation} />}
-      {selectedCatagory === "공모전" && <ContestTab navigation={navigation} />}
+      {selectedCatagory === "커뮤니티" && (
+        <CommunityTab navigation={navigation} />
+      )}
     </View>
   );
 }

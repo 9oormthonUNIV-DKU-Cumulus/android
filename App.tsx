@@ -15,17 +15,28 @@ import SignupScreen from "./screens/SignupScreen";
 import SignupFormScreen from "./screens/SignupFormScreen";
 
 import HomeScreen from "./screens/home/HomeScreen";
-import CategoryScreen from "./screens/category/CategoryScreen";
 import CategoryListScreen from "./screens/category/CategoryListScreen";
-import CommunityScreen from "./screens/community/CommunityScreen";
 import MyPageScreen from "./screens/myPage/MyPageScreen";
 
 import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
 import MeetingApplyScreen from "./screens/meeting/MeetingApplyScreen";
 import ApplicantInfoScreen from "./screens/meeting/ApplicantInfoScreen"; // “신청정보” 화면
+import MoimFormScreen from "./screens/meeting/MoimFormScreen"; // 모임 신청 폼 화면
+import JoinMoimScreen from "./screens/meeting/JoinMoimScreen";
+import ClubFormScreen from "./screens/meeting/ClubFormScreen";
 
 /* ───── 타입 정의 ───── */
+// 모임 타입
+export type PlanType = {
+  id: number;
+  title: string;
+  location: string;
+  date: string;
+  peopleCount: number;
+  content: string;
+};
+
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
@@ -39,13 +50,21 @@ export type HomeStackParamList = {
   JoinConfirm: undefined;
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
+  MoimForm: undefined;
+  JoinMoim: { plan: PlanType };
+};
+
+export type ClubManageStackParamList = {
+  JoinConfirm: undefined;
+  MeetingApply: undefined;
+  ApplicantInfo: { id: string }; // ← 신청자 id 전달
 };
 
 /* ───── 네비게이터 생성 ───── */
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
-const CategoryStk = createNativeStackNavigator();
-const CommunityStk = createNativeStackNavigator();
+const ClubCreateStk = createNativeStackNavigator();
+const ClubManageStk = createNativeStackNavigator<ClubManageStackParamList>();
 const MyPageStk = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -59,26 +78,31 @@ function HomeStackScreen() {
         component={CategoryListScreen}
       />
       <HomeStack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
-      <HomeStack.Screen name="JoinConfirm" component={JoinConfirmScreen} />
       <HomeStack.Screen name="MeetingApply" component={MeetingApplyScreen} />
-      <HomeStack.Screen name="ApplicantInfo" component={ApplicantInfoScreen} />
+
+      <HomeStack.Screen name="MoimForm" component={MoimFormScreen} />
+      <HomeStack.Screen name="JoinMoim" component={JoinMoimScreen} />
     </HomeStack.Navigator>
   );
 }
 
 /* ===== 기타 스택 ===== */
-function CategoryStackScreen() {
+function ClubCreateStackScreen() {
   return (
-    <CategoryStk.Navigator screenOptions={{ headerShown: false }}>
-      <CategoryStk.Screen name="Category" component={CategoryScreen} />
-    </CategoryStk.Navigator>
+    <ClubCreateStk.Navigator screenOptions={{ headerShown: false }}>
+      <ClubCreateStk.Screen name="CreateClub" component={ClubFormScreen} />
+    </ClubCreateStk.Navigator>
   );
 }
-function CommunityStackScreen() {
+function ClubManageStackScreen() {
   return (
-    <CommunityStk.Navigator screenOptions={{ headerShown: false }}>
-      <CommunityStk.Screen name="Community" component={CommunityScreen} />
-    </CommunityStk.Navigator>
+    <ClubManageStk.Navigator screenOptions={{ headerShown: false }}>
+      <ClubManageStk.Screen name="JoinConfirm" component={JoinConfirmScreen} />
+      <ClubManageStk.Screen
+        name="ApplicantInfo"
+        component={ApplicantInfoScreen}
+      />
+    </ClubManageStk.Navigator>
   );
 }
 function MyPageStackScreen() {
@@ -91,13 +115,6 @@ function MyPageStackScreen() {
 
 /* ===== 하단 탭 ===== */
 function MainTab({ currentRoute }: { currentRoute?: string }) {
-  const hideFabRoutes = [
-    "MeetingDetail",
-    "JoinConfirm",
-    "MeetingApply",
-    "ApplicantInfo",
-  ];
-
   return (
     <>
       <Tab.Navigator
@@ -127,8 +144,8 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
           }}
         />
         <Tab.Screen
-          name="카테고리"
-          component={CategoryStackScreen}
+          name="동아리 개설"
+          component={ClubCreateStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -143,8 +160,8 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
           }}
         />
         <Tab.Screen
-          name="커뮤니티"
-          component={CommunityStackScreen}
+          name="동아리 관리"
+          component={ClubManageStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -175,16 +192,6 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
           }}
         />
       </Tab.Navigator>
-
-      {/* FAB 조건부 렌더링 */}
-      {!hideFabRoutes.includes(currentRoute || "") && (
-        <TouchableOpacity style={styles.fab}>
-          <Image
-            source={require("./assets/icons/floatingIcon.png")}
-            style={{ width: 50, height: 50 }}
-          />
-        </TouchableOpacity>
-      )}
     </>
   );
 }
@@ -218,16 +225,3 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
-
-/* ===== 공용 스타일 ===== */
-const styles = StyleSheet.create({
-  fab: {
-    position: "absolute",
-    bottom: 110,
-    right: 20,
-    borderRadius: 28,
-    backgroundColor: "#5498FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

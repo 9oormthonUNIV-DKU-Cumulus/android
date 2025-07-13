@@ -10,8 +10,8 @@ import {
 import DiscoverTab from "./tab/DiscoverTab";
 import PopularTab from "./tab/PopularTab";
 import NewTab from "./tab/NewTab";
-import ContestTab from "./tab/ContestTab";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import CommunityTab from "./tab/CommunityTab";
 
 // 네비게이션 스택 타입 정의
 type RootStackParamList = {
@@ -32,7 +32,7 @@ interface Props {
 
 const screenWidth = Dimensions.get("window").width;
 
-const categories = ["발견", "인기모임", "신규모임", "공모전"];
+const categories = ["발견", "인기모임", "신규모임", "커뮤니티"];
 
 export default function HomeScreen({ navigation }: Props) {
   const [selectedCatagory, setSelectedCategory] = useState("발견");
@@ -43,9 +43,10 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Image
-            source={require("../../assets/images/logoTitle.png")}
+            source={require("../../assets/images/dmoim-logo.png")}
             style={styles.logo}
           />
+          <Text style={styles.logoText}>moim</Text>
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.headerButton}>
@@ -90,7 +91,9 @@ export default function HomeScreen({ navigation }: Props) {
         <PopularTab navigation={navigation} />
       )}
       {selectedCatagory === "신규모임" && <NewTab navigation={navigation} />}
-      {selectedCatagory === "공모전" && <ContestTab navigation={navigation} />}
+      {selectedCatagory === "커뮤니티" && (
+        <CommunityTab navigation={navigation} />
+      )}
     </View>
   );
 }
@@ -105,7 +108,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 12,
   },
-  headerLeft: { flexDirection: "row" },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center", // ✅ 이미지와 텍스트 수직 가운데 정렬
+    // marginLeft: 24,
+  },
   headerRight: {
     flexDirection: "row",
     alignItems: "center",
@@ -115,10 +122,15 @@ const styles = StyleSheet.create({
   logo: {
     marginTop: 10,
     marginBottom: 8,
-    width: screenWidth * 0.3,
-    height: 30,
+    width: screenWidth * 0.1,
+    height: 40,
     resizeMode: "contain",
-    marginLeft: 24,
+    marginLeft: 12,
+  },
+  logoText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    // marginLeft: 8,
   },
   headerButton: { marginRight: 20 },
   img: {

@@ -21,8 +21,8 @@ const CategoryListScreen = () => {
   // 전체,인기,최신 상태(기본 상태는 전체)
   // const [sort, setSort] = useState<"latest" | "popular" | "all">("all");
 
-  const types = ["개인", "동아리"];
-  const [selectedType, setSelectedType] = useState("개인");
+  const types = ["죽전", "천안"];
+  const [selectedType, setSelectedType] = useState("죽전");
   const navigation = useNavigation();
 
   return (
@@ -63,8 +63,8 @@ const CategoryListScreen = () => {
         ))}
       </View>
       {/* 탭별 컴포넌트 */}
-      {selectedType === "개인" && <IndividualTab categoryId={categoryId} />}
-      {selectedType === "동아리" && <ClubTab categoryId={categoryId} />}
+      {selectedType === "죽전" && <IndividualTab categoryId={categoryId} />}
+      {selectedType === "천안" && <ClubTab categoryId={categoryId} />}
     </View>
   );
 };

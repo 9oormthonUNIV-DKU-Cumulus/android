@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HomeStackParamList } from "../../App";
+import PlanTabContent from "./PlanTabContent";
 
 /* ───────────────────────── 상수 / 리소스 */
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
@@ -78,7 +79,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
           <Image source={BACK_ICON} style={styles.goBackImg} />
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.alarmBtn}
           onPress={() => navigation.navigate("JoinConfirm")}
         >
@@ -86,7 +87,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
           <View style={styles.badge}>
             <Text style={styles.badgeTxt}>3</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* ─── 프로필 카드 ─── */}
@@ -119,23 +120,28 @@ export default function MeetingDetailScreen({ navigation }: Props) {
 
       {/* ─── 본문 ─── */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        {tab === "홈" ? <HomeTabContent /> : <TabPlaceholder label={tab} />}
+        {tab === "홈" && <HomeTabContent />}
+        {tab === "일정" && <PlanTabContent />}
         <View style={{ height: 110 }} />
       </ScrollView>
 
       {/* ─── 하단 바 ─── */}
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.likeBtn}>
-          <Image source={HEART_ICON} style={styles.likeIcon} />
-        </TouchableOpacity>
+      {tab === "홈" && (
+        <View style={styles.bottomBar}>
+          <TouchableOpacity style={styles.likeBtn}>
+            <Image source={HEART_ICON} style={styles.likeIcon} />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.joinBtn}
-          onPress={() => navigation.navigate("MeetingApply")}
-        >
-          <Text style={styles.joinTxt}>{joined ? "가입취소" : "가입하기"}</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={styles.joinBtn}
+            onPress={() => navigation.navigate("MeetingApply")}
+          >
+            <Text style={styles.joinTxt}>
+              {joined ? "가입취소" : "가입하기"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -186,54 +192,6 @@ function HomeTabContent() {
           </View>
         ))}
       </View>
-
-      {/* 게시판 */}
-      <View style={styles.section}>
-        <SectionHeader title={`게시판 ${MEETING.posts}`} />
-        <View style={styles.postItem}>
-          <Image source={AVATAR} style={styles.postAvatar} />
-          <View style={styles.postContent}>
-            <Text style={styles.postWriter}>김단웅</Text>
-            <Text style={styles.postTime}>1시간 전</Text>
-            <Text style={styles.postText} numberOfLines={2}>
-              커뮤니티 글 내용 적기 커뮤니티 글 내용 적기{"\n"}
-              커뮤니티 글 내용 적기 커뮤니티 글 내용 적기
-            </Text>
-            <View style={styles.postReactions}>
-              <Image source={GOOD_ICON} style={styles.reactionIcon} />
-              <Text style={styles.postMeta}>50</Text>
-              <Image
-                source={TALK_ICON}
-                style={[styles.reactionIcon, { marginLeft: 16 }]}
-              />
-              <Text style={styles.postMeta}>50</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* 일정 */}
-      <View style={styles.section}>
-        <SectionHeader title={`일정 ${MEETING.schedules.length}`} />
-        {MEETING.schedules.map((s, idx) => {
-          const [month, day] = s.date.replace("일", "").split(" ");
-          return (
-            <View key={idx} style={styles.scheduleItem}>
-              <View style={styles.dateBox}>
-                <Text style={styles.monthTxt}>{month}</Text>
-                <Text style={styles.dayTxt}>{day}</Text>
-              </View>
-              <View style={styles.scheduleContent}>
-                <Text style={styles.scheduleTitle}>{s.title}</Text>
-                <Text style={styles.scheduleStatus}>{s.status}</Text>
-                <Text
-                  style={styles.scheduleTime}
-                >{`${s.time} · ${s.count}`}</Text>
-              </View>
-            </View>
-          );
-        })}
-      </View>
     </View>
   );
 }
@@ -249,15 +207,15 @@ function SectionHeader({ title }: { title: string }) {
     </View>
   );
 }
-function TabPlaceholder({ label }: { label: string }) {
-  return (
-    <View style={styles.placeholderWrap}>
-      <Text
-        style={styles.placeholderTxt}
-      >{`${label} 탭은 추후 구현됩니다.`}</Text>
-    </View>
-  );
-}
+// function TabPlaceholder({ label }: { label: string }) {
+//   return (
+//     <View style={styles.placeholderWrap}>
+//       <Text
+//         style={styles.placeholderTxt}
+//       >{`${label} 탭은 추후 구현됩니다.`}</Text>
+//     </View>
+//   );
+// }
 
 /* ───────────────────────── 스타일 */
 const GREY = "#6B7280";

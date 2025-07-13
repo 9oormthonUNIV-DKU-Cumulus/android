@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import { HomeStackParamList } from "../../App"; // HomeStackParamList 타입 import
@@ -26,9 +27,10 @@ export default function JoinMoimScreen({ navigation, route }: Props) {
   const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [cancleModalModalVisible, setCancleModalVisible] = useState(false);
   const [joined, setJoined] = useState(false); // 참여 상태
+  const [menuVisible, setMenuVisible] = useState(false); // 모임 삭제,수정 팝업창 상태
 
-  return (
-    <View style={styles.container}>
+  const renderContent = () => (
+    <>
       <View style={styles.topBar}>
         {/* 상단 제목 */}
         <View style={styles.side}>
@@ -46,9 +48,34 @@ export default function JoinMoimScreen({ navigation, route }: Props) {
 
         <View style={styles.side} />
       </View>
-      <Text style={{ fontWeight: "bold", marginVertical: 10 }}>
-        개설된 모임
-      </Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.sectionTitle}>개설된 모임</Text>
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+          <Image
+            source={require("../../assets/images/more.png")}
+            style={styles.moreBtn}
+          />
+        </TouchableOpacity>
+
+        {/* 메뉴 팝업 */}
+        {menuVisible && (
+          <TouchableOpacity
+            style={styles.menuOverlay}
+            activeOpacity={1}
+            onPressOut={() => setMenuVisible(false)}
+          >
+            <View style={styles.menuBox}>
+              <TouchableOpacity>
+                <Text style={styles.menuItem}>모임 수정하기</Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={styles.menuItem}>모임 삭제하기</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        )}
+      </View>
+
       <PlanCard data={plan} />
       <View>
         <Text>참여자 목록</Text>
@@ -110,6 +137,18 @@ export default function JoinMoimScreen({ navigation, route }: Props) {
           </View>
         </View>
       </Modal>
+    </>
+  );
+
+  return (
+    <View style={styles.container}>
+      {menuVisible ? (
+        <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
+          <View style={{ flex: 1 }}>{renderContent()}</View>
+        </TouchableWithoutFeedback>
+      ) : (
+        renderContent()
+      )}
     </View>
   );
 }
@@ -130,7 +169,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#FFF",
   },
   topBar: {
     flexDirection: "row",
@@ -145,6 +184,53 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     resizeMode: "contain",
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+
+  sectionTitle: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+
+  moreBtn: {
+    width: 18,
+    height: 18,
+    resizeMode: "contain",
+  },
+
+  menuOverlay: {
+    position: "absolute",
+    top: 30,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: "rgba(0,0,0,0.01)", // 외부 클릭 감지용
+    width: "100%",
+    height: "100%",
+  },
+
+  menuBox: {
+    position: "absolute",
+    top: 0,
+    right: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  menuItem: {
+    fontSize: 14,
+    paddingVertical: 8,
+    color: "#333",
   },
   createMoimTitle: {
     fontSize: 18,

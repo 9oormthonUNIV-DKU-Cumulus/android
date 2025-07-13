@@ -79,7 +79,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
           <Image source={BACK_ICON} style={styles.goBackImg} />
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.alarmBtn}
           onPress={() => navigation.navigate("JoinConfirm")}
         >
@@ -87,7 +87,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
           <View style={styles.badge}>
             <Text style={styles.badgeTxt}>3</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* ─── 프로필 카드 ─── */}

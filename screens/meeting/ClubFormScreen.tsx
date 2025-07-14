@@ -10,11 +10,34 @@ import {
   TextInput,
   Image,
 } from "react-native";
+import { launchImageLibrary } from "react-native-image-picker";
 
 export default function ClubFormScreen({ navigation }) {
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const handleSelectImage = () => {
+    launchImageLibrary(
+      {
+        mediaType: "photo",
+        maxWidth: 800,
+        maxHeight: 800,
+        quality: 0.7,
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log("이미지를 선택하지 않음");
+        } else if (response.errorCode) {
+          console.log("이미지 선택 에러", response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          setImageUri(response.assets[0].uri || null);
+        }
+      }
+    );
+  };
+
   // 동아리 개설 api
   const handleCreateClub = () => {};
 
+  const [inputHeight, setInputHeight] = useState(60); // 내용 입력창 초기 높이
   const [selectedCategory, setSelectedCategory] = useState<number>(1);
   const [selectedType, setSelectedType] = useState<"죽전" | "천안" | null>(
     "죽전"
@@ -66,7 +89,7 @@ export default function ClubFormScreen({ navigation }) {
           />
 
           {/* 카테고리 */}
-          <Text style={styles.categoryLabel}>카테고리</Text>
+          <Text style={styles.label}>카테고리</Text>
           <Picker
             selectedValue={selectedCategory}
             onValueChange={(item) => setSelectedCategory(item)}
@@ -86,14 +109,45 @@ export default function ClubFormScreen({ navigation }) {
 
           {/* 내용 */}
           <Text style={styles.label}>내용</Text>
-          <TextInput style={styles.input} placeholder="내용을 입력해주세요" />
+          <TextInput
+            style={[styles.input, { height: inputHeight }]}
+            placeholder="내용을 입력해주세요"
+            multiline={true}
+            textAlignVertical="top"
+            onContentSizeChange={(e) => {
+              setInputHeight(e.nativeEvent.contentSize.height);
+            }}
+          />
 
           {/* 모집 인원 */}
           <Text style={styles.label}>모집 인원</Text>
           <TextInput
             style={styles.input}
             placeholder="모집인원을 입력해주세요"
+            keyboardType="numeric"
           />
+
+          {/* 이미지 업로드 */}
+          <Text style={styles.label}>동아리 대표 이미지</Text>
+          <TouchableOpacity
+            style={styles.imageUploadButton}
+            onPress={() => handleSelectImage()}
+          >
+            <Text style={styles.imageUploadText}>사진 선택하기</Text>
+          </TouchableOpacity>
+
+          {imageUri && (
+            <Image
+              source={{ uri: imageUri }}
+              style={{
+                width: "100%",
+                height: 200,
+                marginTop: 10,
+                borderRadius: 10,
+              }}
+              resizeMode="cover"
+            />
+          )}
 
           {/* 가입하기 버튼 */}
           <TouchableOpacity
@@ -191,7 +245,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#333",
     marginBottom: 10,
     fontWeight: "500",
@@ -208,12 +262,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     backgroundColor: "#FAFAFA",
   },
-  categoryLabel: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 10,
+  imageUploadButton: {
+    width: "100%",
+    height: 48,
+    borderWidth: 1,
+    borderColor: "#DDD",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    marginBottom: 18,
+    backgroundColor: "#FAFAFA",
+
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  imageUploadText: {
+    fontSize: 13,
+    color: "#428DFF",
     fontWeight: "500",
-    marginTop: 20,
   },
   picker: {
     width: "100%",
@@ -235,7 +301,8 @@ const styles = StyleSheet.create({
   checkboxGroup: {
     marginTop: 10,
     flexDirection: "row",
-    gap: 16,
+    gap: 80,
+    justifyContent: "flex-start",
   },
   checkboxContainer: {
     flexDirection: "row",

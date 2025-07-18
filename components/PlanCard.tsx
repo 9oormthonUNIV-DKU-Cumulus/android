@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 16,
     shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 0 },
     shadowRadius: 4,
-    elevation: 1,
+    elevation: 4,
   },
   cardTitle: {
     fontSize: 16,

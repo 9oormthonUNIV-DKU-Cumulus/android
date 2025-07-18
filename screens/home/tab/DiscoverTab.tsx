@@ -82,28 +82,43 @@ const recommendedData: MatchingItem[] = [
 ];
 
 const firstRow = [
-  { label: "스포츠", icon: require("../../../assets/images/sport.png") },
+  { id: 1, label: "스포츠", icon: require("../../../assets/images/sport.png") },
   {
+    id: 2,
     label: "외국/언어",
     icon: require("../../../assets/images/language.png"),
   },
-  { label: "댄스", icon: require("../../../assets/images/dance.png") },
+  { id: 3, label: "댄스", icon: require("../../../assets/images/dance.png") },
   {
+    id: 4,
     label: "봉사활동",
     icon: require("../../../assets/images/volunteer.png"),
   },
-  { label: "자기계발", icon: require("../../../assets/images/goal.png") },
+  {
+    id: 5,
+    label: "자기계발",
+    icon: require("../../../assets/images/goal.png"),
+  },
 ];
 
 const secondRow = [
-  { label: "독서/글", icon: require("../../../assets/images/book.png") },
+  { id: 6, label: "독서/글", icon: require("../../../assets/images/book.png") },
   {
+    id: 7,
     label: "문화/댄스",
     icon: require("../../../assets/images/dance.png"),
   },
-  { label: "음악/악기", icon: require("../../../assets/images/song.png") },
-  { label: "여행", icon: require("../../../assets/images/trip.png") },
-  { label: "업종/직무", icon: require("../../../assets/images/work.png") },
+  {
+    id: 8,
+    label: "음악/악기",
+    icon: require("../../../assets/images/song.png"),
+  },
+  { id: 9, label: "여행", icon: require("../../../assets/images/trip.png") },
+  {
+    id: 10,
+    label: "업종/직무",
+    icon: require("../../../assets/images/work.png"),
+  },
 ];
 
 const DiscoverTab = ({ navigation }) => {
@@ -137,6 +152,7 @@ const DiscoverTab = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate("CategoryListScreen", {
                     label: item.label,
+                    categoryId: item.id,
                   })
                 }
               >
@@ -154,6 +170,7 @@ const DiscoverTab = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate("CategoryListScreen", {
                     label: item.label,
+                    categoryId: item.id,
                   })
                 }
               >
@@ -169,7 +186,7 @@ const DiscoverTab = ({ navigation }) => {
 
       {/* 추천 타이틀 */}
       <Text style={styles.recommendTitle}>
-        <Text style={{ color: "#5498FF" }}>단웅</Text>님께 추천하는 모임
+        <Text style={{ color: "#5498FF" }}>단웅</Text>님이 참여중인 동아리
       </Text>
     </View>
   );
@@ -189,8 +206,6 @@ const DiscoverTab = ({ navigation }) => {
 export default DiscoverTab;
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: "#FAFAFA" },
-
   categories: {
     marginTop: 20,
   },

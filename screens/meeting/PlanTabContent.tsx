@@ -145,7 +145,7 @@ export default function PlanTabContent() {
             ) : (
               <>
                 <Text style={styles.planDescription}>
-                  아직 지유 모임이 없어요!
+                  아직 자유 모임이 없어요!
                 </Text>
                 <Text style={styles.planSubText}>
                   자유 모임을 만들어보세요.
@@ -179,19 +179,9 @@ const styles = StyleSheet.create({
   },
   planSection: {
     padding: 20,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#FFF",
   },
-  //   planCard: {
-  //     backgroundColor: "#FFFFFF",
-  //     padding: 20,
-  //     borderRadius: 12,
-  //     marginBottom: 16,
-  //     shadowColor: "#000",
-  //     shadowOpacity: 0.05,
-  //     shadowRadius: 4,
-  //     shadowOffset: { width: 0, height: 2 },
-  //     elevation: 2,
-  //   },
+
   planTitle: {
     fontSize: 16,
     fontWeight: "600",

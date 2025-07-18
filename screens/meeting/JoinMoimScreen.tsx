@@ -250,7 +250,8 @@ const styles = StyleSheet.create({
   joinBtn: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    gap: 20,
   },
   button: {
     marginTop: 30,
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 14,
     alignItems: "center",
-    paddingHorizontal: 65,
+    flex: 1,
   },
   cancleButton: {
     marginTop: 30,
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 14,
     alignItems: "center",
-    paddingHorizontal: 65,
+    flex: 1,
   },
   disabledButton: {
     backgroundColor: "#bbb",
@@ -296,20 +297,23 @@ const styles = StyleSheet.create({
   },
   modalButtons: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     marginTop: 10,
+    gap: 16,
   },
   confirmBtn: {
     backgroundColor: "#428DFF",
     paddingVertical: 12,
-    paddingHorizontal: 50,
     borderRadius: 15,
+    flex: 1,
+    alignItems: "center",
   },
   cancleBtn: {
     backgroundColor: "#D3D3D3",
     paddingVertical: 12,
-    paddingHorizontal: 50,
     borderRadius: 15,
+    flex: 1,
+    alignItems: "center",
   },
   modalBtnText: {
     color: "#fff",

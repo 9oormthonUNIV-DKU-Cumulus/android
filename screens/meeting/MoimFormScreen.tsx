@@ -150,7 +150,7 @@ function Checkbox({
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#FFF",
   },
   side: {
     width: 40,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#FFF",
   },
   topBar: {
     flexDirection: "row",

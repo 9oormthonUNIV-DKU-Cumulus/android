@@ -2,21 +2,21 @@ import { RouteProp } from "@react-navigation/native";
 import {
   View,
   Text,
+  KeyboardAvoidingView,
+  Image,
   StyleSheet,
   TouchableOpacity,
-  Image,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
+  TextInput,
+  Platform,
 } from "react-native";
 import { HomeStackParamList } from "../../App";
 
 type Props = {
-  route: RouteProp<HomeStackParamList, "CommunityDetailScreen">;
+  route: RouteProp<HomeStackParamList, "NoticeDetailScreen">;
 };
 
-export default function CommnuityDetailScreen({ navigation, route }: Props) {
+export default function NoticeDetailScreen({ navigation, route }: Props) {
   const { post } = route.params;
 
   return (
@@ -37,7 +37,7 @@ export default function CommnuityDetailScreen({ navigation, route }: Props) {
         </View>
 
         <View style={styles.center}>
-          <Text style={styles.createMoimTitle}>커뮤니티</Text>
+          <Text style={styles.createMoimTitle}>공지</Text>
         </View>
         <View style={styles.side} />
       </View>

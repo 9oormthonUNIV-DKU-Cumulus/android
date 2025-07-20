@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "react-native";
 
-export default function CommunityFormScreen({ navigation }) {
+export default function NoticeFormScreen({ navigation }) {
   const [inputHeight, setInputHeight] = useState(200); // 내용 입력창 초기 높이
 
   return (
@@ -25,11 +25,11 @@ export default function CommunityFormScreen({ navigation }) {
         </View>
 
         <View style={styles.center}>
-          <Text style={styles.communityBarText}>글 쓰기</Text>
+          <Text style={styles.notificationyBarText}>글 쓰기</Text>
         </View>
-
         <View style={styles.side} />
       </View>
+
       {/* 글 작성 */}
       <View style={styles.container}>
         {/* 제목 */}
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     height: 20,
     resizeMode: "contain",
   },
-  communityBarText: {
+  notificationyBarText: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",

@@ -10,7 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image } from "react-native";
 
 /* ───── 화면 컴포넌트 ───── */
 import LoginScreen from "./screens/LoginScreen";
@@ -30,6 +30,8 @@ import JoinMoimScreen from "./screens/meeting/JoinMoimScreen";
 import ClubFormScreen from "./screens/meeting/ClubFormScreen";
 import CommunityFormScreen from "./screens/community/CommunityFormScreen";
 import CommunityDetailScreen from "./screens/community/CommunityDetailScreen";
+import NoticeDetailScreen from "./screens/meeting/NoticeDetailScreen";
+import NoticeFormScreen from "./screens/meeting/NoticeFormScreen";
 
 /* ───── 타입 정의 ───── */
 // 모임 타입
@@ -68,6 +70,8 @@ export type HomeStackParamList = {
   JoinMoim: { plan: PlanType };
   CommunityFormScreen: undefined;
   CommunityDetailScreen: { post: PostType };
+  NoticeDetailScreen: { post: PostType };
+  NoticeFormScreen: undefined;
 };
 
 export type ClubManageStackParamList = {
@@ -106,6 +110,11 @@ function HomeStackScreen() {
         name="CommunityDetailScreen"
         component={CommunityDetailScreen}
       />
+      <HomeStack.Screen
+        name="NoticeDetailScreen"
+        component={NoticeDetailScreen}
+      />
+      <HomeStack.Screen name="NoticeFormScreen" component={NoticeFormScreen} />
     </HomeStack.Navigator>
   );
 }
@@ -163,6 +172,8 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
               "MeetingDetail",
               "MoimForm",
               "JoinMoim",
+              "MeetingApply",
+              "NoticeDetailScreen",
             ];
 
             return {

@@ -1,4 +1,7 @@
-import { useNavigationContainerRef } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { useState, useRef } from "react";
 
 // App.tsx ─ 최상위 네비게이션 설정
@@ -25,6 +28,8 @@ import ApplicantInfoScreen from "./screens/meeting/ApplicantInfoScreen"; // “�
 import MoimFormScreen from "./screens/meeting/MoimFormScreen"; // 모임 신청 폼 화면
 import JoinMoimScreen from "./screens/meeting/JoinMoimScreen";
 import ClubFormScreen from "./screens/meeting/ClubFormScreen";
+import CommunityFormScreen from "./screens/community/CommunityFormScreen";
+import CommunityDetailScreen from "./screens/community/CommunityDetailScreen";
 
 /* ───── 타입 정의 ───── */
 // 모임 타입
@@ -34,6 +39,15 @@ export type PlanType = {
   location: string;
   date: string;
   peopleCount: number;
+  content: string;
+};
+
+// 게시글 타입
+export type PostType = {
+  id: string;
+  author: string;
+  date: string;
+  title: string;
   content: string;
 };
 
@@ -52,6 +66,8 @@ export type HomeStackParamList = {
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
   MoimForm: undefined;
   JoinMoim: { plan: PlanType };
+  CommunityFormScreen: undefined;
+  CommunityDetailScreen: { post: PostType };
 };
 
 export type ClubManageStackParamList = {
@@ -82,6 +98,14 @@ function HomeStackScreen() {
 
       <HomeStack.Screen name="MoimForm" component={MoimFormScreen} />
       <HomeStack.Screen name="JoinMoim" component={JoinMoimScreen} />
+      <HomeStack.Screen
+        name="CommunityFormScreen"
+        component={CommunityFormScreen}
+      />
+      <HomeStack.Screen
+        name="CommunityDetailScreen"
+        component={CommunityDetailScreen}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -130,17 +154,36 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
         <Tab.Screen
           name="홈"
           component={HomeStackScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <Image
-                source={
-                  focused
-                    ? require("./assets/icons/home_active.png")
-                    : require("./assets/icons/home_inactive.png")
-                }
-                style={{ width: 24, height: 24 }}
-              />
-            ),
+          options={({ route }) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
+
+            const hiddenRoutes = [
+              "CommunityFormScreen",
+              "CommunityDetailScreen",
+              "MeetingDetail",
+              "MoimForm",
+              "JoinMoim",
+            ];
+
+            return {
+              tabBarStyle: hiddenRoutes.includes(routeName)
+                ? { display: "none" }
+                : {
+                    height: 80,
+                    paddingBottom: 12,
+                    paddingTop: 10,
+                  },
+              tabBarIcon: ({ focused }) => (
+                <Image
+                  source={
+                    focused
+                      ? require("./assets/icons/home_active.png")
+                      : require("./assets/icons/home_inactive.png")
+                  }
+                  style={{ width: 24, height: 24 }}
+                />
+              ),
+            };
           }}
         />
         <Tab.Screen

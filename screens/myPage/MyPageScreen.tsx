@@ -1,13 +1,5 @@
-// import {View, Text} from 'react-native';
-
-// export default function MyPageScreen() {
-//   return (
-//     <View>
-//       <Text>마이페이지 화면</Text>
-//     </View>
-//   );
-// }
-import React from "react";
+// screens/myPage/MyPageScreen.tsx
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -16,35 +8,104 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Dimensions,
-} from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import Ionicons from "react-native-vector-icons/Ionicons";
+  FlatList,
+  Alert,
+} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 
-/* ───── 타입 정의 ───── */
-type RootStackParamList = {
-  MyPageScreen: undefined;
-  HomeScreen: undefined;
-};
-type MyPageNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "MyPageScreen"
->;
-interface Props {
-  navigation: MyPageNavigationProp;
-}
+/* ───── 타입 ───── */
+type MyPageNav = NativeStackNavigationProp<RootStackParamList, 'Main'>;
+interface Props { navigation: MyPageNav; }
 
-/* ───── 더미 유저 데이터 ───── */
+/* ───── 더미 데이터 ───── */
 const dummyUser = {
-  name: "김단웅",
-  gender: "여",
+  name: '김단웅',
+  gender: '여',
   age: 21,
-  department: "커뮤니케이션 디자인",
-  stats: { volunteer: 2, meetings: 5, replies: 2 },
+  department: '커뮤니케이션 디자인',
+  stats: { like: 2, manage: 1, joined: 5, clubJoined: 2 },
 };
+
+type ApplyStatus = '승인 대기' | '승인 완료' | '승인 거절';
+interface ApplyItem {
+  id: string;
+  title: string;
+  place: string;
+  time: string;
+  members: string;
+  status: ApplyStatus;
+}
+const dummyApplies: ApplyItem[] = [
+  {
+    id: '1',
+    title: '단국대 운동 동아리',
+    place: '수업 끝나고 7시부터 9시까지',
+    time: '독서/글 · 멤버 45',
+    members: '2명 / 45명',
+    status: '승인 대기',
+  },
+  {
+    id: '2',
+    title: '단국대 운동 동아리',
+    place: '수업 끝나고 7시부터 9시까지',
+    time: '독서/글 · 멤버 45',
+    members: '2명 / 45명',
+    status: '승인 거절',
+  },
+];
 
 /* ───── 메인 컴포넌트 ───── */
 export default function MyPageScreen({ navigation }: Props) {
   const { name, gender, age, department, stats } = dummyUser;
+
+  // 하트 토글 상태
+  const [likedIds, setLikedIds] = useState<string[]>([]);
+  const toggleLike = (id: string) =>
+    setLikedIds(prev => (prev.includes(id) ? prev.filter(v => v !== id) : [...prev, id]));
+
+  const onCancel = (id: string) => {
+    Alert.alert('신청 취소', '정말 취소하시겠어요?', [
+      { text: '아니오' },
+      { text: '예', style: 'destructive', onPress: () => console.log('cancel:', id) },
+    ]);
+  };
+
+  const renderItem = ({ item }: { item: ApplyItem }) => {
+    const liked = likedIds.includes(item.id);
+    return (
+      <View style={styles.applyCard}>
+        <View style={styles.thumbWrap}>
+          <View style={styles.applyThumb} />
+          <TouchableOpacity
+            style={styles.heartBtn}
+            onPress={() => toggleLike(item.id)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons
+              name={liked ? 'heart' : 'heart-outline'}
+              size={16}
+              color={liked ? '#FF4D4D' : '#C7C7C7'}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.applyInfo}>
+          <Text style={styles.applyTitle}>{item.title}</Text>
+          <Text style={styles.applySub}>{item.place}</Text>
+          <Text style={styles.applySub}>{item.time}</Text>
+        </View>
+
+        <View style={styles.applyRight}>
+          <StatusBadge status={item.status} />
+          <TouchableOpacity style={styles.cancelBtn} onPress={() => onCancel(item.id)}>
+            <Text style={styles.cancelBtnText}>신청 취소</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,34 +117,46 @@ export default function MyPageScreen({ navigation }: Props) {
         <Text style={styles.headerTitle}>마이페이지</Text>
       </View>
 
-      {/* 프로필 */}
-      <View style={styles.profileSection}>
-        <Image
-          style={styles.avatar}
-          source={require("../../assets/images/avatar-placeholder.png")}
-        />
+      <FlatList
+        data={dummyApplies}
+        keyExtractor={i => i.id}
+        ListHeaderComponent={
+          <>
+            {/* 프로필 */}
+            <View style={styles.profileSection}>
+              <Image
+                style={styles.avatar}
+                source={require('../../assets/images/avatar-placeholder.png')}
+              />
+              <View style={styles.profileTextWrapper}>
+                <Text style={styles.userName}>
+                  {name} <Text style={styles.userAge}>({gender} / {age}세)</Text>
+                </Text>
+                <View style={styles.deptRow}>
+                  <Text style={styles.userLabel}>학과 </Text>
+                  <Text style={styles.userDept}>{department}</Text>
+                </View>
+              </View>
+            </View>
 
-        <View style={styles.profileTextWrapper}>
-          <Text style={styles.userName}>
-            {name} <Text style={styles.userAge}>({gender} / {age}세)</Text>
-          </Text>
+            {/* 통계 카드 */}
+            <View style={styles.statsCard}>
+              <StatItem label="찜 동아리" value={stats.like} />
+              <View style={styles.vertDivider} />
+              <StatItem label="개설 모임 관리" value={stats.manage} />
+              <View style={styles.vertDivider} />
+              <StatItem label="참여 모임" value={stats.joined} />
+              <View style={styles.vertDivider} />
+              <StatItem label="참여 동아리" value={stats.clubJoined} />
+            </View>
 
-          {/* 학과 전공 */}
-          <View style={styles.deptRow}>
-            <Text style={styles.userLabel}>학과 </Text>
-            <Text style={styles.userDept}>{department}</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* 통계 카드 */}
-      <View style={styles.statsCard}>
-        <StatItem label="찜한 동아리" value={stats.volunteer} />
-        <View style={styles.vertDivider} />
-        <StatItem label="참여 모임" value={stats.meetings} />
-        <View style={styles.vertDivider} />
-        <StatItem label="참여 동아리" value={stats.replies} />
-      </View>
+            <Text style={styles.sectionTitle}>동아리 신청 내역</Text>
+          </>
+        }
+        renderItem={renderItem}
+        contentContainerStyle={{ paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      />
     </SafeAreaView>
   );
 }
@@ -98,79 +171,127 @@ function StatItem({ label, value }: { label: string; value: number }) {
   );
 }
 
+function StatusBadge({ status }: { status: ApplyStatus }) {
+  const map: Record<ApplyStatus, { bg: string; txt: string }> = {
+    '승인 대기': { bg: '#E6F0FF', txt: '#357CFF' },
+    '승인 완료': { bg: '#E9F9EF', txt: '#22A064' },
+    '승인 거절': { bg: '#FDECEC', txt: '#E24D4D' },
+  };
+  const c = map[status];
+  return (
+    <View style={[styles.badge, { backgroundColor: c.bg }]}>
+      <Text style={[styles.badgeText, { color: c.txt }]}>{status}</Text>
+    </View>
+  );
+}
+
 /* ───── 스타일 ───── */
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: W } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF" },
+  container: { flex: 1, backgroundColor: '#FFF' },
 
   /* 헤더 */
   headerWrapper: {
     height: 56,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#E4E4E4",
+    borderColor: '#E4E4E4',
     paddingHorizontal: 16,
   },
-  backBtn: { position: "absolute", left: 16 },
-  headerTitle: { fontFamily: "Pretendard-Bold", fontSize: 18, color: "#1C1C1C" },
+  backBtn: { position: 'absolute', left: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#1C1C1C' },
 
   /* 프로필 */
   profileSection: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 32,
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#D9D9D9",
-  },
+  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#D9D9D9' },
   profileTextWrapper: { marginLeft: 16 },
-  userName: { fontFamily: "Pretendard-Bold", fontSize: 22, color: "#1C1C1C" },
-  userAge: { fontFamily: "Pretendard-Regular", fontSize: 18, color: "#6F6F6F" },
-
-  /* 학과 한 줄 표현 */
-  deptRow: { flexDirection: "row", alignItems: "center", marginTop: 8 },
-  userLabel: {
-    fontFamily: "Pretendard-Regular",
-    fontSize: 14,
-    color: "#6F6F6F",
-  },
-  userDept: {
-    fontFamily: "Pretendard-SemiBold",
-    fontSize: 16,
-    color: "#1C1C1C",
-  },
+  userName: { fontSize: 18, fontWeight: '700', color: '#1C1C1C' },
+  userAge: { fontSize: 13, fontWeight: '400', color: '#6F6F6F' },
+  deptRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  userLabel: { fontSize: 15, color: '#6F6F6F' },
+  userDept: { fontSize: 12, fontWeight: '600', color: '#1C1C1C' },
 
   /* 통계 카드 */
   statsCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginHorizontal: 24,
     borderWidth: 1,
-    borderColor: "#E4E4E4",
+    borderColor: '#E4E4E4',
     borderRadius: 12,
     paddingVertical: 20,
     paddingHorizontal: 8,
   },
-  vertDivider: { width: 1, height: 40, backgroundColor: "#E4E4E4" },
-  statItem: { flex: 1, alignItems: "center" },
-  statValue: {
-    fontFamily: "Pretendard-Bold",
-    fontSize: 13,
-    color: "#1C1C1C",
-  },
-  statLabel: {
-    marginTop: 4,
-    fontFamily: "Pretendard-Regular",
-    fontSize: 10,
-    color: "#6F6F6F",
-  },
-});
+  vertDivider: { width: 1, height: 40, backgroundColor: '#E4E4E4' },
+  statItem: { flex: 1, alignItems: 'center' },
+  statValue: { fontSize: 16, fontWeight: '700', color: '#1C1C1C' },
+  statLabel: { marginTop: 4, fontSize: 11, color: '#6F6F6F' },
 
+  /* 섹션 타이틀 */
+  sectionTitle: {
+    marginTop: 28,
+    marginBottom: 12,
+    marginHorizontal: 24,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1C1C1C',
+  },
+
+  /* 신청 카드 */
+  applyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 24,
+    marginBottom: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E4E4E4',
+    borderRadius: 12,
+    backgroundColor: '#FFF',
+  },
+  thumbWrap: { marginRight: 12, position: 'relative' },
+  applyThumb: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#D9D9D9' },
+
+  heartBtn: {
+    position: 'absolute',
+    left: -8,
+    bottom: -8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  applyInfo: { flex: 1 },
+  applyTitle: { fontSize: 14, fontWeight: '700', color: '#1C1C1C' },
+  applySub: { fontSize: 11, color: '#6F6F6F', marginTop: 2 },
+
+  applyRight: { alignItems: 'flex-end', justifyContent: 'space-between', height: 56 },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignSelf: 'flex-end',
+  },
+  badgeText: { fontSize: 11, fontWeight: '600' },
+
+  cancelBtn: {
+    marginTop: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#357CFF',
+  },
+  cancelBtnText: { color: '#fff', fontSize: 11, fontWeight: '600' },
+});

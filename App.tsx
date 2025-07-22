@@ -22,6 +22,7 @@ import CommunityScreen from "./screens/community/CommunityScreen";
 import MyPageScreen from "./screens/myPage/MyPageScreen";
 import FavoritesScreen from './screens/myPage/FavoritesScreen';
 import ParticipatingMeetingsScreen from './screens/myPage/ParticipatingMeetingsScreen';  
+import ParticipatingClubsScreen from './screens/myPage/ParticipatingClubsScreen';
 
 import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
@@ -36,6 +37,7 @@ export type RootStackParamList = {
   Main: undefined;
   Favorites: undefined;
   ParticipatingMeetings: undefined;
+  ParticipatingClubs: undefined;
 };
 export type HomeStackParamList = {
   Home: undefined;
@@ -53,6 +55,7 @@ const CategoryStk = createNativeStackNavigator();
 const CommunityStk = createNativeStackNavigator();
 const MyPageStk = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
 
 /* ===== HomeStack ===== */
 function HomeStackScreen() {
@@ -94,6 +97,7 @@ function MyPageStackScreen() {
       <MyPageStk.Screen
         name="ParticipatingMeetings"
         component={ParticipatingMeetingsScreen} />
+      <MyPageStk.Screen name="ParticipatingClubs" component={ParticipatingClubsScreen} />
     </MyPageStk.Navigator>
   );
 }

@@ -97,8 +97,8 @@ export default function MyPageScreen({ navigation }: Props) {
   const statItems = [
     { key: 'like', label: '찜 동아리', value: stats.like, onPress: goFavorites },
     { key: 'manage', label: '개설 모임 관리', value: stats.manage },
-    { key: 'joined', label: '참여 모임', value: stats.joined },
-    { key: 'clubJoined', label: '참여 동아리', value: stats.clubJoined },
+    { key: 'joined', label: '참여 모임', value: stats.joined, onPress: () => navigation.navigate('ParticipatingMeetings') },
+    { key: 'clubJoined', label: '참여 동아리', value: stats.clubJoined, onPress: () => navigation.navigate('ParticipatingClubs') },
   ];
 
   return (

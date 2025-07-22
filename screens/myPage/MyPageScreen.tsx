@@ -15,11 +15,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 
-/* ───── 타입 ───── */
 type MyPageNav = NativeStackNavigationProp<RootStackParamList, 'Main'>;
 interface Props { navigation: MyPageNav; }
 
-/* ───── 더미 데이터 ───── */
+/* -------- 더미 -------- */
 const dummyUser = {
   name: '김단웅',
   gender: '여',
@@ -38,29 +37,14 @@ interface ApplyItem {
   status: ApplyStatus;
 }
 const dummyApplies: ApplyItem[] = [
-  {
-    id: '1',
-    title: '단국대 운동 동아리',
-    place: '수업 끝나고 7시부터 9시까지',
-    time: '독서/글 · 멤버 45',
-    members: '2명 / 45명',
-    status: '승인 대기',
-  },
-  {
-    id: '2',
-    title: '단국대 운동 동아리',
-    place: '수업 끝나고 7시부터 9시까지',
-    time: '독서/글 · 멤버 45',
-    members: '2명 / 45명',
-    status: '승인 거절',
-  },
+  { id: '1', title: '단국대 운동 동아리', place: '수업 끝나고 7시부터 9시까지', time: '독서/글 · 멤버 45', members: '2명 / 45명', status: '승인 대기' },
+  { id: '2', title: '단국대 운동 동아리', place: '수업 끝나고 7시부터 9시까지', time: '독서/글 · 멤버 45', members: '2명 / 45명', status: '승인 거절' },
 ];
 
-/* ───── 메인 컴포넌트 ───── */
+/* -------- 메인 -------- */
 export default function MyPageScreen({ navigation }: Props) {
   const { name, gender, age, department, stats } = dummyUser;
 
-  // 하트 토글 상태
   const [likedIds, setLikedIds] = useState<string[]>([]);
   const toggleLike = (id: string) =>
     setLikedIds(prev => (prev.includes(id) ? prev.filter(v => v !== id) : [...prev, id]));
@@ -71,6 +55,8 @@ export default function MyPageScreen({ navigation }: Props) {
       { text: '예', style: 'destructive', onPress: () => console.log('cancel:', id) },
     ]);
   };
+
+  const goFavorites = () => navigation.navigate('Favorites'); // 찜 동아리 화면
 
   const renderItem = ({ item }: { item: ApplyItem }) => {
     const liked = likedIds.includes(item.id);
@@ -107,6 +93,14 @@ export default function MyPageScreen({ navigation }: Props) {
     );
   };
 
+  /* 통계 데이터 배열화 */
+  const statItems = [
+    { key: 'like', label: '찜 동아리', value: stats.like, onPress: goFavorites },
+    { key: 'manage', label: '개설 모임 관리', value: stats.manage },
+    { key: 'joined', label: '참여 모임', value: stats.joined },
+    { key: 'clubJoined', label: '참여 동아리', value: stats.clubJoined },
+  ];
+
   return (
     <SafeAreaView style={styles.container}>
       {/* 헤더 */}
@@ -139,15 +133,21 @@ export default function MyPageScreen({ navigation }: Props) {
               </View>
             </View>
 
-            {/* 통계 카드 */}
+            {/* 통계 카드 - 균등 너비 */}
             <View style={styles.statsCard}>
-              <StatItem label="찜 동아리" value={stats.like} />
-              <View style={styles.vertDivider} />
-              <StatItem label="개설 모임 관리" value={stats.manage} />
-              <View style={styles.vertDivider} />
-              <StatItem label="참여 모임" value={stats.joined} />
-              <View style={styles.vertDivider} />
-              <StatItem label="참여 동아리" value={stats.clubJoined} />
+              {statItems.map((item, idx) => (
+                <React.Fragment key={item.key}>
+                  <TouchableOpacity
+                    style={styles.statCell}
+                    activeOpacity={item.onPress ? 0.6 : 1}
+                    onPress={item.onPress}
+                  >
+                    <Text style={styles.statValue}>{item.value}</Text>
+                    <Text style={styles.statLabel}>{item.label}</Text>
+                  </TouchableOpacity>
+                  {idx !== statItems.length - 1 && <View style={styles.vertDivider} />}
+                </React.Fragment>
+              ))}
             </View>
 
             <Text style={styles.sectionTitle}>동아리 신청 내역</Text>
@@ -161,16 +161,7 @@ export default function MyPageScreen({ navigation }: Props) {
   );
 }
 
-/* ───── 하위 컴포넌트 ───── */
-function StatItem({ label, value }: { label: string; value: number }) {
-  return (
-    <View style={styles.statItem}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-}
-
+/* -------- 컴포넌트 -------- */
 function StatusBadge({ status }: { status: ApplyStatus }) {
   const map: Record<ApplyStatus, { bg: string; txt: string }> = {
     '승인 대기': { bg: '#E6F0FF', txt: '#357CFF' },
@@ -185,13 +176,12 @@ function StatusBadge({ status }: { status: ApplyStatus }) {
   );
 }
 
-/* ───── 스타일 ───── */
+/* -------- 스타일 -------- */
 const { width: W } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
 
-  /* 헤더 */
   headerWrapper: {
     height: 56,
     flexDirection: 'row',
@@ -204,7 +194,6 @@ const styles = StyleSheet.create({
   backBtn: { position: 'absolute', left: 16 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: '#1C1C1C' },
 
-  /* 프로필 */
   profileSection: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -213,30 +202,34 @@ const styles = StyleSheet.create({
   },
   avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#D9D9D9' },
   profileTextWrapper: { marginLeft: 16 },
-  userName: { fontSize: 18, fontWeight: '700', color: '#1C1C1C' },
-  userAge: { fontSize: 13, fontWeight: '400', color: '#6F6F6F' },
+  userName: { fontSize: 20, fontWeight: '700', color: '#1C1C1C' },
+  userAge: { fontSize: 16, fontWeight: '400', color: '#6F6F6F' },
   deptRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  userLabel: { fontSize: 15, color: '#6F6F6F' },
+  userLabel: { fontSize: 14, color: '#6F6F6F' },
   userDept: { fontSize: 12, fontWeight: '600', color: '#1C1C1C' },
 
   /* 통계 카드 */
   statsCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'stretch',
     marginHorizontal: 24,
     borderWidth: 1,
     borderColor: '#E4E4E4',
     borderRadius: 12,
-    paddingVertical: 20,
-    paddingHorizontal: 8,
+    overflow: 'hidden',
   },
-  vertDivider: { width: 1, height: 40, backgroundColor: '#E4E4E4' },
-  statItem: { flex: 1, alignItems: 'center' },
-  statValue: { fontSize: 16, fontWeight: '700', color: '#1C1C1C' },
-  statLabel: { marginTop: 4, fontSize: 11, color: '#6F6F6F' },
+  statCell: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+  },
+  vertDivider: { width: 1, backgroundColor: '#E4E4E4' },
+  statValue: { fontSize: 14, fontWeight: '700', color: '#1C1C1C' },
+  statLabel: { marginTop: 2, fontSize: 10, color: '#6F6F6F', textAlign: 'center' },
 
-  /* 섹션 타이틀 */
   sectionTitle: {
     marginTop: 28,
     marginBottom: 12,
@@ -246,7 +239,6 @@ const styles = StyleSheet.create({
     color: '#1C1C1C',
   },
 
-  /* 신청 카드 */
   applyCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -260,7 +252,6 @@ const styles = StyleSheet.create({
   },
   thumbWrap: { marginRight: 12, position: 'relative' },
   applyThumb: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#D9D9D9' },
-
   heartBtn: {
     position: 'absolute',
     left: -8,

@@ -23,6 +23,7 @@ import MyPageScreen from "./screens/myPage/MyPageScreen";
 import FavoritesScreen from './screens/myPage/FavoritesScreen';
 import ParticipatingMeetingsScreen from './screens/myPage/ParticipatingMeetingsScreen';  
 import ParticipatingClubsScreen from './screens/myPage/ParticipatingClubsScreen';
+import ManagedMeetingsScreen from './screens/myPage/ManagedMeetingsScreen'; // “관리 모임” 화면
 
 import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
@@ -38,6 +39,7 @@ export type RootStackParamList = {
   Favorites: undefined;
   ParticipatingMeetings: undefined;
   ParticipatingClubs: undefined;
+  ManagedMeetings: undefined; 
 };
 export type HomeStackParamList = {
   Home: undefined;
@@ -98,6 +100,10 @@ function MyPageStackScreen() {
         name="ParticipatingMeetings"
         component={ParticipatingMeetingsScreen} />
       <MyPageStk.Screen name="ParticipatingClubs" component={ParticipatingClubsScreen} />
+      <MyPageStk.Screen
+        name="ManagedMeetings"
+        component={ManagedMeetingsScreen} />
+
     </MyPageStk.Navigator>
   );
 }

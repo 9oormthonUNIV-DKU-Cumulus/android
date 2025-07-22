@@ -96,7 +96,7 @@ export default function MyPageScreen({ navigation }: Props) {
   /* 통계 데이터 배열화 */
   const statItems = [
     { key: 'like', label: '찜 동아리', value: stats.like, onPress: goFavorites },
-    { key: 'manage', label: '개설 모임 관리', value: stats.manage },
+    { key: 'managed', label: '개설 모임 관리', value: stats.manage ,onPress: () => navigation.navigate('ManagedMeetings') },
     { key: 'joined', label: '참여 모임', value: stats.joined, onPress: () => navigation.navigate('ParticipatingMeetings') },
     { key: 'clubJoined', label: '참여 동아리', value: stats.clubJoined, onPress: () => navigation.navigate('ParticipatingClubs') },
   ];
@@ -139,8 +139,9 @@ export default function MyPageScreen({ navigation }: Props) {
                 <React.Fragment key={item.key}>
                   <TouchableOpacity
                     style={styles.statCell}
-                    activeOpacity={item.onPress ? 0.6 : 1}
-                    onPress={item.onPress}
+                    activeOpacity={0.6} // 항상 0.6으로 설정
+                    onPress={item.onPress} // onPress를 여기서 호출
+                    
                   >
                     <Text style={styles.statValue}>{item.value}</Text>
                     <Text style={styles.statLabel}>{item.label}</Text>

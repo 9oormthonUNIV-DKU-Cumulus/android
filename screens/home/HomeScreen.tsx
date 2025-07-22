@@ -100,6 +100,7 @@ export default function HomeScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   body: {
+    flex: 1,
     backgroundColor: "#FAFAFA",
   },
   header: {

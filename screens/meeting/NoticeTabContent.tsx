@@ -1,45 +1,49 @@
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   FlatList,
+  StyleSheet,
 } from "react-native";
+import { HomeStackParamList } from "../../App";
 
-// 게시글 목업
-const mockPosts = [
-  {
-    id: "1",
-    author: "김단웅",
-    date: "2025-07-19",
-    title: "1학년 새내기인데 동아리 추천좀..",
-    content:
-      "1학년인데 재밌는거 들어가고 싶어요dsdsadsad들어가고 싶어요dsdsadsadsdaddddddddddddddddddddddddddddddddddd들어가고 싶어요dsdsadsadsdadddddddddddddddddddddddddddddddddddsdadddddddddddddddddddddddddddddddddddd",
-  },
-  {
-    id: "2",
-    author: "김단웅",
-    date: "2025-07-19",
-    title: "1학년 새내기인데 동아리 추천좀..",
-    content: "1학년인데 재밌는거 들어가고 싶어요",
-  },
-  {
-    id: "3",
-    author: "김단웅",
-    date: "2025-07-19",
-    title: "1학년 새내기인데 동아리 추천좀..",
-    content: "1학년인데 재밌는거 들어가고 싶어요",
-  },
-];
+export default function NoticeTabContent() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
 
-const CommunityTab = ({ navigation }) => {
+  // 게시글 목업
+  const mockPosts = [
+    {
+      id: "1",
+      author: "홍길동",
+      date: "2025-07-19",
+      title: "동아리 모임 관련 공지입니다",
+      content:
+        "동아리 MT는 다음주 금요일입니다. 가실 분들은 모임에 참여해주세요",
+    },
+    {
+      id: "2",
+      author: "김단웅",
+      date: "2025-07-19",
+      title: "1학년 새내기인데 동아리 추천좀..",
+      content: "1학년인데 재밌는거 들어가고 싶어요",
+    },
+    {
+      id: "3",
+      author: "김단웅",
+      date: "2025-07-19",
+      title: "1학년 새내기인데 동아리 추천좀..",
+      content: "1학년인데 재밌는거 들어가고 싶어요",
+    },
+  ];
+
   const hasPosts = true; // 등록된 글이 있는지 여부
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("CommunityDetailScreen", { post: item })
-      }
+      onPress={() => navigation.navigate("NoticeDetailScreen", { post: item })}
       style={styles.postContainer}
     >
       <Text style={styles.title} numberOfLines={1}>
@@ -64,16 +68,14 @@ const CommunityTab = ({ navigation }) => {
       )}
 
       <TouchableOpacity
-        onPress={() => navigation.navigate("CommunityFormScreen")}
+        onPress={() => navigation.navigate("NoticeFormScreen")}
         style={styles.fab}
       >
         <Text style={styles.fabText}>글 쓰기</Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-export default CommunityTab;
+}
 
 const styles = StyleSheet.create({
   container: {

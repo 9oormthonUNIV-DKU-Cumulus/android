@@ -18,7 +18,10 @@ import HomeScreen from "./screens/home/HomeScreen";
 import CategoryScreen from "./screens/category/CategoryScreen";
 import CategoryListScreen from "./screens/category/CategoryListScreen";
 import CommunityScreen from "./screens/community/CommunityScreen";
+
 import MyPageScreen from "./screens/myPage/MyPageScreen";
+import FavoritesScreen from './screens/myPage/FavoritesScreen';
+import ParticipatingMeetingsScreen from './screens/myPage/ParticipatingMeetingsScreen';  
 
 import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
@@ -31,6 +34,8 @@ export type RootStackParamList = {
   Signup: undefined;
   SignupForm: undefined;
   Main: undefined;
+  Favorites: undefined;
+  ParticipatingMeetings: undefined;
 };
 export type HomeStackParamList = {
   Home: undefined;
@@ -85,6 +90,10 @@ function MyPageStackScreen() {
   return (
     <MyPageStk.Navigator screenOptions={{ headerShown: false }}>
       <MyPageStk.Screen name="MyPage" component={MyPageScreen} />
+      <MyPageStk.Screen name="Favorites" component={FavoritesScreen} />
+      <MyPageStk.Screen
+        name="ParticipatingMeetings"
+        component={ParticipatingMeetingsScreen} />
     </MyPageStk.Navigator>
   );
 }

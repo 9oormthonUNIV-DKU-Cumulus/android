@@ -1,5 +1,6 @@
 // screens/myPage/ParticipatingClubsScreen.tsx
 import React, { useState } from 'react';
+
 import {
   SafeAreaView,
   View,

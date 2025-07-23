@@ -19,7 +19,13 @@ import SignupFormScreen from "./screens/SignupFormScreen";
 
 import HomeScreen from "./screens/home/HomeScreen";
 import CategoryListScreen from "./screens/category/CategoryListScreen";
+// import CommunityScreen from "./screens/community/CommunityScreen";
+
 import MyPageScreen from "./screens/myPage/MyPageScreen";
+import FavoritesScreen from "./screens/myPage/FavoritesScreen";
+import ParticipatingMeetingsScreen from "./screens/myPage/ParticipatingMeetingsScreen";
+import ParticipatingClubsScreen from "./screens/myPage/ParticipatingClubsScreen";
+import ManagedMeetingsScreen from "./screens/myPage/ManagedMeetingsScreen"; // “관리 모임” 화면
 
 import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
@@ -33,6 +39,7 @@ import CommunityDetailScreen from "./screens/community/CommunityDetailScreen";
 import NoticeDetailScreen from "./screens/meeting/NoticeDetailScreen";
 import NoticeFormScreen from "./screens/meeting/NoticeFormScreen";
 import SearchScreen from "./screens/home/SearchScreen";
+import AlbumUploadScreen from "./screens/meeting/AlbumUploadScreen";
 
 /* ───── 타입 정의 ───── */
 // 모임 타입
@@ -59,6 +66,10 @@ export type RootStackParamList = {
   Signup: undefined;
   SignupForm: undefined;
   Main: undefined;
+  Favorites: undefined;
+  ParticipatingMeetings: undefined;
+  ParticipatingClubs: undefined;
+  ManagedMeetings: undefined;
 };
 export type HomeStackParamList = {
   HomeScreen: undefined;
@@ -74,6 +85,7 @@ export type HomeStackParamList = {
   NoticeDetailScreen: { post: PostType };
   NoticeFormScreen: undefined;
   SearchScreen: undefined;
+  AlbumUploadScreen: undefined;
 };
 
 export type ClubManageStackParamList = {
@@ -118,6 +130,10 @@ function HomeStackScreen() {
         component={NoticeDetailScreen}
       />
       <HomeStack.Screen name="NoticeFormScreen" component={NoticeFormScreen} />
+      <HomeStack.Screen
+        name="AlbumUploadScreen"
+        component={AlbumUploadScreen}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -145,6 +161,19 @@ function MyPageStackScreen() {
   return (
     <MyPageStk.Navigator screenOptions={{ headerShown: false }}>
       <MyPageStk.Screen name="MyPage" component={MyPageScreen} />
+      <MyPageStk.Screen name="Favorites" component={FavoritesScreen} />
+      <MyPageStk.Screen
+        name="ParticipatingMeetings"
+        component={ParticipatingMeetingsScreen}
+      />
+      <MyPageStk.Screen
+        name="ParticipatingClubs"
+        component={ParticipatingClubsScreen}
+      />
+      <MyPageStk.Screen
+        name="ManagedMeetings"
+        component={ManagedMeetingsScreen}
+      />
     </MyPageStk.Navigator>
   );
 }
@@ -177,6 +206,7 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
               "JoinMoim",
               "MeetingApply",
               "NoticeDetailScreen",
+              "AlbumUploadScreen",
             ];
 
             return {

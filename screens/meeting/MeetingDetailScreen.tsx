@@ -15,6 +15,7 @@ import { HomeStackParamList } from "../../App";
 import PlanTabContent from "./PlanTabContent";
 import NoticeTabContent from "./NoticeTabContent";
 import HomeTabContent from "./HomeTabContent";
+import AlbumTabContent from "./AlbumTabContent";
 
 /* ───────────────────────── 상수 / 리소스 */
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
@@ -82,7 +83,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
         <View style={{ flex: 1 }}>
           <Text style={styles.meetingName}>{MEETING.name}</Text>
           <Text style={styles.memberLine}>
-            <Text style={styles.memberGrey}>멤버 {MEETING.members} · </Text>
+            <Text style={styles.memberGrey}>멤버 {MEETING.members}</Text>
           </Text>
         </View>
       </View>
@@ -107,6 +108,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
       {tab === "홈" && <HomeTabContent />}
       {tab === "일정" && <PlanTabContent />}
       {tab === "공지" && <NoticeTabContent />}
+      {tab === "앨범" && <AlbumTabContent />}
 
       {/* ─── 하단 바 ─── */}
       {tab === "홈" && (
@@ -176,7 +178,6 @@ const styles = StyleSheet.create({
   tabRow: {
     flexDirection: "row",
     backgroundColor: "#fff",
-    marginHorizontal: 8,
   },
   tabBtn: { flex: 1, alignItems: "center", paddingVertical: 12 },
   tabTxt: { fontSize: 13, color: "#7A7A7A", fontWeight: "500" },
@@ -196,7 +197,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     backgroundColor: "#fff",
-    borderTopWidth: 1,
     borderColor: "#E5E7EB",
   },
   likeBtn: { padding: 6 }, // 회색 원 제거, 터치 영역만

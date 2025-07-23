@@ -10,25 +10,11 @@ import {
 import DiscoverTab from "./tab/DiscoverTab";
 import PopularTab from "./tab/PopularTab";
 import NewTab from "./tab/NewTab";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import CommunityTab from "./tab/CommunityTab";
+import { HomeStackParamList } from "../../App";
 
-// 네비게이션 스택 타입 정의
-type RootStackParamList = {
-  HomeScreen: undefined;
-  CategoryListScreen: { label: string };
-  // 여기에 필요한 스크린들 추가
-};
-
-// HomeScreen에서 navigation prop 타입 정의
-type HomeScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "HomeScreen"
->;
-
-interface Props {
-  navigation: HomeScreenNavigationProp;
-}
+type Props = NativeStackScreenProps<HomeStackParamList, "HomeScreen">;
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -49,7 +35,10 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.logoText}>moim</Text>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.headerButton}>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => navigation.navigate("SearchScreen")}
+          >
             <Image
               source={require("../../assets/images/search.png")}
               style={styles.img}

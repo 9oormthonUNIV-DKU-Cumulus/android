@@ -32,6 +32,7 @@ import CommunityFormScreen from "./screens/community/CommunityFormScreen";
 import CommunityDetailScreen from "./screens/community/CommunityDetailScreen";
 import NoticeDetailScreen from "./screens/meeting/NoticeDetailScreen";
 import NoticeFormScreen from "./screens/meeting/NoticeFormScreen";
+import SearchScreen from "./screens/home/SearchScreen";
 
 /* ───── 타입 정의 ───── */
 // 모임 타입
@@ -60,7 +61,7 @@ export type RootStackParamList = {
   Main: undefined;
 };
 export type HomeStackParamList = {
-  Home: undefined;
+  HomeScreen: undefined;
   CategoryListScreen: { label?: string } | undefined;
   MeetingDetail: undefined;
   JoinConfirm: undefined;
@@ -72,6 +73,7 @@ export type HomeStackParamList = {
   CommunityDetailScreen: { post: PostType };
   NoticeDetailScreen: { post: PostType };
   NoticeFormScreen: undefined;
+  SearchScreen: undefined;
 };
 
 export type ClubManageStackParamList = {
@@ -92,7 +94,8 @@ const Tab = createBottomTabNavigator();
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      <HomeStack.Screen name="SearchScreen" component={SearchScreen} />
       <HomeStack.Screen
         name="CategoryListScreen"
         component={CategoryListScreen}

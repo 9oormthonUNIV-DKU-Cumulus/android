@@ -113,7 +113,7 @@ const ClubTab = ({
 
   return (
     <View style={styles.body}>
-      <Text style={styles.contentTitle}>동아리 둘러보기</Text>
+      <Text style={styles.contentTitle}>둘러보기</Text>
       <SortButtons />
       <FlatList
         data={clubData}

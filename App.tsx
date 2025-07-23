@@ -1,4 +1,7 @@
-import { useNavigationContainerRef } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { useState, useRef } from "react";
 
 // App.tsx ─ 최상위 네비게이션 설정
@@ -7,7 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image } from "react-native";
 
 /* ───── 화면 컴포넌트 ───── */
 import LoginScreen from "./screens/LoginScreen";
@@ -15,22 +18,49 @@ import SignupScreen from "./screens/SignupScreen";
 import SignupFormScreen from "./screens/SignupFormScreen";
 
 import HomeScreen from "./screens/home/HomeScreen";
-import CategoryScreen from "./screens/category/CategoryScreen";
 import CategoryListScreen from "./screens/category/CategoryListScreen";
-import CommunityScreen from "./screens/community/CommunityScreen";
+// import CommunityScreen from "./screens/community/CommunityScreen";
 
 import MyPageScreen from "./screens/myPage/MyPageScreen";
-import FavoritesScreen from './screens/myPage/FavoritesScreen';
-import ParticipatingMeetingsScreen from './screens/myPage/ParticipatingMeetingsScreen';  
-import ParticipatingClubsScreen from './screens/myPage/ParticipatingClubsScreen';
-import ManagedMeetingsScreen from './screens/myPage/ManagedMeetingsScreen'; // “관리 모임” 화면
+import FavoritesScreen from "./screens/myPage/FavoritesScreen";
+import ParticipatingMeetingsScreen from "./screens/myPage/ParticipatingMeetingsScreen";
+import ParticipatingClubsScreen from "./screens/myPage/ParticipatingClubsScreen";
+import ManagedMeetingsScreen from "./screens/myPage/ManagedMeetingsScreen"; // “관리 모임” 화면
 
 import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
 import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
 import MeetingApplyScreen from "./screens/meeting/MeetingApplyScreen";
 import ApplicantInfoScreen from "./screens/meeting/ApplicantInfoScreen"; // “신청정보” 화면
+import MoimFormScreen from "./screens/meeting/MoimFormScreen"; // 모임 신청 폼 화면
+import JoinMoimScreen from "./screens/meeting/JoinMoimScreen";
+import ClubFormScreen from "./screens/meeting/ClubFormScreen";
+import CommunityFormScreen from "./screens/community/CommunityFormScreen";
+import CommunityDetailScreen from "./screens/community/CommunityDetailScreen";
+import NoticeDetailScreen from "./screens/meeting/NoticeDetailScreen";
+import NoticeFormScreen from "./screens/meeting/NoticeFormScreen";
+import SearchScreen from "./screens/home/SearchScreen";
+import AlbumUploadScreen from "./screens/meeting/AlbumUploadScreen";
 
 /* ───── 타입 정의 ───── */
+// 모임 타입
+export type PlanType = {
+  id: number;
+  title: string;
+  location: string;
+  date: string;
+  peopleCount: number;
+  content: string;
+};
+
+// 게시글 타입
+export type PostType = {
+  id: string;
+  author: string;
+  date: string;
+  title: string;
+  content: string;
+};
+
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
@@ -39,12 +69,26 @@ export type RootStackParamList = {
   Favorites: undefined;
   ParticipatingMeetings: undefined;
   ParticipatingClubs: undefined;
-  ManagedMeetings: undefined; 
+  ManagedMeetings: undefined;
 };
 export type HomeStackParamList = {
-  Home: undefined;
+  HomeScreen: undefined;
   CategoryListScreen: { label?: string } | undefined;
   MeetingDetail: undefined;
+  JoinConfirm: undefined;
+  MeetingApply: undefined;
+  ApplicantInfo: { id: string }; // ← 신청자 id 전달
+  MoimForm: undefined;
+  JoinMoim: { plan: PlanType };
+  CommunityFormScreen: undefined;
+  CommunityDetailScreen: { post: PostType };
+  NoticeDetailScreen: { post: PostType };
+  NoticeFormScreen: undefined;
+  SearchScreen: undefined;
+  AlbumUploadScreen: undefined;
+};
+
+export type ClubManageStackParamList = {
   JoinConfirm: undefined;
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
@@ -53,42 +97,64 @@ export type HomeStackParamList = {
 /* ───── 네비게이터 생성 ───── */
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
-const CategoryStk = createNativeStackNavigator();
-const CommunityStk = createNativeStackNavigator();
+const ClubCreateStk = createNativeStackNavigator();
+const ClubManageStk = createNativeStackNavigator<ClubManageStackParamList>();
 const MyPageStk = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
 
 /* ===== HomeStack ===== */
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      <HomeStack.Screen name="SearchScreen" component={SearchScreen} />
       <HomeStack.Screen
         name="CategoryListScreen"
         component={CategoryListScreen}
       />
       <HomeStack.Screen name="MeetingDetail" component={MeetingDetailScreen} />
-      <HomeStack.Screen name="JoinConfirm" component={JoinConfirmScreen} />
       <HomeStack.Screen name="MeetingApply" component={MeetingApplyScreen} />
-      <HomeStack.Screen name="ApplicantInfo" component={ApplicantInfoScreen} />
+
+      <HomeStack.Screen name="MoimForm" component={MoimFormScreen} />
+      <HomeStack.Screen name="JoinMoim" component={JoinMoimScreen} />
+      <HomeStack.Screen
+        name="CommunityFormScreen"
+        component={CommunityFormScreen}
+      />
+      <HomeStack.Screen
+        name="CommunityDetailScreen"
+        component={CommunityDetailScreen}
+      />
+      <HomeStack.Screen
+        name="NoticeDetailScreen"
+        component={NoticeDetailScreen}
+      />
+      <HomeStack.Screen name="NoticeFormScreen" component={NoticeFormScreen} />
+      <HomeStack.Screen
+        name="AlbumUploadScreen"
+        component={AlbumUploadScreen}
+      />
     </HomeStack.Navigator>
   );
 }
 
 /* ===== 기타 스택 ===== */
-function CategoryStackScreen() {
+function ClubCreateStackScreen() {
   return (
-    <CategoryStk.Navigator screenOptions={{ headerShown: false }}>
-      <CategoryStk.Screen name="Category" component={CategoryScreen} />
-    </CategoryStk.Navigator>
+    <ClubCreateStk.Navigator screenOptions={{ headerShown: false }}>
+      <ClubCreateStk.Screen name="CreateClub" component={ClubFormScreen} />
+    </ClubCreateStk.Navigator>
   );
 }
-function CommunityStackScreen() {
+function ClubManageStackScreen() {
   return (
-    <CommunityStk.Navigator screenOptions={{ headerShown: false }}>
-      <CommunityStk.Screen name="Community" component={CommunityScreen} />
-    </CommunityStk.Navigator>
+    <ClubManageStk.Navigator screenOptions={{ headerShown: false }}>
+      <ClubManageStk.Screen name="JoinConfirm" component={JoinConfirmScreen} />
+      <ClubManageStk.Screen
+        name="ApplicantInfo"
+        component={ApplicantInfoScreen}
+      />
+    </ClubManageStk.Navigator>
   );
 }
 function MyPageStackScreen() {
@@ -98,25 +164,22 @@ function MyPageStackScreen() {
       <MyPageStk.Screen name="Favorites" component={FavoritesScreen} />
       <MyPageStk.Screen
         name="ParticipatingMeetings"
-        component={ParticipatingMeetingsScreen} />
-      <MyPageStk.Screen name="ParticipatingClubs" component={ParticipatingClubsScreen} />
+        component={ParticipatingMeetingsScreen}
+      />
+      <MyPageStk.Screen
+        name="ParticipatingClubs"
+        component={ParticipatingClubsScreen}
+      />
       <MyPageStk.Screen
         name="ManagedMeetings"
-        component={ManagedMeetingsScreen} />
-
+        component={ManagedMeetingsScreen}
+      />
     </MyPageStk.Navigator>
   );
 }
 
 /* ===== 하단 탭 ===== */
 function MainTab({ currentRoute }: { currentRoute?: string }) {
-  const hideFabRoutes = [
-    "MeetingDetail",
-    "JoinConfirm",
-    "MeetingApply",
-    "ApplicantInfo",
-  ];
-
   return (
     <>
       <Tab.Navigator
@@ -132,22 +195,44 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
         <Tab.Screen
           name="홈"
           component={HomeStackScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <Image
-                source={
-                  focused
-                    ? require("./assets/icons/home_active.png")
-                    : require("./assets/icons/home_inactive.png")
-                }
-                style={{ width: 24, height: 24 }}
-              />
-            ),
+          options={({ route }) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
+
+            const hiddenRoutes = [
+              "CommunityFormScreen",
+              "CommunityDetailScreen",
+              "MeetingDetail",
+              "MoimForm",
+              "JoinMoim",
+              "MeetingApply",
+              "NoticeDetailScreen",
+              "AlbumUploadScreen",
+            ];
+
+            return {
+              tabBarStyle: hiddenRoutes.includes(routeName)
+                ? { display: "none" }
+                : {
+                    height: 80,
+                    paddingBottom: 12,
+                    paddingTop: 10,
+                  },
+              tabBarIcon: ({ focused }) => (
+                <Image
+                  source={
+                    focused
+                      ? require("./assets/icons/home_active.png")
+                      : require("./assets/icons/home_inactive.png")
+                  }
+                  style={{ width: 24, height: 24 }}
+                />
+              ),
+            };
           }}
         />
         <Tab.Screen
-          name="카테고리"
-          component={CategoryStackScreen}
+          name="동아리 개설"
+          component={ClubCreateStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -162,8 +247,8 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
           }}
         />
         <Tab.Screen
-          name="커뮤니티"
-          component={CommunityStackScreen}
+          name="동아리 관리"
+          component={ClubManageStackScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Image
@@ -194,16 +279,6 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
           }}
         />
       </Tab.Navigator>
-
-      {/* FAB 조건부 렌더링 */}
-      {!hideFabRoutes.includes(currentRoute || "") && (
-        <TouchableOpacity style={styles.fab}>
-          <Image
-            source={require("./assets/icons/floatingIcon.png")}
-            style={{ width: 50, height: 50 }}
-          />
-        </TouchableOpacity>
-      )}
     </>
   );
 }
@@ -237,16 +312,3 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
-
-/* ===== 공용 스타일 ===== */
-const styles = StyleSheet.create({
-  fab: {
-    position: "absolute",
-    bottom: 110,
-    right: 20,
-    borderRadius: 28,
-    backgroundColor: "#5498FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

@@ -1,0 +1,502 @@
+diff --git a/App.tsx b/App.tsx
+index 987d356..3ba34bf 100644
+--- a/App.tsx
++++ b/App.tsx
+@@ -19,7 +19,14 @@ import SignupFormScreen from "./screens/SignupFormScreen";
+ 
+ import HomeScreen from "./screens/home/HomeScreen";
+ import CategoryListScreen from "./screens/category/CategoryListScreen";
++
++/* ---─ 마이페이지 관련 화면 ───── */
+ import MyPageScreen from "./screens/myPage/MyPageScreen";
++import FavoritesScreen from "./screens/myPage/FavoritesScreen";
++import ManagedMeetingsScreen from "./screens/myPage/ManagedMeetingsScreen";
++import ParticipatingClubsScreen from "./screens/myPage/ParticipatingClubsScreen";
++import ParticipatingMeetingsScreen from "./screens/myPage/ParticipatingMeetingsScreen";
++
+ 
+ import MeetingDetailScreen from "./screens/meeting/MeetingDetailScreen";
+ import JoinConfirmScreen from "./screens/meeting/JoinConfirmScreen";
+@@ -58,6 +65,10 @@ export type RootStackParamList = {
+   Signup: undefined;
+   SignupForm: undefined;
+   Main: undefined;
++  Favorites: undefined;
++  ParticipatingMeetings: undefined;
++  ParticipatingClubs: undefined;
++  ManagedMeetings: undefined; 
+ };
+ export type HomeStackParamList = {
+   Home: undefined;
+@@ -72,6 +83,7 @@ export type HomeStackParamList = {
+   CommunityDetailScreen: { post: PostType };
+   NoticeDetailScreen: { post: PostType };
+   NoticeFormScreen: undefined;
++  
+ };
+ 
+ export type ClubManageStackParamList = {
+@@ -88,6 +100,8 @@ const ClubManageStk = createNativeStackNavigator<ClubManageStackParamList>();
+ const MyPageStk = createNativeStackNavigator();
+ const Tab = createBottomTabNavigator();
+ 
++
++
+ /* ===== HomeStack ===== */
+ function HomeStackScreen() {
+   return (
+@@ -142,6 +156,14 @@ function MyPageStackScreen() {
+   return (
+     <MyPageStk.Navigator screenOptions={{ headerShown: false }}>
+       <MyPageStk.Screen name="MyPage" component={MyPageScreen} />
++      <MyPageStk.Screen name="Favorites" component={FavoritesScreen} />
++      <MyPageStk.Screen
++        name="ParticipatingMeetings"
++        component={ParticipatingMeetingsScreen} />
++      <MyPageStk.Screen name="ParticipatingClubs" component={ParticipatingClubsScreen} />
++      <MyPageStk.Screen
++        name="ManagedMeetings"
++        component={ManagedMeetingsScreen} />
+     </MyPageStk.Navigator>
+   );
+ }
+diff --git a/package-lock.json b/package-lock.json
+index 26ecb1a..48171ce 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -2228,9 +2228,9 @@
+       }
+     },
+     "node_modules/@eslint/eslintrc/node_modules/brace-expansion": {
+-      "version": "1.1.11",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
+-      "integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
++      "version": "1.1.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.12.tgz",
++      "integrity": "sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -3491,9 +3491,9 @@
+       }
+     },
+     "node_modules/@humanwhocodes/config-array/node_modules/brace-expansion": {
+-      "version": "1.1.11",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
+-      "integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
++      "version": "1.1.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.12.tgz",
++      "integrity": "sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -6345,9 +6345,9 @@
+       }
+     },
+     "node_modules/brace-expansion": {
+-      "version": "2.0.1",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.1.tgz",
+-      "integrity": "sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==",
++      "version": "2.0.2",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.2.tgz",
++      "integrity": "sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==",
+       "license": "MIT",
+       "dependencies": {
+         "balanced-match": "^1.0.0"
+@@ -6846,16 +6846,16 @@
+       }
+     },
+     "node_modules/compression": {
+-      "version": "1.8.0",
+-      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.0.tgz",
+-      "integrity": "sha512-k6WLKfunuqCYD3t6AsuPGvQWaKwuLLh2/xHNcX4qE+vIfDNXpSqnrhwA7O53R7WVQUnt8dVAIW+YHr7xTgOgGA==",
++      "version": "1.8.1",
++      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.1.tgz",
++      "integrity": "sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==",
+       "license": "MIT",
+       "dependencies": {
+         "bytes": "3.1.2",
+         "compressible": "~2.0.18",
+         "debug": "2.6.9",
+         "negotiator": "~0.6.4",
+-        "on-headers": "~1.0.2",
++        "on-headers": "~1.1.0",
+         "safe-buffer": "5.2.1",
+         "vary": "~1.1.2"
+       },
+@@ -8021,9 +8021,9 @@
+       "license": "MIT"
+     },
+     "node_modules/eslint-plugin-react/node_modules/brace-expansion": {
+-      "version": "1.1.11",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
+-      "integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
++      "version": "1.1.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.12.tgz",
++      "integrity": "sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -8110,9 +8110,9 @@
+       }
+     },
+     "node_modules/eslint/node_modules/brace-expansion": {
+-      "version": "1.1.11",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
+-      "integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
++      "version": "1.1.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.12.tgz",
++      "integrity": "sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -8833,9 +8833,9 @@
+       }
+     },
+     "node_modules/form-data": {
+-      "version": "4.0.3",
+-      "resolved": "https://registry.npmjs.org/form-data/-/form-data-4.0.3.tgz",
+-      "integrity": "sha512-qsITQPfmvMOSAdeyZ+12I1c+CKSstAFAwu+97zrnWAbIr5u8wfsExUzCesVLC8NgHuRUqNN4Zy6UPWUTRGslcA==",
++      "version": "4.0.4",
++      "resolved": "https://registry.npmjs.org/form-data/-/form-data-4.0.4.tgz",
++      "integrity": "sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==",
+       "license": "MIT",
+       "dependencies": {
+         "asynckit": "^0.4.0",
+@@ -9151,9 +9151,9 @@
+       }
+     },
+     "node_modules/glob/node_modules/brace-expansion": {
+-      "version": "1.1.11",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
+-      "integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
++      "version": "1.1.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.12.tgz",
++      "integrity": "sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==",
+       "license": "MIT",
+       "dependencies": {
+         "balanced-match": "^1.0.0",
+@@ -12771,9 +12771,9 @@
+       }
+     },
+     "node_modules/on-headers": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/on-headers/-/on-headers-1.0.2.tgz",
+-      "integrity": "sha512-pZAE+FJLoyITytdqK0U5s+FIpjN0JP3OzFi/u8Rx+EV5/W+JTWGXG8xFzevE7AjBfDqHv/8vL8qQsIhHnqRkrA==",
++      "version": "1.1.0",
++      "resolved": "https://registry.npmjs.org/on-headers/-/on-headers-1.1.0.tgz",
++      "integrity": "sha512-737ZY3yNnXy37FHkQxPzt4UZ2UWPWiCZWLvFZ4fu5cueciegX0zGPnrlY6bwRg4FdQOe9YU8MkmJwGhoMybl8A==",
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.8"
+@@ -15355,9 +15355,9 @@
+       }
+     },
+     "node_modules/test-exclude/node_modules/brace-expansion": {
+-      "version": "1.1.11",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
+-      "integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
++      "version": "1.1.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.12.tgz",
++      "integrity": "sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==",
+       "license": "MIT",
+       "dependencies": {
+         "balanced-match": "^1.0.0",
+diff --git a/screens/myPage/MyPageScreen.tsx b/screens/myPage/MyPageScreen.tsx
+index abac17c..f177a17 100644
+--- a/screens/myPage/MyPageScreen.tsx
++++ b/screens/myPage/MyPageScreen.tsx
+@@ -1,9 +1,289 @@
+-import {View, Text} from 'react-native';
++// screens/myPage/MyPageScreen.tsx
++import React, { useState } from 'react';
++import {
++  View,
++  Text,
++  StyleSheet,
++  Image,
++  TouchableOpacity,
++  SafeAreaView,
++  Dimensions,
++  FlatList,
++  Alert,
++} from 'react-native';
++import Ionicons from 'react-native-vector-icons/Ionicons';
++import { NativeStackNavigationProp } from '@react-navigation/native-stack';
++import { RootStackParamList } from '../../App';
++
++type MyPageNav = NativeStackNavigationProp<RootStackParamList, 'Main'>;
++interface Props { navigation: MyPageNav; }
++
++/* -------- 더미 -------- */
++const dummyUser = {
++  name: '김단웅',
++  gender: '여',
++  age: 21,
++  department: '커뮤니케이션 디자인',
++  stats: { like: 2, manage: 1, joined: 5, clubJoined: 2 },
++};
++
++type ApplyStatus = '승인 대기' | '승인 완료' | '승인 거절';
++interface ApplyItem {
++  id: string;
++  title: string;
++  place: string;
++  time: string;
++  members: string;
++  status: ApplyStatus;
++}
++const dummyApplies: ApplyItem[] = [
++  { id: '1', title: '단국대 운동 동아리', place: '수업 끝나고 7시부터 9시까지', time: '독서/글 · 멤버 45', members: '2명 / 45명', status: '승인 대기' },
++  { id: '2', title: '단국대 운동 동아리', place: '수업 끝나고 7시부터 9시까지', time: '독서/글 · 멤버 45', members: '2명 / 45명', status: '승인 거절' },
++];
++
++/* -------- 메인 -------- */
++export default function MyPageScreen({ navigation }: Props) {
++  const { name, gender, age, department, stats } = dummyUser;
++
++  const [likedIds, setLikedIds] = useState<string[]>([]);
++  const toggleLike = (id: string) =>
++    setLikedIds(prev => (prev.includes(id) ? prev.filter(v => v !== id) : [...prev, id]));
++
++  const onCancel = (id: string) => {
++    Alert.alert('신청 취소', '정말 취소하시겠어요?', [
++      { text: '아니오' },
++      { text: '예', style: 'destructive', onPress: () => console.log('cancel:', id) },
++    ]);
++  };
++
++  const goFavorites = () => navigation.navigate('Favorites'); // 찜 동아리 화면
++
++  const renderItem = ({ item }: { item: ApplyItem }) => {
++    const liked = likedIds.includes(item.id);
++    return (
++      <View style={styles.applyCard}>
++        <View style={styles.thumbWrap}>
++          <View style={styles.applyThumb} />
++          <TouchableOpacity
++            style={styles.heartBtn}
++            onPress={() => toggleLike(item.id)}
++            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
++          >
++            <Ionicons
++              name={liked ? 'heart' : 'heart-outline'}
++              size={16}
++              color={liked ? '#FF4D4D' : '#C7C7C7'}
++            />
++          </TouchableOpacity>
++        </View>
++
++        <View style={styles.applyInfo}>
++          <Text style={styles.applyTitle}>{item.title}</Text>
++          <Text style={styles.applySub}>{item.place}</Text>
++          <Text style={styles.applySub}>{item.time}</Text>
++        </View>
++
++        <View style={styles.applyRight}>
++          <StatusBadge status={item.status} />
++          <TouchableOpacity style={styles.cancelBtn} onPress={() => onCancel(item.id)}>
++            <Text style={styles.cancelBtnText}>신청 취소</Text>
++          </TouchableOpacity>
++        </View>
++      </View>
++    );
++  };
++
++  /* 통계 데이터 배열화 */
++  const statItems = [
++    { key: 'like', label: '찜 동아리', value: stats.like, onPress: goFavorites },
++    { key: 'managed', label: '개설 모임 관리', value: stats.manage ,onPress: () => navigation.navigate('ManagedMeetings') },
++    { key: 'joined', label: '참여 모임', value: stats.joined, onPress: () => navigation.navigate('ParticipatingMeetings') },
++    { key: 'clubJoined', label: '참여 동아리', value: stats.clubJoined, onPress: () => navigation.navigate('ParticipatingClubs') },
++  ];
+ 
+-export default function MyPageScreen() {
+   return (
+-    <View>
+-      <Text>마이페이지 화면</Text>
++    <SafeAreaView style={styles.container}>
++      {/* 헤더 */}
++      <View style={styles.headerWrapper}>
++        <TouchableOpacity style={styles.backBtn} onPress={navigation.goBack}>
++          <Ionicons name="chevron-back" size={24} color="#1C1C1C" />
++        </TouchableOpacity>
++        <Text style={styles.headerTitle}>마이페이지</Text>
++      </View>
++
++      <FlatList
++        data={dummyApplies}
++        keyExtractor={i => i.id}
++        ListHeaderComponent={
++          <>
++            {/* 프로필 */}
++            <View style={styles.profileSection}>
++              <Image
++                style={styles.avatar}
++                source={require('../../assets/images/avatar-placeholder.png')}
++              />
++              <View style={styles.profileTextWrapper}>
++                <Text style={styles.userName}>
++                  {name} <Text style={styles.userAge}>({gender} / {age}세)</Text>
++                </Text>
++                <View style={styles.deptRow}>
++                  <Text style={styles.userLabel}>학과 </Text>
++                  <Text style={styles.userDept}>{department}</Text>
++                </View>
++              </View>
++            </View>
++
++            {/* 통계 카드 - 균등 너비 */}
++            <View style={styles.statsCard}>
++              {statItems.map((item, idx) => (
++                <React.Fragment key={item.key}>
++                  <TouchableOpacity
++                    style={styles.statCell}
++                    activeOpacity={0.6} // 항상 0.6으로 설정
++                    onPress={item.onPress} // onPress를 여기서 호출
++                    
++                  >
++                    <Text style={styles.statValue}>{item.value}</Text>
++                    <Text style={styles.statLabel}>{item.label}</Text>
++                  </TouchableOpacity>
++                  {idx !== statItems.length - 1 && <View style={styles.vertDivider} />}
++                </React.Fragment>
++              ))}
++            </View>
++
++            <Text style={styles.sectionTitle}>동아리 신청 내역</Text>
++          </>
++        }
++        renderItem={renderItem}
++        contentContainerStyle={{ paddingBottom: 32 }}
++        showsVerticalScrollIndicator={false}
++      />
++    </SafeAreaView>
++  );
++}
++
++/* -------- 컴포넌트 -------- */
++function StatusBadge({ status }: { status: ApplyStatus }) {
++  const map: Record<ApplyStatus, { bg: string; txt: string }> = {
++    '승인 대기': { bg: '#E6F0FF', txt: '#357CFF' },
++    '승인 완료': { bg: '#E9F9EF', txt: '#22A064' },
++    '승인 거절': { bg: '#FDECEC', txt: '#E24D4D' },
++  };
++  const c = map[status];
++  return (
++    <View style={[styles.badge, { backgroundColor: c.bg }]}>
++      <Text style={[styles.badgeText, { color: c.txt }]}>{status}</Text>
+     </View>
+   );
+ }
++
++/* -------- 스타일 -------- */
++const { width: W } = Dimensions.get('window');
++
++const styles = StyleSheet.create({
++  container: { flex: 1, backgroundColor: '#FFF' },
++
++  headerWrapper: {
++    height: 56,
++    flexDirection: 'row',
++    alignItems: 'center',
++    justifyContent: 'center',
++    borderBottomWidth: StyleSheet.hairlineWidth,
++    borderColor: '#E4E4E4',
++    paddingHorizontal: 16,
++  },
++  backBtn: { position: 'absolute', left: 16 },
++  headerTitle: { fontSize: 18, fontWeight: '700', color: '#1C1C1C' },
++
++  profileSection: {
++    flexDirection: 'row',
++    alignItems: 'center',
++    paddingHorizontal: 24,
++    paddingVertical: 32,
++  },
++  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#D9D9D9' },
++  profileTextWrapper: { marginLeft: 16 },
++  userName: { fontSize: 20, fontWeight: '700', color: '#1C1C1C' },
++  userAge: { fontSize: 16, fontWeight: '400', color: '#6F6F6F' },
++  deptRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
++  userLabel: { fontSize: 14, color: '#6F6F6F' },
++  userDept: { fontSize: 12, fontWeight: '600', color: '#1C1C1C' },
++
++  /* 통계 카드 */
++  statsCard: {
++    flexDirection: 'row',
++    alignItems: 'stretch',
++    marginHorizontal: 24,
++    borderWidth: 1,
++    borderColor: '#E4E4E4',
++    borderRadius: 12,
++    overflow: 'hidden',
++  },
++  statCell: {
++    flex: 1,
++    paddingVertical: 12,
++    paddingHorizontal: 4,
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: '#FFF',
++  },
++  vertDivider: { width: 1, backgroundColor: '#E4E4E4' },
++  statValue: { fontSize: 14, fontWeight: '700', color: '#1C1C1C' },
++  statLabel: { marginTop: 2, fontSize: 10, color: '#6F6F6F', textAlign: 'center' },
++
++  sectionTitle: {
++    marginTop: 28,
++    marginBottom: 12,
++    marginHorizontal: 24,
++    fontSize: 16,
++    fontWeight: '700',
++    color: '#1C1C1C',
++  },
++
++  applyCard: {
++    flexDirection: 'row',
++    alignItems: 'center',
++    marginHorizontal: 24,
++    marginBottom: 16,
++    padding: 16,
++    borderWidth: 1,
++    borderColor: '#E4E4E4',
++    borderRadius: 12,
++    backgroundColor: '#FFF',
++  },
++  thumbWrap: { marginRight: 12, position: 'relative' },
++  applyThumb: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#D9D9D9' },
++  heartBtn: {
++    position: 'absolute',
++    left: -8,
++    bottom: -8,
++    width: 24,
++    height: 24,
++    borderRadius: 12,
++    backgroundColor: '#F0F0F0',
++    justifyContent: 'center',
++    alignItems: 'center',
++  },
++
++  applyInfo: { flex: 1 },
++  applyTitle: { fontSize: 14, fontWeight: '700', color: '#1C1C1C' },
++  applySub: { fontSize: 11, color: '#6F6F6F', marginTop: 2 },
++
++  applyRight: { alignItems: 'flex-end', justifyContent: 'space-between', height: 56 },
++  badge: {
++    paddingHorizontal: 10,
++    paddingVertical: 6,
++    borderRadius: 12,
++    alignSelf: 'flex-end',
++  },
++  badgeText: { fontSize: 11, fontWeight: '600' },
++
++  cancelBtn: {
++    marginTop: 6,
++    paddingHorizontal: 12,
++    paddingVertical: 6,
++    borderRadius: 16,
++    backgroundColor: '#357CFF',
++  },
++  cancelBtnText: { color: '#fff', fontSize: 11, fontWeight: '600' },
++});

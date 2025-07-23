@@ -5,11 +5,9 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
 } from "react-native";
 
 const AVATAR = require("../../assets/images/avatar-placeholder.png");
-const { width } = Dimensions.get("window");
 
 /* ───────────────────────── 데모 데이터 */
 const MEETING = {

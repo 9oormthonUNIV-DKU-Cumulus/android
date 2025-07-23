@@ -33,6 +33,7 @@ import CommunityDetailScreen from "./screens/community/CommunityDetailScreen";
 import NoticeDetailScreen from "./screens/meeting/NoticeDetailScreen";
 import NoticeFormScreen from "./screens/meeting/NoticeFormScreen";
 import SearchScreen from "./screens/home/SearchScreen";
+import AlbumUploadScreen from "./screens/meeting/AlbumUploadScreen";
 
 /* ───── 타입 정의 ───── */
 // 모임 타입
@@ -74,6 +75,7 @@ export type HomeStackParamList = {
   NoticeDetailScreen: { post: PostType };
   NoticeFormScreen: undefined;
   SearchScreen: undefined;
+  AlbumUploadScreen: undefined;
 };
 
 export type ClubManageStackParamList = {
@@ -118,6 +120,10 @@ function HomeStackScreen() {
         component={NoticeDetailScreen}
       />
       <HomeStack.Screen name="NoticeFormScreen" component={NoticeFormScreen} />
+      <HomeStack.Screen
+        name="AlbumUploadScreen"
+        component={AlbumUploadScreen}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -177,6 +183,7 @@ function MainTab({ currentRoute }: { currentRoute?: string }) {
               "JoinMoim",
               "MeetingApply",
               "NoticeDetailScreen",
+              "AlbumUploadScreen",
             ];
 
             return {

@@ -22,6 +22,7 @@ const categories = ["발견", "인기모임", "신규모임", "커뮤니티"];
 
 export default function HomeScreen({ navigation }: Props) {
   const [selectedCatagory, setSelectedCategory] = useState("발견");
+  const [unreadCount, setUnreadCount] = useState(2); // 목업 알림 개수
 
   return (
     <View style={styles.body}>
@@ -44,12 +45,23 @@ export default function HomeScreen({ navigation }: Props) {
               style={styles.img}
             />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require("../../assets/images/notification.png")}
-              style={styles.img}
-            />
-          </TouchableOpacity>
+
+          {/* 알림 아이콘 + 배지 */}
+          <View style={{ position: "relative" }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("NotificationScreen")}
+            >
+              <Image
+                source={require("../../assets/images/notification.png")}
+                style={styles.img}
+              />
+            </TouchableOpacity>
+            {unreadCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unreadCount}</Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
       {/* 홈 화면 상단 탭바 */}
@@ -127,6 +139,23 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     resizeMode: "contain",
+  },
+  badge: {
+    position: "absolute",
+    top: -7,
+    right: -7,
+    backgroundColor: "red",
+    borderRadius: 10,
+    minWidth: 16,
+    height: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   title: {
     height: 40,

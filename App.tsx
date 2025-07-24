@@ -40,6 +40,7 @@ import NoticeDetailScreen from "./screens/meeting/NoticeDetailScreen";
 import NoticeFormScreen from "./screens/meeting/NoticeFormScreen";
 import SearchScreen from "./screens/home/SearchScreen";
 import AlbumUploadScreen from "./screens/meeting/AlbumUploadScreen";
+import NotificationScreen from "./screens/home/NotificationScreen";
 
 /* ───── 타입 정의 ───── */
 // 모임 타입
@@ -86,6 +87,7 @@ export type HomeStackParamList = {
   NoticeFormScreen: undefined;
   SearchScreen: undefined;
   AlbumUploadScreen: undefined;
+  NotificationScreen: undefined;
 };
 
 export type ClubManageStackParamList = {
@@ -108,6 +110,10 @@ function HomeStackScreen() {
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen name="SearchScreen" component={SearchScreen} />
+      <HomeStack.Screen
+        name="NotificationScreen"
+        component={NotificationScreen}
+      />
       <HomeStack.Screen
         name="CategoryListScreen"
         component={CategoryListScreen}

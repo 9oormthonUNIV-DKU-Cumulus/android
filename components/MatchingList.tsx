@@ -17,12 +17,16 @@ type MatchingListItemProps = {
   item: MatchingItem;
   likedItems: string[];
   onToggleLike: (item: MatchingItem) => void;
+  onDelete: (id: string) => void;
+  isOwner: boolean;
 };
 
 export const MatchingListItem = ({
   item,
   onToggleLike,
   likedItems,
+  onDelete,
+  isOwner,
 }: MatchingListItemProps) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -67,6 +71,16 @@ export const MatchingListItem = ({
           <Text style={styles.text}>멤버 {item.member}</Text>
         </View>
       </TouchableOpacity>
+      {isOwner && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate("ClubForm", { club: item })} style={styles.editButton}>
+            <Text style={styles.editButtonText}>수정</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onDelete(item.id)} style={styles.deleteButton}>
+            <Text style={styles.deleteButtonText}>삭제</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -115,5 +129,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 5,
     color: "#868686",
+  },
+  deleteButton: {
+    marginLeft: 'auto',
+    marginRight: 15,
+    padding: 8,
+    backgroundColor: '#EF4444',
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  editButton: {
+    padding: 8,
+    backgroundColor: '#3B82F6',
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  editButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

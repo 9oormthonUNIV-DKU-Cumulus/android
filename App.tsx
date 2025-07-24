@@ -80,6 +80,7 @@ export type HomeStackParamList = {
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
   MoimForm: { meeting?: any }; // meeting이 optional
+  ClubForm: { club?: any }; // club이 optional
   JoinMoim: { plan: PlanType };
   CommunityFormScreen: undefined;
   CommunityDetailScreen: { post: PostType };
@@ -123,6 +124,7 @@ function HomeStackScreen() {
 
       <HomeStack.Screen name="MoimForm" component={MoimFormScreen} />
       <HomeStack.Screen name="JoinMoim" component={JoinMoimScreen} />
+      <HomeStack.Screen name="ClubForm" component={ClubFormScreen} />
       <HomeStack.Screen
         name="CommunityFormScreen"
         component={CommunityFormScreen}

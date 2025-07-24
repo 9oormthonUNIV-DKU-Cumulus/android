@@ -1,5 +1,5 @@
 import { Picker } from "@react-native-picker/picker";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,11 +9,54 @@ import {
   ScrollView,
   TextInput,
   Image,
+  Alert,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { HomeStackParamList } from "../../App";
+import { updateClub } from "../../utils/api";
 
-export default function ClubFormScreen({ navigation }) {
+type Props = NativeStackScreenProps<HomeStackParamList, "ClubForm">;
+
+export default function ClubFormScreen({ route, navigation }: Props) {
+  const club = route.params?.club;
+  const isEditing = !!club;
+
+  const [clubName, setClubName] = useState("");
+  const [clubDesc, setClubDesc] = useState("");
+  const [campus, setCampus] = useState<"죽전" | "천안">("죽전");
   const [imageUri, setImageUri] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isEditing) {
+      setClubName(club.clubName);
+      setClubDesc(club.clubDesc);
+      setCampus(club.campus === "CHEONAN" ? "천안" : "죽전");
+      setImageUri(club.imageUrl);
+    }
+  }, [isEditing, club]);
+
+  const handleUpdate = async () => {
+    if (!clubName || !clubDesc) {
+      Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
+      return;
+    }
+
+    const data = {
+      clubName,
+      clubDesc,
+      campus: campus === "천안" ? "CHEONAN" : "JUKJEON",
+    };
+
+    try {
+      await updateClub(club.id, data);
+      Alert.alert("수정 완료", "동아리가 성공적으로 수정되었습니다.");
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("오류", "동아리 수정 중 오류가 발생했습니다.");
+    }
+  };
+
   const handleSelectImage = () => {
     launchImageLibrary(
       {
@@ -34,14 +77,6 @@ export default function ClubFormScreen({ navigation }) {
     );
   };
 
-  // 동아리 개설 api
-  const handleCreateClub = () => {};
-
-  const [inputHeight, setInputHeight] = useState(60); // 내용 입력창 초기 높이
-  const [selectedCategory, setSelectedCategory] = useState<number>(1);
-  const [selectedType, setSelectedType] = useState<"죽전" | "천안" | null>(
-    "죽전"
-  );
 
   return (
     <View style={styles.body}>
@@ -70,68 +105,41 @@ export default function ClubFormScreen({ navigation }) {
           <View style={styles.checkboxGroup}>
             <Checkbox
               label="죽전"
-              selected={selectedType === "죽전"}
-              onPress={() => setSelectedType("죽전")}
+              selected={campus === "죽전"}
+              onPress={() => setCampus("죽전")}
             />
             <Checkbox
               label="천안"
-              selected={selectedType === "천안"}
-              onPress={() => setSelectedType("천안")}
+              selected={campus === "천안"}
+              onPress={() => setCampus("천안")}
             />
           </View>
 
           {/* 제목 */}
-          <Text style={styles.label}>제목</Text>
+          <Text style={styles.label}>동아리 이름</Text>
           <TextInput
             style={styles.input}
-            placeholder="제목을 입력해주세요"
-            keyboardType="default"
+            placeholder="동아리 이름을 입력해주세요"
+            value={clubName}
+            onChangeText={setClubName}
           />
-
-          {/* 카테고리 */}
-          <Text style={styles.label}>카테고리</Text>
-          <Picker
-            selectedValue={selectedCategory}
-            onValueChange={(item) => setSelectedCategory(item)}
-            style={styles.picker}
-          >
-            <Picker.Item label="스포츠" value={1} />
-            <Picker.Item label="외국/언어" value={2} />
-            <Picker.Item label="사진/영상" value={3} />
-            <Picker.Item label="봉사활동" value={4} />
-            <Picker.Item label="자기계발" value={5} />
-            <Picker.Item label="독서/글" value={6} />
-            <Picker.Item label="문화/댄스" value={7} />
-            <Picker.Item label="음악/악기" value={8} />
-            <Picker.Item label="여행" value={9} />
-            <Picker.Item label="업종/직무" value={10} />
-          </Picker>
 
           {/* 내용 */}
-          <Text style={styles.label}>내용</Text>
+          <Text style={styles.label}>동아리 설명</Text>
           <TextInput
-            style={[styles.input, { height: inputHeight }]}
-            placeholder="내용을 입력해주세요"
+            style={[styles.input, { height: 100 }]}
+            placeholder="동아리 설명을 입력해주세요"
             multiline={true}
             textAlignVertical="top"
-            onContentSizeChange={(e) => {
-              setInputHeight(e.nativeEvent.contentSize.height);
-            }}
-          />
-
-          {/* 모집 인원 */}
-          <Text style={styles.label}>모집 인원</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="모집인원을 입력해주세요"
-            keyboardType="numeric"
+            value={clubDesc}
+            onChangeText={setClubDesc}
           />
 
           {/* 이미지 업로드 */}
           <Text style={styles.label}>동아리 대표 이미지</Text>
           <TouchableOpacity
             style={styles.imageUploadButton}
-            onPress={() => handleSelectImage()}
+            onPress={handleSelectImage}
           >
             <Text style={styles.imageUploadText}>사진 선택하기</Text>
           </TouchableOpacity>
@@ -152,9 +160,11 @@ export default function ClubFormScreen({ navigation }) {
           {/* 가입하기 버튼 */}
           <TouchableOpacity
             style={styles.createMoimButton}
-            onPress={() => handleCreateClub()}
+            onPress={isEditing ? handleUpdate : () => {}}
           >
-            <Text style={styles.createMoimText}>동아리 개설하기</Text>
+            <Text style={styles.createMoimText}>
+              {isEditing ? "동아리 수정하기" : "동아리 개설하기"}
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>

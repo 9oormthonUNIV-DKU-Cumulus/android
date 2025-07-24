@@ -16,6 +16,8 @@ import PlanTabContent from "./PlanTabContent";
 import NoticeTabContent from "./NoticeTabContent";
 import HomeTabContent from "./HomeTabContent";
 import AlbumTabContent from "./AlbumTabContent";
+import { deleteActivity } from "../../utils/api";
+import { Alert } from "react-native";
 
 /* ───────────────────────── 상수 / 리소스 */
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
@@ -59,9 +61,34 @@ const MEETING = {
 };
 
 /* ───────────────────────── 메인 컴포넌트 */
-export default function MeetingDetailScreen({ navigation }: Props) {
+export default function MeetingDetailScreen({ route, navigation }: Props) {
   const [tab, setTab] = useState<"홈" | "공지" | "일정" | "앨범">("홈");
   const [joined, setJoin] = useState(false);
+  const [isOwner, setIsOwner] = useState(true); // 임시로 true로 설정
+
+  const { id, clubId } = route.params.meeting;
+
+  const handleDelete = () => {
+    Alert.alert("모임 삭제", "정말로 이 모임을 삭제하시겠습니까?", [
+      {
+        text: "취소",
+        style: "cancel",
+      },
+      {
+        text: "삭제",
+        onPress: async () => {
+          try {
+            await deleteActivity(id, clubId);
+            Alert.alert("삭제 완료", "모임이 성공적으로 삭제되었습니다.");
+            navigation.goBack();
+          } catch (error) {
+            Alert.alert("오류", "모임 삭제 중 오류가 발생했습니다.");
+          }
+        },
+        style: "destructive",
+      },
+    ]);
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -117,14 +144,31 @@ export default function MeetingDetailScreen({ navigation }: Props) {
             <Image source={HEART_ICON} style={styles.likeIcon} />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.joinBtn}
-            onPress={() => navigation.navigate("MeetingApply")}
-          >
-            <Text style={styles.joinTxt}>
-              {joined ? "가입취소" : "가입하기"}
-            </Text>
-          </TouchableOpacity>
+          {isOwner ? (
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <TouchableOpacity
+                style={[styles.joinBtn, { flex: 1, marginRight: 8 }]}
+                onPress={() => navigation.navigate("MoimForm", { meeting })}
+              >
+                <Text style={styles.joinTxt}>수정하기</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.joinBtn, styles.deleteBtn, { flex: 1, marginLeft: 8 }]}
+                onPress={handleDelete}
+              >
+                <Text style={styles.joinTxt}>삭제하기</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.joinBtn}
+              onPress={() => navigation.navigate("MeetingApply")}
+            >
+              <Text style={styles.joinTxt}>
+                {joined ? "가입취소" : "가입하기"}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </SafeAreaView>
@@ -211,4 +255,5 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   joinTxt: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  deleteBtn: { backgroundColor: "#EF4444" },
 });

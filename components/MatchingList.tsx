@@ -7,7 +7,7 @@ import type { RootStackParamList } from "../screens/category/CategoryListScreen"
 export type MatchingItem = {
   id: string;
   title: string;
-  category: string;
+  category: number;
   description: string;
   member: string;
   imageUrl: string | number;
@@ -64,7 +64,7 @@ export const MatchingListItem = ({
         <Text style={styles.text}>{item.description}</Text>
         <View style={styles.row}>
           <Text style={styles.text}>{getCategoryLabel(item.category)}</Text>
-          <Text style={styles.text}>멤버 {item.member}</Text>
+          {/* <Text style={styles.text}>멤버 {item.member}</Text> */}
         </View>
       </TouchableOpacity>
     </View>

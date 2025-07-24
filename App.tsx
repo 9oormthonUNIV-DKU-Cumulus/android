@@ -63,7 +63,10 @@ export type PostType = {
 };
 
 // 동아리 타입
-type Club = {
+export type Club = {
+  category: any;
+  clubDesc: any;
+  clubName: string;
   id: number;
   title: string;
   description: string;
@@ -85,7 +88,7 @@ export type RootStackParamList = {
 };
 export type HomeStackParamList = {
   HomeScreen: undefined;
-  CategoryListScreen: { label?: string } | undefined;
+  CategoryListScreen: { label: string; categoryId: number };
   MeetingDetail: undefined;
   JoinConfirm: undefined;
   MeetingApply: undefined;

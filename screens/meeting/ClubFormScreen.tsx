@@ -15,8 +15,7 @@ import { launchImageLibrary } from "react-native-image-picker";
 import { api } from "../../utils/api";
 
 export default function ClubFormScreen({ navigation, route }) {
-  const mode: "create" | "edit" = route?.params?.mode ?? "create";
-  const club = route?.params?.club ?? null;
+  const { mode = "create", club = null } = route?.params ?? {};
 
   const [imageUri, setImageUri] = useState<string | null>(null);
   const handleSelectImage = () => {
@@ -41,18 +40,18 @@ export default function ClubFormScreen({ navigation, route }) {
 
   // 동아리 개설 및 수정
   const handleSubmit = async () => {
-    if (!title || !description || !people) {
+    if (!title || !description) {
       Alert.alert("입력 오류", "모든 필드를 입력해주세요");
       return;
     }
 
     const payload = {
-      title,
-      description,
-      categoryId: selectedCategory,
-      campus: selectedType,
-      poepleLimit: Number(people),
-      imageUrI: imageUri,
+      clubName: title,
+      clubDesc: description,
+      category: selectedCategory,
+      campus: selectedType === "죽전" ? "JUKJEON" : "CHEONAN",
+      // peopleLimit: Number(people),
+      // imageUrl: imageUri,
     };
 
     try {
@@ -170,6 +169,7 @@ export default function ClubFormScreen({ navigation, route }) {
             placeholder="모집인원을 입력해주세요"
             keyboardType="numeric"
             value={people}
+            onChangeText={setPeople}
           />
 
           {/* 이미지 업로드 */}

@@ -44,7 +44,8 @@ const CategoryListScreen = () => {
 
         <View style={styles.side} />
       </View>
-      {/* 개인 & 동아리 탭바 */}
+
+      {/* 죽전 & 천안 동아리 탭바 */}
       <View style={styles.tabContainer}>
         {types.map((type) => (
           <TouchableOpacity
@@ -62,9 +63,14 @@ const CategoryListScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
+
       {/* 탭별 컴포넌트 */}
-      {selectedType === "죽전" && <IndividualTab categoryId={categoryId} />}
-      {selectedType === "천안" && <ClubTab categoryId={categoryId} />}
+      {categoryId !== undefined && selectedType === "죽전" && (
+        <IndividualTab categoryId={categoryId} />
+      )}
+      {categoryId !== undefined && selectedType === "천안" && (
+        <ClubTab categoryId={categoryId} />
+      )}
     </View>
   );
 };

@@ -1,6 +1,5 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useState } from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,25 +9,59 @@ import {
   ScrollView,
   TextInput,
   Image,
+  Alert,
 } from "react-native";
 import { HomeStackParamList } from "../../App";
+import { updateActivity } from "../../utils/api";
 
-type MoimFormScreenNavigationProp = NativeStackNavigationProp<
-  HomeStackParamList,
-  "MoimForm"
->;
+type Props = NativeStackScreenProps<HomeStackParamList, "MoimForm">;
 
-type Props = {
-  navigation: MoimFormScreenNavigationProp;
-};
+export default function MoimFormScreen({ route, navigation }: Props) {
+  const meeting = route.params?.meeting;
+  const isEditing = !!meeting;
 
-export default function MoimFormScreen({ navigation }: Props) {
-  const [selectedType, setSelectedType] = useState<"정기" | "자유" | null>(
-    "정기"
-  );
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [meetingDate, setMeetingDate] = useState(new Date());
+  const [deadline, setDeadline] = useState(new Date());
+  const [maxParticipants, setMaxParticipants] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDeadlinePicker, setShowDeadlinePicker] = useState(false);
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showPicker, setShowPicker] = useState(false);
+  useEffect(() => {
+    if (isEditing) {
+      setTitle(meeting.title);
+      setDescription(meeting.description);
+      setMeetingDate(new Date(meeting.meetingDate));
+      setDeadline(new Date(meeting.deadline));
+      setMaxParticipants(meeting.maxParticipants.toString());
+    }
+  }, [isEditing, meeting]);
+
+  const handleUpdate = async () => {
+    if (!title || !description || !maxParticipants) {
+      Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
+      return;
+    }
+
+    const data = {
+      clubId: meeting.clubId, // clubId는 수정되지 않는다고 가정
+      title,
+      description,
+      meetingDate: meetingDate.toISOString(),
+      deadline: deadline.toISOString(),
+      maxParticipants: parseInt(maxParticipants, 10),
+    };
+
+    try {
+      await updateActivity(meeting.id, data);
+      Alert.alert("수정 완료", "모임이 성공적으로 수정되었습니다.");
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("오류", "모임 수정 중 오류가 발생했습니다.");
+    }
+  };
+
 
   return (
     <View style={styles.body}>
@@ -72,56 +105,83 @@ export default function MoimFormScreen({ navigation }: Props) {
           <TextInput
             style={styles.input}
             placeholder="제목을 입력해주세요"
-            keyboardType="default"
+            value={title}
+            onChangeText={setTitle}
           />
 
-          {/* 위치 */}
-          <Text style={styles.label}>위치</Text>
+          {/* 내용 */}
+          <Text style={styles.label}>내용</Text>
           <TextInput
             style={styles.input}
-            placeholder="위치를 입력해주세요"
-            autoCapitalize="none"
+            placeholder="내용을 입력해주세요"
+            value={description}
+            onChangeText={setDescription}
           />
 
           {/* 날짜 */}
           <Text style={styles.label}>날짜</Text>
           <TouchableOpacity
             style={styles.date}
-            onPress={() => setShowPicker(true)}
+            onPress={() => setShowDatePicker(true)}
           >
-            <Text style={{ color: selectedDate ? "#000" : "#999" }}>
-              {selectedDate
-                ? selectedDate.toISOString().split("T")[0]
-                : "날짜를 선택해주세요"}
+            <Text style={{ color: meetingDate ? "#000" : "#999" }}>
+              {meetingDate.toISOString().split("T")[0]}
             </Text>
           </TouchableOpacity>
 
-          {showPicker && (
+          {showDatePicker && (
             <DateTimePicker
-              value={selectedDate || new Date()}
+              value={meetingDate}
               mode="date"
               display="default"
               onChange={(event, date) => {
-                setShowPicker(false);
-                if (date) setSelectedDate(date);
+                setShowDatePicker(false);
+                if (date) setMeetingDate(date);
               }}
             />
           )}
 
-          {/* 내용 */}
-          <Text style={styles.label}>내용</Text>
-          <TextInput style={styles.input} placeholder="내용을 입력해주세요" />
+          {/* 마감일 */}
+          <Text style={styles.label}>마감일</Text>
+          <TouchableOpacity
+            style={styles.date}
+            onPress={() => setShowDeadlinePicker(true)}
+          >
+            <Text style={{ color: deadline ? "#000" : "#999" }}>
+              {deadline.toISOString().split("T")[0]}
+            </Text>
+          </TouchableOpacity>
+
+          {showDeadlinePicker && (
+            <DateTimePicker
+              value={deadline}
+              mode="date"
+              display="default"
+              onChange={(event, date) => {
+                setShowDeadlinePicker(false);
+                if (date) setDeadline(date);
+              }}
+            />
+          )}
 
           {/* 모집 인원 */}
           <Text style={styles.label}>모집 인원</Text>
           <TextInput
             style={styles.input}
             placeholder="모집인원을 입력해주세요"
+            keyboardType="numeric"
+            value={maxParticipants}
+            onChangeText={setMaxParticipants}
           />
 
           {/* 가입하기 버튼 */}
-          <TouchableOpacity style={styles.createMoimButton}>
-            <Text style={styles.createMoimText}>모임 개설하기</Text>
+          <TouchableOpacity
+            style={styles.createMoimButton}
+            onPress={isEditing ? handleUpdate : () => {}}
+          >
+            <Text style={styles.createMoimText}>
+              {isEditing ? "모임 수정하기" : "모임 개설하기"}
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>

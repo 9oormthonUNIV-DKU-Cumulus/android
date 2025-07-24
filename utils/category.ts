@@ -1,41 +1,14 @@
-// // label(한글) → id(영문)
-// export const categoryMap: Record<string, string> = {
-//   스포츠: "sports",
-//   "외국/언어": "language",
-//   댄스: "dance",
-//   봉사활동: "volunteer",
-//   자기계발: "self-dev",
-//   "독서/글": "book",
-//   "문화/공연": "festival",
-//   "음악/악기": "music",
-//   여행: "trip",
-//   "업종/직무": "work",
-// };
-
-// // id(영문) → label(한글)
-// export const categoryLabelMap: Record<string, string> = Object.entries(
-//   categoryMap
-// ).reduce((acc, [label, id]) => {
-//   acc[id] = label;
-//   return acc;
-// }, {} as Record<string, string>);
-
-// // 유틸 함수 예시
-// export const getCategoryId = (label: string) => categoryMap[label] || label;
-// export const getCategoryLabel = (id: string) => categoryLabelMap[id] || id;
-
-// 숫자 ID → 문자열 enum 매핑
-export const categoryIdToEnumMap: Record<number, string> = {
-  1: "SPORTS",
-  2: "LANGUAGE",
-  3: "DANCE",
-  4: "VOLUNTEER",
-  5: "SELF_DEV",
-  6: "BOOK",
-  7: "FESTIVAL",
-  8: "MUSIC",
-  9: "TRIP",
-  10: "WORK",
+export const categoryNameToId: Record<string, number> = {
+  SPORTS: 1,
+  LANGUAGE: 2,
+  DANCE: 3,
+  VOLUNTEER: 4,
+  "SELF-DEV": 5,
+  BOOK: 6,
+  FESTIVAL: 7,
+  MUSIC: 8,
+  TRIP: 9,
+  WORK: 10,
 };
 
 // 라벨 → ID
@@ -52,7 +25,8 @@ export const categoryLabelToIdMap: Record<string, number> = {
   "업종/직무": 10,
 };
 
-export const categoryIdToLabelMap: Record<number, string> = {
+// 숫자 categoryId → 한글 이름
+export const categoryIdLabelMap: Record<number, string> = {
   1: "스포츠",
   2: "외국/언어",
   3: "댄스",
@@ -65,8 +39,7 @@ export const categoryIdToLabelMap: Record<number, string> = {
   10: "업종/직무",
 };
 
-export const getCategoryLabel = (id: number): string =>
-  categoryIdToLabelMap[id] || "기타";
+export const getCategoryLabelById = (id: number): string =>
+  categoryIdLabelMap[id] || "기타";
 
 export const getCategoryId = (label: string) => categoryLabelToIdMap[label];
-export const getCategoryEnum = (id: number) => categoryIdToEnumMap[id];

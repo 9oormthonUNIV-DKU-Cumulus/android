@@ -2,7 +2,7 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getCategoryEnum, getCategoryId } from "../../utils/category";
+import { getCategoryId } from "../../utils/category";
 import JukjeonTab from "./tabs/JukjeonTab";
 import CheonanTab from "./tabs/CheonanTab";
 
@@ -16,7 +16,6 @@ const CategoryListScreen = () => {
   const { label } = route.params;
 
   const categoryId = getCategoryId(label);
-  const categoryEnum = getCategoryEnum(categoryId);
 
   // 전체,인기,최신 상태(기본 상태는 전체)
   // const [sort, setSort] = useState<"latest" | "popular" | "all">("all");

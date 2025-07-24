@@ -8,73 +8,7 @@ import { useEffect, useState } from "react";
 import SortButtons from "../../../components/SortButtons";
 import { api } from "../../../utils/api";
 import type { Club } from "../../../App";
-
-// 목업 데이터 (api 연결 시 삭제)
-// const individualData = [
-// {
-//   id: "1",
-//   title: "주말 풋살 모임",
-//   category: "스포츠",
-//   description: "수업 끝나고 7시부터 9시까지",
-//   member: "45",
-//   // imageUrl: "https://via.placeholder.com/150",
-//   imageUrl: require("../../../assets/mockImg/activity1.png"),
-// },
-// {
-//   id: "2",
-//   title: "골프 모임",
-//   category: "스포츠",
-//   description: "금요일 6시부터 자유롭게",
-//   member: "45",
-//   // imageUrl: "https://via.placeholder.com/150",
-//   imageUrl: require("../../../assets/mockImg/activity2.png"),
-// },
-// {
-//   id: "3",
-//   title: "단국대 축구 모임",
-//   category: "스포츠",
-//   description: "주말에 모임",
-//   member: "45",
-//   // imageUrl: "https://via.placeholder.com/150",
-//   imageUrl: require("../../../assets/mockImg/activity3.png"),
-// },
-// {
-//   id: "4",
-//   title: "테니스 모임",
-//   category: "스포츠",
-//   description: "주말 / 학교 테니스장",
-//   member: "45",
-//   // imageUrl: "https://via.placeholder.com/150",
-//   imageUrl: require("../../../assets/mockImg/activity4.png"),
-// },
-// {
-//   id: "5",
-//   title: "단국대 헬스 모임",
-//   category: "스포츠",
-//   description: "학교 근처 헬스장에 모임",
-//   member: "45",
-//   // imageUrl: "https://via.placeholder.com/150",
-//   imageUrl: require("../../../assets/mockImg/activity5.png"),
-// },
-// {
-//   id: "6",
-//   title: "필라테스 모임",
-//   category: "스포츠",
-//   description: "학교 앞 필라테스 장",
-//   member: "45",
-//   // imageUrl: "https://via.placeholder.com/150",
-//   imageUrl: require("../../../assets/mockImg/activity6.png"),
-// },
-// {
-//   id: "7",
-//   title: "단국대 조깅 모임",
-//   category: "스포츠",
-//   description: "금요일 7시 조깅",
-//   member: "45",
-//   // imageUrl: "https://via.placeholder.com/150",
-//   imageUrl: require("../../../assets/mockImg/activity7.png"),
-// },
-// ];
+import { categoryNameToId } from "../../../utils/category";
 
 // API 응답 타입 정의
 type ClubResponse = {
@@ -95,7 +29,7 @@ const JukjeonTab = ({ categoryId }: { categoryId: number }) => {
     const fetchClubs = async () => {
       try {
         const res = await api.get<ClubResponse>(
-          `/api/clubs?categoryId=${categoryId}&campus=JUKJEON`
+          `/api/clubs?categoryId=${categoryId}&campusVal=JUKJEON`
         );
 
         const clubs = res.data?.data;
@@ -131,7 +65,7 @@ const JukjeonTab = ({ categoryId }: { categoryId: number }) => {
   const mappedClubList: MatchingItem[] = clubList.map((club) => ({
     id: club.id.toString(),
     title: club.clubName,
-    category: club.category.toString(),
+    category: categoryNameToId[club.category.toUpperCase()] ?? 0,
     description: club.clubDesc,
     member: "0", // 멤버 수 정보 없을 경우 기본값
     imageUrl: require("../../../assets/images/camera.png"),

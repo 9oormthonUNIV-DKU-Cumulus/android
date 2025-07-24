@@ -62,6 +62,17 @@ export type PostType = {
   content: string;
 };
 
+// 동아리 타입
+type Club = {
+  id: number;
+  title: string;
+  description: string;
+  campus: "죽전" | "천안";
+  categoryId: number;
+  peopleLimit: number;
+  imageUrl: string | null;
+};
+
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
@@ -88,6 +99,10 @@ export type HomeStackParamList = {
   SearchScreen: undefined;
   AlbumUploadScreen: undefined;
   NotificationScreen: undefined;
+  CreateClub: {
+    mode: "edit" | "create";
+    club?: Club;
+  };
 };
 
 export type ClubManageStackParamList = {
@@ -140,6 +155,7 @@ function HomeStackScreen() {
         name="AlbumUploadScreen"
         component={AlbumUploadScreen}
       />
+      <HomeStack.Screen name="CreateClub" component={ClubFormScreen} />
     </HomeStack.Navigator>
   );
 }

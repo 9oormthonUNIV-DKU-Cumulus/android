@@ -39,29 +39,13 @@ const MEETING = {
 운동을 좋아하는 사람, 처음 시작하는 사람도 환영합니다.`,
   tags: ["단국대", "봉사", "20~30세"],
   leader: { name: "김단웅", intro: "안녕하세요 김단웅입니다" },
-  posts: 53,
-  schedules: [
-    {
-      date: "7월 16일",
-      title: "크루에게만 공개된 일정이에요",
-      status: "모집중",
-      time: "오전 08:12",
-      count: "3/20명",
-    },
-    {
-      date: "7월 18일",
-      title: "서울 반려동물 봉사활동 모집",
-      status: "모집중",
-      time: "오전 08:12",
-      count: "3/20명",
-    },
-  ],
 };
 
 /* ───────────────────────── 메인 컴포넌트 */
 export default function MeetingDetailScreen({ navigation }: Props) {
   const [tab, setTab] = useState<"홈" | "공지" | "일정" | "앨범">("홈");
   const [joined, setJoin] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false); // 모임 삭제,수정 팝업창 상태
 
   return (
     <SafeAreaView style={styles.root}>
@@ -75,6 +59,50 @@ export default function MeetingDetailScreen({ navigation }: Props) {
         >
           <Image source={BACK_ICON} style={styles.goBackImg} />
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.moreBtnContainer}
+          onPress={() => setMenuVisible(true)}
+        >
+          <Image
+            source={require("../../assets/images/more.png")}
+            style={styles.moreBtn}
+          />
+        </TouchableOpacity>
+
+        {/* 메뉴 팝업 */}
+        {menuVisible && (
+          <TouchableOpacity
+            style={styles.menuOverlay}
+            activeOpacity={1}
+            onPressOut={() => setMenuVisible(false)}
+          >
+            <View style={styles.menuBox}>
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(false);
+                  navigation.navigate("CreateClub", {
+                    mode: "edit",
+                    club: {
+                      id: 1,
+                      title: MEETING.name,
+                      description: MEETING.intro,
+                      campus: "죽전", // 또는 "천안" (데이터에 따라)
+                      categoryId: 1, // 예시 카테고리
+                      peopleLimit: 20,
+                      imageUrl: null, // 혹은 실제 이미지 URL
+                    },
+                  });
+                }}
+              >
+                <Text style={styles.menuItem}>동아리 수정하기</Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={styles.menuItem}>동아리 삭제하기</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* ─── 프로필 카드 ─── */}
@@ -151,6 +179,47 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     resizeMode: "contain",
+  },
+  moreBtnContainer: {
+    position: "absolute",
+    top: STATUS_BAR + 5,
+    right: 20,
+    zIndex: 10,
+  },
+  moreBtn: {
+    width: 18,
+    height: 18,
+    resizeMode: "contain",
+  },
+
+  menuOverlay: {
+    position: "absolute",
+    top: 30,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: "rgba(0,0,0,0.01)", // 외부 클릭 감지용
+    width: "100%",
+    height: "100%",
+  },
+
+  menuBox: {
+    position: "absolute",
+    top: 0,
+    right: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  menuItem: {
+    fontSize: 14,
+    paddingVertical: 8,
+    color: "#333",
   },
 
   /* 프로필 카드 */

@@ -9,10 +9,15 @@ import {
   ScrollView,
   TextInput,
   Image,
+  Alert,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
+import { api } from "../../utils/api";
 
-export default function ClubFormScreen({ navigation }) {
+export default function ClubFormScreen({ navigation, route }) {
+  const mode: "create" | "edit" = route?.params?.mode ?? "create";
+  const club = route?.params?.club ?? null;
+
   const [imageUri, setImageUri] = useState<string | null>(null);
   const handleSelectImage = () => {
     launchImageLibrary(
@@ -34,14 +39,47 @@ export default function ClubFormScreen({ navigation }) {
     );
   };
 
-  // 동아리 개설 api
-  const handleCreateClub = () => {};
+  // 동아리 개설 및 수정
+  const handleSubmit = async () => {
+    if (!title || !description || !people) {
+      Alert.alert("입력 오류", "모든 필드를 입력해주세요");
+      return;
+    }
+
+    const payload = {
+      title,
+      description,
+      categoryId: selectedCategory,
+      campus: selectedType,
+      poepleLimit: Number(people),
+      imageUrI: imageUri,
+    };
+
+    try {
+      if (mode === "edit") {
+        await api.patch(`/api/club/${club.id}`, payload);
+        Alert.alert("수정 완료", "동아리 정보가 수정되었습니다");
+      } else {
+        await api.post(`/api/club`, payload);
+        Alert.alert("개설 완료", "동아리가 성공적으로 개설되었습니다");
+      }
+      navigation.goBack();
+    } catch (err) {
+      console.error("저장 오류", err);
+      Alert.alert("오류", "서버 요청 중 문제가 발생했습니다");
+    }
+  };
 
   const [inputHeight, setInputHeight] = useState(60); // 내용 입력창 초기 높이
-  const [selectedCategory, setSelectedCategory] = useState<number>(1);
-  const [selectedType, setSelectedType] = useState<"죽전" | "천안" | null>(
-    "죽전"
+  const [selectedCategory, setSelectedCategory] = useState<number>(
+    club?.categoryId ?? 1
   );
+  const [selectedType, setSelectedType] = useState<"죽전" | "천안">(
+    club?.campus === "천안" ? "천안" : "죽전"
+  );
+  const [title, setTitle] = useState(club?.title ?? "");
+  const [description, setDescription] = useState(club?.description ?? "");
+  const [people, setPeople] = useState(club?.peopleLimit?.toString() ?? "");
 
   return (
     <View style={styles.body}>
@@ -57,7 +95,9 @@ export default function ClubFormScreen({ navigation }) {
         </View>
 
         <View style={styles.center}>
-          <Text style={styles.createMoimTitle}>동아리 개설</Text>
+          <Text style={styles.createMoimTitle}>
+            {mode === "edit" ? "동아리 수정" : "동아리 개설"}
+          </Text>
         </View>
 
         <View style={styles.side} />
@@ -86,6 +126,8 @@ export default function ClubFormScreen({ navigation }) {
             style={styles.input}
             placeholder="제목을 입력해주세요"
             keyboardType="default"
+            value={title}
+            onChangeText={setTitle}
           />
 
           {/* 카테고리 */}
@@ -113,6 +155,8 @@ export default function ClubFormScreen({ navigation }) {
             style={[styles.input, { height: inputHeight }]}
             placeholder="내용을 입력해주세요"
             multiline={true}
+            value={description}
+            onChangeText={setDescription}
             textAlignVertical="top"
             onContentSizeChange={(e) => {
               setInputHeight(e.nativeEvent.contentSize.height);
@@ -125,6 +169,7 @@ export default function ClubFormScreen({ navigation }) {
             style={styles.input}
             placeholder="모집인원을 입력해주세요"
             keyboardType="numeric"
+            value={people}
           />
 
           {/* 이미지 업로드 */}
@@ -152,9 +197,11 @@ export default function ClubFormScreen({ navigation }) {
           {/* 가입하기 버튼 */}
           <TouchableOpacity
             style={styles.createMoimButton}
-            onPress={() => handleCreateClub()}
+            onPress={() => handleSubmit()}
           >
-            <Text style={styles.createMoimText}>동아리 개설하기</Text>
+            <Text style={styles.createMoimText}>
+              {mode === "edit" ? "수정 완료" : "동아리 개설하기"}
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>

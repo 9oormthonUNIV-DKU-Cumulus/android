@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { Alert, View, Text, StyleSheet } from "react-native";
 import { MatchingListItem } from "../../../components/MatchingList";
 import { FlatList } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
 import SortButtons from "../../../components/SortButtons";
+import { deleteClub } from "../../../utils/api";
 
 // 목업 데이터 (api 연결 시 삭제)
 const clubData = [
@@ -111,6 +112,29 @@ const ClubTab = ({
     );
   };
 
+  const handleDelete = (id: string) => {
+    Alert.alert("동아리 삭제", "정말로 이 동아리를 삭제하시겠습니까?", [
+      {
+        text: "취소",
+        style: "cancel",
+      },
+      {
+        text: "삭제",
+        onPress: async () => {
+          try {
+            await deleteClub(parseInt(id, 10));
+            // 성공 시 목록 새로고침 (실제로는 API 재호출)
+            // setClubData((prev) => prev.filter((item) => item.id !== id));
+            Alert.alert("삭제 완료", "동아리가 성공적으로 삭제되었습니다.");
+          } catch (error) {
+            Alert.alert("오류", "동아리 삭제 중 오류가 발생했습니다.");
+          }
+        },
+        style: "destructive",
+      },
+    ]);
+  };
+
   return (
     <View style={styles.body}>
       <Text style={styles.contentTitle}>둘러보기</Text>
@@ -123,6 +147,8 @@ const ClubTab = ({
             item={item}
             likedItems={likedItems}
             onToggleLike={handleToggleLike}
+            onDelete={handleDelete}
+            isOwner={true} // 임시로 true 설정
           />
         )}
         contentContainerStyle={{ paddingBottom: 30 }}

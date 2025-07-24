@@ -1,11 +1,10 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import IndividualTab from "./tabs/IndividualTab";
-import ClubTab from "./tabs/ClubTab";
-// import SortButtons from "../../components/SortButtons";
 import { useNavigation } from "@react-navigation/native";
-import { getCategoryId } from "../../utils/category";
+import { getCategoryEnum, getCategoryId } from "../../utils/category";
+import JukjeonTab from "./tabs/JukjeonTab";
+import CheonanTab from "./tabs/CheonanTab";
 
 export type RootStackParamList = {
   CategoryListScreen: { label: string };
@@ -17,6 +16,7 @@ const CategoryListScreen = () => {
   const { label } = route.params;
 
   const categoryId = getCategoryId(label);
+  const categoryEnum = getCategoryEnum(categoryId);
 
   // 전체,인기,최신 상태(기본 상태는 전체)
   // const [sort, setSort] = useState<"latest" | "popular" | "all">("all");
@@ -66,10 +66,10 @@ const CategoryListScreen = () => {
 
       {/* 탭별 컴포넌트 */}
       {categoryId !== undefined && selectedType === "죽전" && (
-        <IndividualTab categoryId={categoryId} />
+        <JukjeonTab categoryId={categoryId} />
       )}
       {categoryId !== undefined && selectedType === "천안" && (
-        <ClubTab categoryId={categoryId} />
+        <CheonanTab categoryId={categoryId} />
       )}
     </View>
   );

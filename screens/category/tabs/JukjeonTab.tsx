@@ -76,7 +76,17 @@ import type { Club } from "../../../App";
 // },
 // ];
 
-const IndividualTab = ({ categoryId }: { categoryId: number }) => {
+// API 응답 타입 정의
+type ClubResponse = {
+  data: Club[];
+  success: boolean;
+  error?: {
+    code: string;
+    message: string;
+  };
+};
+
+const JukjeonTab = ({ categoryId }: { categoryId: number }) => {
   // 불러온 동아리 저장
   const [clubList, setClubList] = useState<Club[]>([]);
 
@@ -84,16 +94,22 @@ const IndividualTab = ({ categoryId }: { categoryId: number }) => {
   useEffect(() => {
     const fetchClubs = async () => {
       try {
-        const res = await api.get(`/api/clubs`, {
-          params: {
-            categoryId,
-            campusVal: "JUKJEON",
-            sort: "all",
-          },
-        });
-        setClubList(res.data as Club[]);
+        const res = await api.get<ClubResponse>(
+          `/api/clubs?categoryId=${categoryId}&campus=JUKJEON`
+        );
+
+        const clubs = res.data?.data;
+
+        if (Array.isArray(clubs)) {
+          setClubList(clubs);
+        } else {
+          console.warn("동아리 목록 배열이 아닙니다", clubs);
+          setClubList([]);
+        }
+        // console.log(res);
       } catch (err) {
         console.error("동아리 목록 불러오기 실패", err);
+        setClubList([]);
       }
     };
     fetchClubs();
@@ -142,7 +158,7 @@ const IndividualTab = ({ categoryId }: { categoryId: number }) => {
   );
 };
 
-export default IndividualTab;
+export default JukjeonTab;
 
 const styles = StyleSheet.create({
   body: {

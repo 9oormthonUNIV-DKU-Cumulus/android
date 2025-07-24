@@ -71,7 +71,7 @@ const clubData = [
   },
 ];
 
-const ClubTab = ({
+const CheonanTab = ({
   categoryId,
 }: // sort,
 {
@@ -132,7 +132,7 @@ const ClubTab = ({
   );
 };
 
-export default ClubTab;
+export default CheonanTab;
 
 const styles = StyleSheet.create({
   body: {

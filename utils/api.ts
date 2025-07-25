@@ -1,6 +1,6 @@
 // utils/api.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import axios, { AxiosRequestHeaders } from "axios";
 
 export const api = axios.create({
   // 백엔드 URL (EC2 퍼블릭 IP + 포트)
@@ -10,13 +10,15 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
-    return AsyncStorage.getItem("accessToken").then((token) => {
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    });
+  async (config) => {
+    const token = await AsyncStorage.getItem("accessToken");
+    if (!config.headers) {
+      config.headers = {} as AxiosRequestHeaders;
+    }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   },
   (error) => Promise.reject(error)
 );

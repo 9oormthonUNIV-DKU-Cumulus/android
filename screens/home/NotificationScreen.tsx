@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from "react-native";
 
-export default function NotificationScreen({ navigation }) {
+export default function NotificationScreen({ navigation }: any) {
   // 공지 더미 데이터
   const dummyNotices = [
     {

@@ -52,7 +52,11 @@ const firstRow = [
     label: "외국/언어",
     icon: require("../../../assets/images/language.png"),
   },
-  { id: 3, label: "댄스", icon: require("../../../assets/images/dance.png") },
+  {
+    id: 3,
+    label: "사진/영상",
+    icon: require("../../../assets/images/camera.png"),
+  },
   {
     id: 4,
     label: "봉사활동",

@@ -13,36 +13,6 @@ type Props = {
 };
 const AVATAR = require("../../assets/images/avatar-placeholder.png");
 
-/* ───────────────────────── 데모 데이터 */
-// const MEETING = {
-//   name: "단국대 스포츠 모임 1",
-//   members: 45,
-//   active: "26분 전 활동",
-//   intro: `"함께하는 스포츠, 함께 성장하는"
-// 우리 단국대학교 스포츠 모임은 다양한 운동과 스포츠 활동을 통해
-// 학생들이 건강하고 즐거운 대학 생활을 할 수 있는 모임입니다.
-// 운동을 좋아하는 사람, 처음 시작하는 사람도 환영합니다.`,
-//   tags: ["단국대", "봉사", "20~30세"],
-//   leader: { name: "김단웅", intro: "안녕하세요 김단웅입니다" },
-//   posts: 53,
-//   schedules: [
-//     {
-//       date: "7월 16일",
-//       title: "크루에게만 공개된 일정이에요",
-//       status: "모집중",
-//       time: "오전 08:12",
-//       count: "3/20명",
-//     },
-//     {
-//       date: "7월 18일",
-//       title: "서울 반려동물 봉사활동 모집",
-//       status: "모집중",
-//       time: "오전 08:12",
-//       count: "3/20명",
-//     },
-//   ],
-// };
-
 export default function HomeTabContent({ club }: Props) {
   return (
     <ScrollView style={styles.content}>
@@ -54,28 +24,27 @@ export default function HomeTabContent({ club }: Props) {
 
       {/* 모임장 */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>모임장</Text>
+        <Text style={styles.sectionTitle}>회장</Text>
         <View style={styles.leaderRow}>
           <Image source={AVATAR} style={styles.leaderAvatar} />
           <View>
-            {/* <Text style={styles.leaderName}>{MEETING.leader.name}</Text> */}
-            {/* <Text style={styles.leaderIntro}>{MEETING.leader.intro}</Text> 개설자 전공으로 대체 */}
+            <Text style={styles.leaderName}>{club.leader.memberName}</Text>
+            {/* <Text style={styles.leaderIntro}>{MEETING.leader.intro}</Text> 개설자 연락처로 대체 */}
           </View>
         </View>
       </View>
 
       {/* 멤버 */}
       <View style={styles.section}>
-        <SectionHeader title={`동아리 멤버 `} />
-        {[1, 2, 3].map((i) => (
-          <View key={i} style={styles.memberItem}>
-            <Image source={AVATAR} style={styles.memberAvatar} />
-            <View>
-              <Text style={styles.memberName}>크루 멤버 {i}</Text>
-              <Text style={styles.memberIntro}>크루 소개글</Text>
-            </View>
+        <SectionHeader title={`동아리 멤버 ${club.memberCount}`} />
+
+        <View style={styles.memberItem}>
+          <Image source={AVATAR} style={styles.memberAvatar} />
+          <View>
+            <Text style={styles.memberName}>크루 멤버</Text>
+            {/* <Text style={styles.memberIntro}>크루 소개글</Text> */}
           </View>
-        ))}
+        </View>
       </View>
     </ScrollView>
   );

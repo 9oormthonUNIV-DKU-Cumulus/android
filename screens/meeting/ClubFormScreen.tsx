@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import { api } from "../../utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ClubFormScreen({ navigation, route }) {
   const { mode = "create", club = null } = route?.params ?? {};
@@ -40,6 +41,9 @@ export default function ClubFormScreen({ navigation, route }) {
 
   // 동아리 개설 및 수정
   const handleSubmit = async () => {
+    const userStr = await AsyncStorage.getItem("user");
+    const currentUser = userStr ? JSON.parse(userStr) : null;
+
     if (!title || !description) {
       Alert.alert("입력 오류", "모든 필드를 입력해주세요");
       return;
@@ -50,7 +54,7 @@ export default function ClubFormScreen({ navigation, route }) {
       clubDesc: description,
       category: selectedCategory,
       campus: selectedType === "죽전" ? "JUKJEON" : "CHEONAN",
-      // userId: currentUser.id,
+      userId: currentUser?.id,
       // peopleLimit: Number(people),
       // imageUrl: imageUri,
     };

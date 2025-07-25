@@ -64,6 +64,8 @@ export type PostType = {
 
 // 동아리 타입
 export type Club = {
+  memberCount: any;
+  leader: any;
   category: any;
   clubDesc: any;
   clubName: string;

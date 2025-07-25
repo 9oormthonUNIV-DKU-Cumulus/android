@@ -141,7 +141,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
         <View style={{ flex: 1 }}>
           <Text style={styles.meetingName}>{club?.clubName}</Text>
           <Text style={styles.memberLine}>
-            <Text style={styles.memberGrey}>멤버 {club?.peopleLimit}</Text>
+            <Text style={styles.memberGrey}>멤버 {club?.memberCount}</Text>
           </Text>
         </View>
       </View>

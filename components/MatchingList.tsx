@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../screens/category/CategoryListScreen"; // 여기 경로는 MatchingListItem 기준
 
 export type MatchingItem = {
+  memberCount: number;
   id: string;
   title: string;
   category: number;
@@ -64,7 +65,7 @@ export const MatchingListItem = ({
         <Text style={styles.text}>{item.description}</Text>
         <View style={styles.row}>
           <Text style={styles.text}>{getCategoryLabelById(item.category)}</Text>
-          <Text style={styles.text}>멤버 {item.member}</Text>
+          <Text style={styles.text}>멤버 {item.memberCount}</Text>
         </View>
       </TouchableOpacity>
     </View>

@@ -49,10 +49,15 @@ export default function LoginScreen({ navigation }) {
       await AsyncStorage.setItem("accessToken", accessToken);
       await AsyncStorage.setItem("refreshToken", refreshToken);
 
-      console.log("로그인 성공 및 토큰 저장 완료");
+      // setErrorMessage("");
+      const meRes = await api.get("/api/user/me");
 
-      setErrorMessage("");
+      await AsyncStorage.setItem("user", JSON.stringify(meRes.data.data));
 
+      const storedUser = await AsyncStorage.getItem("user");
+      console.log("저장된 사용자 정보:", storedUser);
+
+      console.log("로그인 성공 및 토큰 및 사용자 정보 저장 완료");
       // 로그인 성공 시 홈으로 이동
       navigation.replace("Main");
     } catch (err) {

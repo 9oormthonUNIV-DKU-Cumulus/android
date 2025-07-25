@@ -67,7 +67,7 @@ const CheonanTab = ({ categoryId }: { categoryId: number }) => {
     title: club.clubName,
     category: categoryNameToId[club.category.toUpperCase()] ?? 0,
     description: club.clubDesc,
-    member: "0", // 멤버 수 정보 없을 경우 기본값
+    memberCount: club.memberCount,
     imageUrl: require("../../../assets/images/book.png"),
   }));
 

@@ -50,6 +50,7 @@ export default function ClubFormScreen({ navigation, route }) {
       clubDesc: description,
       category: selectedCategory,
       campus: selectedType === "죽전" ? "JUKJEON" : "CHEONAN",
+      // userId: currentUser.id,
       // peopleLimit: Number(people),
       // imageUrl: imageUri,
     };

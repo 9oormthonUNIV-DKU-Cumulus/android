@@ -89,7 +89,7 @@ export type RootStackParamList = {
 export type HomeStackParamList = {
   HomeScreen: undefined;
   CategoryListScreen: { label: string; categoryId: number };
-  MeetingDetail: undefined;
+  MeetingDetail: { id: number };
   JoinConfirm: undefined;
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달

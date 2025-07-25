@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -11,11 +11,13 @@ import {
   Dimensions,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { HomeStackParamList } from "../../App";
+import { Club, HomeStackParamList } from "../../App";
 import PlanTabContent from "./PlanTabContent";
 import NoticeTabContent from "./NoticeTabContent";
 import HomeTabContent from "./HomeTabContent";
 import AlbumTabContent from "./AlbumTabContent";
+import { useRoute } from "@react-navigation/native";
+import { api } from "../../utils/api";
 
 /* ───────────────────────── 상수 / 리소스 */
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
@@ -41,11 +43,39 @@ const MEETING = {
   leader: { name: "김단웅", intro: "안녕하세요 김단웅입니다" },
 };
 
+// API 응답 타입 정의
+type ClubResponse = {
+  data: Club;
+  success: boolean;
+  error?: {
+    code: string;
+    message: string;
+  };
+};
+
 /* ───────────────────────── 메인 컴포넌트 */
 export default function MeetingDetailScreen({ navigation }: Props) {
   const [tab, setTab] = useState<"홈" | "공지" | "일정" | "앨범">("홈");
   const [joined, setJoin] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false); // 모임 삭제,수정 팝업창 상태
+
+  const route = useRoute();
+  const { id } = route.params as { id: string };
+
+  const [club, setClub] = useState<Club | null>(null);
+
+  useEffect(() => {
+    const fetchClub = async () => {
+      try {
+        const res = await api.get<ClubResponse>(`/api/club/${id}`);
+        setClub(res.data.data); // 서버 응답 구조에 맞춰서
+      } catch (err) {
+        console.error("동아리 정보 가져오기 실패:", err);
+      }
+    };
+
+    fetchClub();
+  }, [id]);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -109,9 +139,9 @@ export default function MeetingDetailScreen({ navigation }: Props) {
       <View style={styles.profileCard}>
         <Image source={AVATAR} style={styles.avatar} />
         <View style={{ flex: 1 }}>
-          <Text style={styles.meetingName}>{MEETING.name}</Text>
+          <Text style={styles.meetingName}>{club?.clubName}</Text>
           <Text style={styles.memberLine}>
-            <Text style={styles.memberGrey}>멤버 {MEETING.members}</Text>
+            <Text style={styles.memberGrey}>멤버 {club?.peopleLimit}</Text>
           </Text>
         </View>
       </View>
@@ -133,7 +163,7 @@ export default function MeetingDetailScreen({ navigation }: Props) {
       </View>
 
       {/* ─── 본문 ─── */}
-      {tab === "홈" && <HomeTabContent />}
+      {tab === "홈" && club !== null && <HomeTabContent club={club} />}
       {tab === "일정" && <PlanTabContent />}
       {tab === "공지" && <NoticeTabContent />}
       {tab === "앨범" && <AlbumTabContent />}

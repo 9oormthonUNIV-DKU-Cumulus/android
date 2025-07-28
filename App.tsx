@@ -62,6 +62,22 @@ export type PostType = {
   content: string;
 };
 
+// 동아리 타입
+export type Club = {
+  memberCount: any;
+  leader: any;
+  category: any;
+  clubDesc: any;
+  clubName: string;
+  id: number;
+  title: string;
+  description: string;
+  campus: "죽전" | "천안";
+  categoryId: number;
+  peopleLimit: number;
+  imageUrl: string | null;
+};
+
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
@@ -74,8 +90,8 @@ export type RootStackParamList = {
 };
 export type HomeStackParamList = {
   HomeScreen: undefined;
-  CategoryListScreen: { label?: string } | undefined;
-  MeetingDetail: { meeting: { id: number; clubId: number } };
+  CategoryListScreen: { label: string; categoryId: number };
+  MeetingDetail: { id: number };
   JoinConfirm: undefined;
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
@@ -89,6 +105,10 @@ export type HomeStackParamList = {
   SearchScreen: undefined;
   AlbumUploadScreen: undefined;
   NotificationScreen: undefined;
+  CreateClub: {
+    mode: "edit" | "create";
+    club?: Club;
+  };
 };
 
 export type ClubManageStackParamList = {
@@ -142,6 +162,7 @@ function HomeStackScreen() {
         name="AlbumUploadScreen"
         component={AlbumUploadScreen}
       />
+      <HomeStack.Screen name="CreateClub" component={ClubFormScreen} />
     </HomeStack.Navigator>
   );
 }

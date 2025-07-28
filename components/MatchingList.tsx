@@ -1,13 +1,14 @@
 import { TouchableOpacity, Text, Image, StyleSheet, View } from "react-native";
-import { getCategoryLabel } from "../utils/category";
+import { getCategoryLabelById } from "../utils/category";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../screens/category/CategoryListScreen"; // 여기 경로는 MatchingListItem 기준
 
 export type MatchingItem = {
+  memberCount: number;
   id: string;
   title: string;
-  category: string;
+  category: number;
   description: string;
   member: string;
   imageUrl: string | number;
@@ -67,8 +68,8 @@ export const MatchingListItem = ({
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.text}>{item.description}</Text>
         <View style={styles.row}>
-          <Text style={styles.text}>{getCategoryLabel(item.category)}</Text>
-          <Text style={styles.text}>멤버 {item.member}</Text>
+          <Text style={styles.text}>{getCategoryLabelById(item.category)}</Text>
+          <Text style={styles.text}>멤버 {item.memberCount}</Text>
         </View>
       </TouchableOpacity>
       {isOwner && (

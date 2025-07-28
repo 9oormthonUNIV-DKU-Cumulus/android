@@ -18,7 +18,7 @@ const screenWidth = Dimensions.get("window").width;
 const recommendedData: MatchingItem[] = [
   {
     id: "1",
-    title: "주말 풋살 모임",
+    title: "런닝 동아리",
     category: "스포츠",
     description: "수업 끝나고 7시부터 9시까지",
     member: "45",
@@ -27,7 +27,7 @@ const recommendedData: MatchingItem[] = [
   },
   {
     id: "2",
-    title: "골프 모임",
+    title: "밴드 동아리",
     category: "스포츠",
     description: "금요일 6시부터 자유롭게",
     member: "45",
@@ -36,48 +36,12 @@ const recommendedData: MatchingItem[] = [
   },
   {
     id: "3",
-    title: "단국대 축구 모임",
+    title: "댄스 동아리",
     category: "스포츠",
     description: "주말에 모임",
     member: "45",
     // imageUrl: "https://via.placeholder.com/150",
     imageUrl: require("../../../assets/mockImg/activity3.png"),
-  },
-  {
-    id: "4",
-    title: "테니스 모임",
-    category: "스포츠",
-    description: "주말 / 학교 테니스장",
-    member: "45",
-    // imageUrl: "https://via.placeholder.com/150",
-    imageUrl: require("../../../assets/mockImg/activity4.png"),
-  },
-  {
-    id: "5",
-    title: "단국대 헬스 모임",
-    category: "스포츠",
-    description: "학교 근처 헬스장에 모임",
-    member: "45",
-    // imageUrl: "https://via.placeholder.com/150",
-    imageUrl: require("../../../assets/mockImg/activity5.png"),
-  },
-  {
-    id: "6",
-    title: "필라테스 모임",
-    category: "스포츠",
-    description: "학교 앞 필라테스 장",
-    member: "45",
-    // imageUrl: "https://via.placeholder.com/150",
-    imageUrl: require("../../../assets/mockImg/activity6.png"),
-  },
-  {
-    id: "7",
-    title: "단국대 조깅 모임",
-    category: "스포츠",
-    description: "금요일 7시 조깅",
-    member: "45",
-    // imageUrl: "https://via.placeholder.com/150",
-    imageUrl: require("../../../assets/mockImg/activity7.png"),
   },
 ];
 
@@ -88,7 +52,11 @@ const firstRow = [
     label: "외국/언어",
     icon: require("../../../assets/images/language.png"),
   },
-  { id: 3, label: "댄스", icon: require("../../../assets/images/dance.png") },
+  {
+    id: 3,
+    label: "사진/영상",
+    icon: require("../../../assets/images/camera.png"),
+  },
   {
     id: 4,
     label: "봉사활동",

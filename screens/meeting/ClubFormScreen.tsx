@@ -12,50 +12,34 @@ import {
   Alert,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { HomeStackParamList } from "../../App";
-import { updateClub } from "../../utils/api";
+import { api } from "../../utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type Props = NativeStackScreenProps<HomeStackParamList, "ClubForm">;
+export default function ClubFormScreen({ navigation, route }) {
+  const { mode = "create", club = null } = route?.params ?? {};
 
-export default function ClubFormScreen({ route, navigation }: Props) {
-  const club = route.params?.club;
-  const isEditing = !!club;
-
-  const [clubName, setClubName] = useState("");
-  const [clubDesc, setClubDesc] = useState("");
-  const [campus, setCampus] = useState<"죽전" | "천안">("죽전");
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [inputHeight, setInputHeight] = useState(60); // 내용 입력창 초기 높이
+  const [selectedCategory, setSelectedCategory] = useState<number>(
+    club?.categoryId ?? 1
+  );
+  const [selectedType, setSelectedType] = useState<"죽전" | "천안">(
+    club?.campus === "CHEONAN" ? "천안" : "죽전"
+  );
+  const [title, setTitle] = useState(club?.clubName ?? "");
+  const [description, setDescription] = useState(club?.clubDesc ?? "");
+  const [people, setPeople] = useState(club?.peopleLimit?.toString() ?? "");
 
   useEffect(() => {
-    if (isEditing) {
-      setClubName(club.clubName);
-      setClubDesc(club.clubDesc);
-      setCampus(club.campus === "CHEONAN" ? "천안" : "죽전");
+    if (mode === "edit" && club) {
+      setTitle(club.clubName);
+      setDescription(club.clubDesc);
+      setSelectedType(club.campus === "CHEONAN" ? "천안" : "죽전");
       setImageUri(club.imageUrl);
+      setPeople(club.peopleLimit?.toString() ?? "");
+      setSelectedCategory(club.categoryId ?? 1);
     }
-  }, [isEditing, club]);
-
-  const handleUpdate = async () => {
-    if (!clubName || !clubDesc) {
-      Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
-      return;
-    }
-
-    const data = {
-      clubName,
-      clubDesc,
-      campus: campus === "천안" ? "CHEONAN" : "JUKJEON",
-    };
-
-    try {
-      await updateClub(club.id, data);
-      Alert.alert("수정 완료", "동아리가 성공적으로 수정되었습니다.");
-      navigation.goBack();
-    } catch (error) {
-      Alert.alert("오류", "동아리 수정 중 오류가 발생했습니다.");
-    }
-  };
+  }, [mode, club]);
 
   const handleSelectImage = () => {
     launchImageLibrary(
@@ -77,6 +61,40 @@ export default function ClubFormScreen({ route, navigation }: Props) {
     );
   };
 
+  // 동아리 개설 및 수정
+  const handleSubmit = async () => {
+    const userStr = await AsyncStorage.getItem("user");
+    const currentUser = userStr ? JSON.parse(userStr) : null;
+
+    if (!title || !description) {
+      Alert.alert("입력 오류", "모든 필드를 입력해주세요");
+      return;
+    }
+
+    const payload = {
+      clubName: title,
+      clubDesc: description,
+      category: selectedCategory,
+      campus: selectedType === "죽전" ? "JUKJEON" : "CHEONAN",
+      userId: currentUser?.id,
+      peopleLimit: Number(people),
+      // imageUrl: imageUri, // TODO: image upload
+    };
+
+    try {
+      if (mode === "edit") {
+        await api.patch(`/api/club/${club.id}`, payload);
+        Alert.alert("수정 완료", "동아리 정보가 수정되었습니다");
+      } else {
+        await api.post(`/api/club`, payload);
+        Alert.alert("개설 완료", "동아리가 성공적으로 개설되었습니다");
+      }
+      navigation.goBack();
+    } catch (err) {
+      console.error("저장 오류", err);
+      Alert.alert("오류", "서버 요청 중 문제가 발생했습니다");
+    }
+  };
 
   return (
     <View style={styles.body}>
@@ -92,7 +110,9 @@ export default function ClubFormScreen({ route, navigation }: Props) {
         </View>
 
         <View style={styles.center}>
-          <Text style={styles.createMoimTitle}>동아리 개설</Text>
+          <Text style={styles.createMoimTitle}>
+            {mode === "edit" ? "동아리 수정" : "동아리 개설"}
+          </Text>
         </View>
 
         <View style={styles.side} />
@@ -105,13 +125,13 @@ export default function ClubFormScreen({ route, navigation }: Props) {
           <View style={styles.checkboxGroup}>
             <Checkbox
               label="죽전"
-              selected={campus === "죽전"}
-              onPress={() => setCampus("죽전")}
+              selected={selectedType === "죽전"}
+              onPress={() => setSelectedType("죽전")}
             />
             <Checkbox
               label="천안"
-              selected={campus === "천안"}
-              onPress={() => setCampus("천안")}
+              selected={selectedType === "천안"}
+              onPress={() => setSelectedType("천안")}
             />
           </View>
 
@@ -119,9 +139,10 @@ export default function ClubFormScreen({ route, navigation }: Props) {
           <Text style={styles.label}>동아리 이름</Text>
           <TextInput
             style={styles.input}
-            placeholder="동아리 이름을 입력해주세요"
-            value={clubName}
-            onChangeText={setClubName}
+            placeholder="제목을 입력해주세요"
+            keyboardType="default"
+            value={title}
+            onChangeText={setTitle}
           />
 
           {/* 내용 */}
@@ -130,9 +151,22 @@ export default function ClubFormScreen({ route, navigation }: Props) {
             style={[styles.input, { height: 100 }]}
             placeholder="동아리 설명을 입력해주세요"
             multiline={true}
+            value={description}
+            onChangeText={setDescription}
             textAlignVertical="top"
-            value={clubDesc}
-            onChangeText={setClubDesc}
+            onContentSizeChange={(e) => {
+              setInputHeight(e.nativeEvent.contentSize.height);
+            }}
+          />
+
+          {/* 모집 인원 */}
+          <Text style={styles.label}>모집 인원</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="모집인원을 입력해주세요"
+            keyboardType="numeric"
+            value={people}
+            onChangeText={setPeople}
           />
 
           {/* 이미지 업로드 */}
@@ -160,10 +194,10 @@ export default function ClubFormScreen({ route, navigation }: Props) {
           {/* 가입하기 버튼 */}
           <TouchableOpacity
             style={styles.createMoimButton}
-            onPress={isEditing ? handleUpdate : () => {}}
+            onPress={() => handleSubmit()}
           >
             <Text style={styles.createMoimText}>
-              {isEditing ? "동아리 수정하기" : "동아리 개설하기"}
+              {mode === "edit" ? "수정 완료" : "동아리 개설하기"}
             </Text>
           </TouchableOpacity>
         </ScrollView>

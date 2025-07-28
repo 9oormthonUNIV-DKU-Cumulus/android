@@ -1,21 +1,35 @@
+// components/SortButtons.tsx
 import { useState } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 
-const SORT_OPTIONS = ["전체", "추천", "인기", "최신"];
+type SortButtonsProps = {
+  options?: string[];
+  defaultValue?: string;
+  onChange?: (selected: string) => void;
+};
 
-const SortButtons = () => {
-  const [selectedSort, setSelectedSort] = useState("전체");
+const SortButtons = ({
+  options = ["전체", "인기", "최신"],
+  defaultValue = "전체",
+  onChange,
+}: SortButtonsProps) => {
+  const [selectedSort, setSelectedSort] = useState(defaultValue);
+
+  const handlePress = (option: string) => {
+    setSelectedSort(option);
+    onChange?.(option); // 선택값 전달
+  };
 
   return (
     <View style={styles.row}>
-      {SORT_OPTIONS.map((option) => (
+      {options.map((option) => (
         <TouchableOpacity
           key={option}
           style={[
             styles.button,
             selectedSort === option && styles.selectedButton,
           ]}
-          onPress={() => setSelectedSort(option)}
+          onPress={() => handlePress(option)}
         >
           <Text
             style={selectedSort === option ? styles.selectedText : styles.text}

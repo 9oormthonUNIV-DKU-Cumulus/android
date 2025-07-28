@@ -1,11 +1,10 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import IndividualTab from "./tabs/IndividualTab";
-import ClubTab from "./tabs/ClubTab";
-// import SortButtons from "../../components/SortButtons";
 import { useNavigation } from "@react-navigation/native";
 import { getCategoryId } from "../../utils/category";
+import JukjeonTab from "./tabs/JukjeonTab";
+import CheonanTab from "./tabs/CheonanTab";
 
 export type RootStackParamList = {
   CategoryListScreen: { label: string };
@@ -44,7 +43,8 @@ const CategoryListScreen = () => {
 
         <View style={styles.side} />
       </View>
-      {/* 개인 & 동아리 탭바 */}
+
+      {/* 죽전 & 천안 동아리 탭바 */}
       <View style={styles.tabContainer}>
         {types.map((type) => (
           <TouchableOpacity
@@ -62,9 +62,14 @@ const CategoryListScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
+
       {/* 탭별 컴포넌트 */}
-      {selectedType === "죽전" && <IndividualTab categoryId={categoryId} />}
-      {selectedType === "천안" && <ClubTab categoryId={categoryId} />}
+      {categoryId !== undefined && selectedType === "죽전" && (
+        <JukjeonTab categoryId={categoryId} />
+      )}
+      {categoryId !== undefined && selectedType === "천안" && (
+        <CheonanTab categoryId={categoryId} />
+      )}
     </View>
   );
 };

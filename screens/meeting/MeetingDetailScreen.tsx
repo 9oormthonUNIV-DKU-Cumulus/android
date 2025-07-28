@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -9,15 +9,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Alert,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { HomeStackParamList } from "../../App";
+import { Club, HomeStackParamList } from "../../App";
 import PlanTabContent from "./PlanTabContent";
 import NoticeTabContent from "./NoticeTabContent";
 import HomeTabContent from "./HomeTabContent";
 import AlbumTabContent from "./AlbumTabContent";
-import { deleteActivity } from "../../utils/api";
-import { Alert } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import { api } from "../../utils/api";
 
 /* ───────────────────────── 상수 / 리소스 */
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
@@ -31,33 +32,14 @@ const BACK_ICON = require("../../assets/images/go-back-white.png");
 /* ───────────────────────── 타입 */
 type Props = NativeStackScreenProps<HomeStackParamList, "MeetingDetail">;
 
-/* ───────────────────────── 데모 데이터 */
-const MEETING = {
-  name: "단국대 스포츠 모임 1",
-  members: 45,
-  intro: `"함께하는 스포츠, 함께 성장하는"
-우리 단국대학교 스포츠 모임은 다양한 운동과 스포츠 활동을 통해
-학생들이 건강하고 즐거운 대학 생활을 할 수 있는 모임입니다.
-운동을 좋아하는 사람, 처음 시작하는 사람도 환영합니다.`,
-  tags: ["단국대", "봉사", "20~30세"],
-  leader: { name: "김단웅", intro: "안녕하세요 김단웅입니다" },
-  posts: 53,
-  schedules: [
-    {
-      date: "7월 16일",
-      title: "크루에게만 공개된 일정이에요",
-      status: "모집중",
-      time: "오전 08:12",
-      count: "3/20명",
-    },
-    {
-      date: "7월 18일",
-      title: "서울 반려동물 봉사활동 모집",
-      status: "모집중",
-      time: "오전 08:12",
-      count: "3/20명",
-    },
-  ],
+// API 응답 타입 정의
+type ClubResponse = {
+  data: Club;
+  success: boolean;
+  error?: {
+    code: string;
+    message: string;
+  };
 };
 
 /* ───────────────────────── 메인 컴포넌트 */
@@ -65,8 +47,24 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
   const [tab, setTab] = useState<"홈" | "공지" | "일정" | "앨범">("홈");
   const [joined, setJoin] = useState(false);
   const [isOwner, setIsOwner] = useState(true); // 임시로 true로 설정
+  const [menuVisible, setMenuVisible] = useState(false); // 모임 삭제,수정 팝업창 상태
 
-  const { id, clubId } = route.params.meeting;
+  const { id } = route.params;
+
+  const [club, setClub] = useState<Club | null>(null);
+
+  useEffect(() => {
+    const fetchClub = async () => {
+      try {
+        const res = await api.get<ClubResponse>(`/api/club/${id}`);
+        setClub(res.data.data);
+      } catch (err) {
+        console.error("동아리 정보 가져오기 실패:", err);
+      }
+    };
+
+    fetchClub();
+  }, [id]);
 
   const handleDelete = () => {
     Alert.alert("모임 삭제", "정말로 이 모임을 삭제하시겠습니까?", [
@@ -78,7 +76,7 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
         text: "삭제",
         onPress: async () => {
           try {
-            await deleteActivity(id, clubId);
+            await api.delete(`/api/club/${id}`);
             Alert.alert("삭제 완료", "모임이 성공적으로 삭제되었습니다.");
             navigation.goBack();
           } catch (error) {
@@ -102,15 +100,51 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
         >
           <Image source={BACK_ICON} style={styles.goBackImg} />
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.moreBtnContainer}
+          onPress={() => setMenuVisible(true)}
+        >
+          <Image
+            source={require("../../assets/images/more.png")}
+            style={styles.moreBtn}
+          />
+        </TouchableOpacity>
+
+        {/* 메뉴 팝업 */}
+        {menuVisible && (
+          <TouchableOpacity
+            style={styles.menuOverlay}
+            activeOpacity={1}
+            onPressOut={() => setMenuVisible(false)}
+          >
+            <View style={styles.menuBox}>
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(false);
+                  navigation.navigate("CreateClub", {
+                    mode: "edit",
+                    club: club,
+                  });
+                }}
+              >
+                <Text style={styles.menuItem}>동아리 수정하기</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleDelete}>
+                <Text style={styles.menuItem}>동아리 삭제하기</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* ─── 프로필 카드 ─── */}
       <View style={styles.profileCard}>
         <Image source={AVATAR} style={styles.avatar} />
         <View style={{ flex: 1 }}>
-          <Text style={styles.meetingName}>{MEETING.name}</Text>
+          <Text style={styles.meetingName}>{club?.clubName}</Text>
           <Text style={styles.memberLine}>
-            <Text style={styles.memberGrey}>멤버 {MEETING.members}</Text>
+            <Text style={styles.memberGrey}>멤버 {club?.memberCount}</Text>
           </Text>
         </View>
       </View>
@@ -132,7 +166,7 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
       </View>
 
       {/* ─── 본문 ─── */}
-      {tab === "홈" && <HomeTabContent />}
+      {tab === "홈" && club !== null && <HomeTabContent club={club} />}
       {tab === "일정" && <PlanTabContent />}
       {tab === "공지" && <NoticeTabContent />}
       {tab === "앨범" && <AlbumTabContent />}
@@ -144,22 +178,7 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
             <Image source={HEART_ICON} style={styles.likeIcon} />
           </TouchableOpacity>
 
-          {isOwner ? (
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <TouchableOpacity
-                style={[styles.joinBtn, { flex: 1, marginRight: 8 }]}
-                onPress={() => navigation.navigate("MoimForm", { meeting })}
-              >
-                <Text style={styles.joinTxt}>수정하기</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.joinBtn, styles.deleteBtn, { flex: 1, marginLeft: 8 }]}
-                onPress={handleDelete}
-              >
-                <Text style={styles.joinTxt}>삭제하기</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
+          {!isOwner && (
             <TouchableOpacity
               style={styles.joinBtn}
               onPress={() => navigation.navigate("MeetingApply")}
@@ -174,8 +193,6 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
     </SafeAreaView>
   );
 }
-
-/* ───────────────────────── 홈 탭 내용 */
 
 /* ───────────────────────── 스타일 */
 const GREY = "#6B7280";
@@ -195,6 +212,47 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     resizeMode: "contain",
+  },
+  moreBtnContainer: {
+    position: "absolute",
+    top: STATUS_BAR + 5,
+    right: 20,
+    zIndex: 10,
+  },
+  moreBtn: {
+    width: 18,
+    height: 18,
+    resizeMode: "contain",
+  },
+
+  menuOverlay: {
+    position: "absolute",
+    top: 30,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: "rgba(0,0,0,0.01)", // 외부 클릭 감지용
+    width: "100%",
+    height: "100%",
+  },
+
+  menuBox: {
+    position: "absolute",
+    top: 0,
+    right: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  menuItem: {
+    fontSize: 14,
+    paddingVertical: 8,
+    color: "#333",
   },
 
   /* 프로필 카드 */

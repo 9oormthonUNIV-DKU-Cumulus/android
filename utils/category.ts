@@ -1,25 +1,45 @@
-// label(한글) → id(영문)
-export const categoryMap: Record<string, string> = {
-  스포츠: "sports",
-  "외국/언어": "language",
-  댄스: "dance",
-  봉사활동: "volunteer",
-  자기계발: "self-dev",
-  "독서/글": "book",
-  "문화/공연": "festival",
-  "음악/악기": "music",
-  여행: "trip",
-  "업종/직무": "work",
+export const categoryNameToId: Record<string, number> = {
+  SPORTS: 1,
+  LANGUAGE: 2,
+  camera: 3,
+  VOLUNTEER: 4,
+  "SELF-DEV": 5,
+  BOOK: 6,
+  FESTIVAL: 7,
+  MUSIC: 8,
+  TRIP: 9,
+  WORK: 10,
 };
 
-// id(영문) → label(한글)
-export const categoryLabelMap: Record<string, string> = Object.entries(
-  categoryMap
-).reduce((acc, [label, id]) => {
-  acc[id] = label;
-  return acc;
-}, {} as Record<string, string>);
+// 라벨 → ID
+export const categoryLabelToIdMap: Record<string, number> = {
+  스포츠: 1,
+  "외국/언어": 2,
+  "사진 /영상": 3,
+  봉사활동: 4,
+  자기계발: 5,
+  "독서/글": 6,
+  "문화/댄스": 7,
+  "음악/악기": 8,
+  여행: 9,
+  "업종/직무": 10,
+};
 
-// 유틸 함수 예시
-export const getCategoryId = (label: string) => categoryMap[label] || label;
-export const getCategoryLabel = (id: string) => categoryLabelMap[id] || id;
+// 숫자 categoryId → 한글 이름
+export const categoryIdLabelMap: Record<number, string> = {
+  1: "스포츠",
+  2: "외국/언어",
+  3: "사진/영상",
+  4: "봉사활동",
+  5: "자기계발",
+  6: "독서/글",
+  7: "문화/댄스",
+  8: "음악/악기",
+  9: "여행",
+  10: "업종/직무",
+};
+
+export const getCategoryLabelById = (id: number): string =>
+  categoryIdLabelMap[id] || "기타";
+
+export const getCategoryId = (label: string) => categoryLabelToIdMap[label];

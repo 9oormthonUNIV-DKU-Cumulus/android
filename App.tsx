@@ -95,9 +95,9 @@ export type HomeStackParamList = {
   JoinConfirm: undefined;
   MeetingApply: undefined;
   ApplicantInfo: { id: string }; // ← 신청자 id 전달
-  MoimForm: { meeting?: any }; // meeting이 optional
+  MoimForm: { meeting?: any; clubId: number; categoryId: number }; // meeting이 optional
   ClubForm: { club?: any }; // club이 optional
-  JoinMoim: { plan: PlanType };
+  JoinMoim: { planId: number };
   CommunityFormScreen: undefined;
   CommunityDetailScreen: { post: PostType };
   NoticeDetailScreen: { post: PostType };
@@ -107,7 +107,7 @@ export type HomeStackParamList = {
   NotificationScreen: undefined;
   CreateClub: {
     mode: "edit" | "create";
-    club?: Club;
+    club?: Club | null;
   };
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import { RouteProp } from "@react-navigation/native";
 import { HomeStackParamList } from "../../App"; // HomeStackParamList 타입 import
 import PlanCard from "../../components/PlanCard";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { getActivityById } from "../../utils/api";
 
 type JoinMoimRouteProp = RouteProp<HomeStackParamList, "JoinMoim">;
 type JoinMoimNavigationProp = NativeStackNavigationProp<
@@ -22,12 +23,34 @@ type JoinMoimNavigationProp = NativeStackNavigationProp<
 type Props = { navigation: JoinMoimNavigationProp; route: JoinMoimRouteProp };
 
 export default function JoinMoimScreen({ navigation, route }: Props) {
-  const { plan } = route.params;
+  const { planId } = route.params;
+
+  const [plan, setPlan] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [cancleModalModalVisible, setCancleModalVisible] = useState(false);
   const [joined, setJoined] = useState(false); // 참여 상태
   const [menuVisible, setMenuVisible] = useState(false); // 모임 삭제,수정 팝업창 상태
+
+  useEffect(() => {
+    const fetchPlanDetail = async () => {
+      try {
+        const response = await getActivityById(planId);
+        console.log("🔥 getActivityById 응답 전체:", response);
+        console.log("📦 response.data:", response.data);
+        console.log("🎯 response.data.data:", response.data.data);
+
+        setPlan(response.data.data); // 이 부분은 콘솔 확인 후 조정
+      } catch (error) {
+        console.error("❌ 모임 상세 조회 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlanDetail();
+  }, [planId]);
 
   const renderContent = () => (
     <>

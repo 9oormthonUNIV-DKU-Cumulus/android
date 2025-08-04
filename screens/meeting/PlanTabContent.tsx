@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
@@ -7,73 +7,42 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HomeStackParamList } from "../../App";
 import PlanCard from "../../components/PlanCard";
+import { getAllActivities } from "../../utils/api";
 
-export default function PlanTabContent() {
+export default function PlanTabContent({ clubId }: { clubId: number }) {
   const navigation =
     useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+
+  // 동아리 내 모임 목록 조회
+  const [plans, setPlans] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await getAllActivities(clubId);
+        console.log("API 응답: ", response.data);
+        setPlans(response.data.data.activityList);
+      } catch (error) {
+        console.error("모임 데이터를 불러오는데 실패했습니다:", error);
+      }
+    };
+
+    fetchActivities();
+  }, [clubId]);
 
   // 모임이 있는 날짜 마킹
   const getMarkedDates = () => {
     const marked: { [date: string]: any } = {};
-
-    // 정기 모임
-    plans["정기"].forEach((plan) => {
-      const date = plan.date;
-      if (!marked[date]) {
-        marked[date] = { dots: [] };
-      }
+    plans.forEach((plan) => {
+      const date = plan.meetingDate?.split("T")[0];
+      if (!marked[date]) marked[date] = { dots: [] };
       marked[date].dots.push({
-        key: `정기-${plan.id}`,
+        key: `plan-${plan.id}`,
         color: "#428DFF",
-      });
-    });
-
-    //자유 모임
-    // 정기 모임
-    plans["자유"].forEach((plan) => {
-      const date = plan.date;
-      if (!marked[date]) {
-        marked[date] = { dots: [] };
-      }
-      marked[date].dots.push({
-        key: `자유-${plan.id}`,
-        color: "#FFA500",
       });
     });
     return marked;
   };
-
-  // 모임 목업 데이터
-  const [plans, setPlans] = useState({
-    정기: [
-      {
-        id: 1,
-        title: "매주 금요일 독서모임",
-        location: "인문관 102호",
-        date: "2025-07-13",
-        peopleCount: 5,
-        content: "책 읽고 토론 진행",
-      },
-      {
-        id: 2,
-        title: "동아리 MT",
-        location: "가평",
-        date: "2025-07-15",
-        peopleCount: 5,
-        content: "책 읽고 토론 진행",
-      },
-    ],
-    자유: [
-      {
-        id: 1,
-        title: "화요일 영화팟",
-        location: "오리역 CGV",
-        date: "2025-07-19",
-        peopleCount: 3,
-        content: "영화 보고 밥 먹을 사람 구함",
-      },
-    ],
-  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -84,17 +53,7 @@ export default function PlanTabContent() {
             console.log("선택한 날짜:", day.dateString); // 예: "2025-07-14"
           }}
           markingType="multi-dot"
-          markedDates={
-            getMarkedDates()
-            // "2025-07-14": {
-            //   selected: true,
-            //   selectedColor: "#428DFF",
-            // },
-            // "2025-07-23": {
-            //   marked: true,
-            //   dotColor: "#428DFF",
-            // },
-          }
+          markedDates={getMarkedDates()}
           theme={{
             selectedDayBackgroundColor: "#428DFF",
             todayTextColor: "#428DFF",
@@ -106,50 +65,24 @@ export default function PlanTabContent() {
         />
 
         <View style={styles.planSection}>
-          {/* 정기 모임 만들기 */}
-          <View>
-            <Text style={styles.planTitle}>정기 모임</Text>
-            {plans["정기"].length > 0 ? (
-              plans["정기"].map((plan) => (
-                <TouchableOpacity
-                  key={plan.id}
-                  onPress={() => navigation.navigate("JoinMoim", { plan })}
-                >
-                  <PlanCard data={plan} />
-                </TouchableOpacity>
-              ))
-            ) : (
-              <>
-                <Text style={styles.planDescription}>
-                  아직 정기 모임이 없어요!
-                </Text>
-                <Text style={styles.planSubText}>
-                  정기 모임을 만들어보세요.
-                </Text>
-              </>
-            )}
-          </View>
-          <View style={styles.hr} />
           {/* 자유 모임 만들기 */}
           <View>
-            <Text style={styles.planTitle}>자유 모임</Text>
-            {plans["자유"].length > 0 ? (
-              plans["자유"].map((plan) => (
+            <Text style={styles.planTitle}>모임</Text>
+            {plans.length > 0 ? (
+              plans.map((plan) => (
                 <TouchableOpacity
                   key={plan.id}
-                  onPress={() => navigation.navigate("JoinMoim", { plan })}
+                  onPress={() =>
+                    navigation.navigate("JoinMoim", { planId: plan.id })
+                  }
                 >
-                  <PlanCard data={plan} />
+                  <PlanCard data={plan} showDescription={false} />
                 </TouchableOpacity>
               ))
             ) : (
               <>
-                <Text style={styles.planDescription}>
-                  아직 자유 모임이 없어요!
-                </Text>
-                <Text style={styles.planSubText}>
-                  자유 모임을 만들어보세요.
-                </Text>
+                <Text style={styles.planDescription}>아직 모임이 없어요!</Text>
+                <Text style={styles.planSubText}>모임을 만들어보세요.</Text>
               </>
             )}
           </View>
@@ -158,7 +91,7 @@ export default function PlanTabContent() {
       {/* ─── 하단 바 ─── */}
       <View style={styles.bottomBar}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("MoimForm")}
+          onPress={() => navigation.navigate("MoimForm", { clubId: clubId })}
           style={styles.createBtn}
         >
           <Text style={styles.createBtnTxt}>모임 만들기</Text>

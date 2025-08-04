@@ -1,13 +1,16 @@
 import { View, Text, StyleSheet } from "react-native";
 
-export default function PlanCard({ data }) {
+export default function PlanCard({ data, showDescription = true }) {
+  if (!data) return null;
+
   return (
     <View style={styles.planCard}>
       <Text style={styles.cardTitle}>{data.title}</Text>
-      <Text style={styles.cardInfo}>위치: {data.location}</Text>
-      <Text style={styles.cardInfo}>날짜: {data.date}</Text>
-      <Text style={styles.cardInfo}>모집인원: {data.peopleCount}명</Text>
-      <Text style={styles.cardContent}>내용: {data.content}</Text>
+      <Text style={styles.cardInfo}>날짜: {data.meetingDate}</Text>
+      <Text style={styles.cardInfo}>모집인원: {data.maxParticipants}명</Text>
+      {showDescription && data.description && (
+        <Text style={styles.cardContent}>내용: {data.description}</Text>
+      )}
     </View>
   );
 }

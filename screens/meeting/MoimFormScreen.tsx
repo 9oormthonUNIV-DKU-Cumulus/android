@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   View,
   Text,
@@ -12,13 +13,14 @@ import {
   Alert,
 } from "react-native";
 import { HomeStackParamList } from "../../App";
-import { updateActivity } from "../../utils/api";
+import { createActivity, updateActivity } from "../../utils/api";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "MoimForm">;
 
 export default function MoimFormScreen({ route, navigation }: Props) {
-  const meeting = route.params?.meeting;
+  const { meeting, clubId, categoryId } = route.params || {};
   const isEditing = !!meeting;
+  const [selectedType, setSelectedType] = useState<string>("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -38,8 +40,38 @@ export default function MoimFormScreen({ route, navigation }: Props) {
     }
   }, [isEditing, meeting]);
 
-  const handleUpdate = async () => {
+  const handleCreate = async () => {
     if (!title || !description || !maxParticipants) {
+      Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
+      return;
+    }
+
+    const data = {
+      clubId: clubId,
+      title,
+      description,
+      meetingDate: meetingDate.toISOString(),
+      deadline: deadline.toISOString(),
+      maxParticipants: parseInt(maxParticipants),
+    };
+
+    try {
+      console.log("Creating activity with data:", data);
+      await createActivity(data);
+      Alert.alert("생성 완료", "모임이 성공적으로 생성되었습니다.");
+      navigation.goBack();
+    } catch (error) {
+      console.error(error);
+      Alert.alert("오류", "모임 생성 중 오류가 발생했습니다.");
+    }
+  };
+
+  const toLocalISOString = (date: Date) => {
+    return date.toISOString().split(".")[0]; // 밀리초와 Z 제거
+  };
+
+  const handleUpdate = async () => {
+    if (!title || !description || !maxParticipants || !clubId) {
       Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
       return;
     }
@@ -48,8 +80,8 @@ export default function MoimFormScreen({ route, navigation }: Props) {
       clubId: meeting.clubId, // clubId는 수정되지 않는다고 가정
       title,
       description,
-      meetingDate: meetingDate.toISOString(),
-      deadline: deadline.toISOString(),
+      meetingDate: toLocalISOString(meetingDate),
+      deadline: toLocalISOString(deadline),
       maxParticipants: parseInt(maxParticipants, 10),
     };
 
@@ -61,7 +93,6 @@ export default function MoimFormScreen({ route, navigation }: Props) {
       Alert.alert("오류", "모임 수정 중 오류가 발생했습니다.");
     }
   };
-
 
   return (
     <View style={styles.body}>
@@ -85,21 +116,6 @@ export default function MoimFormScreen({ route, navigation }: Props) {
 
       <SafeAreaView style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
-          {/* 모임 종류 */}
-          <Text style={styles.label}>모임 종류</Text>
-          <View style={styles.checkboxGroup}>
-            <Checkbox
-              label="정기 모임"
-              selected={selectedType === "정기"}
-              onPress={() => setSelectedType("정기")}
-            />
-            <Checkbox
-              label="자유 모임"
-              selected={selectedType === "자유"}
-              onPress={() => setSelectedType("자유")}
-            />
-          </View>
-
           {/* 제목 */}
           <Text style={styles.label}>제목</Text>
           <TextInput
@@ -177,7 +193,7 @@ export default function MoimFormScreen({ route, navigation }: Props) {
           {/* 가입하기 버튼 */}
           <TouchableOpacity
             style={styles.createMoimButton}
-            onPress={isEditing ? handleUpdate : () => {}}
+            onPress={isEditing ? handleUpdate : handleCreate}
           >
             <Text style={styles.createMoimText}>
               {isEditing ? "모임 수정하기" : "모임 개설하기"}

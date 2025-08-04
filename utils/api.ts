@@ -23,6 +23,37 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+export const createActivity = async (data: any) => {
+  const token = await AsyncStorage.getItem("accessToken");
+
+  console.log("📤 [createActivity] 요청 보냄");
+  console.log("🔐 token:", token);
+  console.log("📦 data:", data);
+
+  try {
+    const response = await api.post("/api/activity", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("✅ 성공 응답:", response.data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      console.log("❌ 서버 응답 에러");
+      console.log("🔻 status:", error.response.status);
+      console.log("🔻 data:", error.response.data);
+    } else if (error.request) {
+      console.log("❌ 요청은 보냈지만 응답 없음");
+      console.log("🔻 request:", error.request);
+    } else {
+      console.log("❌ 요청 설정 중 에러:", error.message);
+    }
+    throw error; // 상위에서 catch 할 수 있도록 다시 던짐
+  }
+};
+
 // 특정 모임 삭제 (모임 주최자 권한 필요)
 export const deleteActivity = (id: number, clubId: number) => {
   return api.delete(`/api/activity/${id}`, { params: { clubId } });
@@ -41,4 +72,14 @@ export const updateClub = (id: number, data: any) => {
 // 특정 모임 수정 (모임 주최자 권한 필요)
 export const updateActivity = (id: number, data: any) => {
   return api.patch(`/api/activity/${id}`, data);
+};
+
+// 동아리내 모임 목록 조회
+export const getAllActivities = (clubId: number) => {
+  return api.get(`/api/activities/${clubId}`);
+};
+
+// 특정모임 상세조회
+export const getActivityById = (id: number) => {
+  return api.get(`/api/activity/${id}`);
 };

@@ -167,7 +167,7 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
 
       {/* ─── 본문 ─── */}
       {tab === "홈" && club !== null && <HomeTabContent club={club} />}
-      {tab === "일정" && <PlanTabContent />}
+      {tab === "일정" && club !== null && <PlanTabContent clubId={club.id} />}
       {tab === "공지" && <NoticeTabContent />}
       {tab === "앨범" && <AlbumTabContent />}
 

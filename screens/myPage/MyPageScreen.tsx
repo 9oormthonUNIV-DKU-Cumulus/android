@@ -1,5 +1,5 @@
 // screens/myPage/MyPageScreen.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,24 +10,33 @@ import {
   Dimensions,
   FlatList,
   Alert,
-} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
+  ActivityIndicator,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../App";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type MyPageNav = NativeStackNavigationProp<RootStackParamList, 'Main'>;
-interface Props { navigation: MyPageNav; }
+type MyPageNav = NativeStackNavigationProp<RootStackParamList, "Main">;
+interface Props {
+  navigation: MyPageNav;
+}
 
 /* -------- 더미 -------- */
 const dummyUser = {
-  name: '김단웅',
-  gender: '여',
+  name: "김단웅",
+  gender: "여",
   age: 21,
-  department: '커뮤니케이션 디자인',
+  department: "커뮤니케이션 디자인",
   stats: { like: 2, manage: 1, joined: 5, clubJoined: 2 },
 };
 
-type ApplyStatus = '승인 대기' | '승인 완료' | '승인 거절';
+interface UserProfile {
+  userName: string;
+  major: string;
+}
+
+type ApplyStatus = "승인 대기" | "승인 완료" | "승인 거절";
 interface ApplyItem {
   id: string;
   title: string;
@@ -37,26 +46,66 @@ interface ApplyItem {
   status: ApplyStatus;
 }
 const dummyApplies: ApplyItem[] = [
-  { id: '1', title: '단국대 운동 동아리', place: '수업 끝나고 7시부터 9시까지', time: '독서/글 · 멤버 45', members: '2명 / 45명', status: '승인 대기' },
-  { id: '2', title: '단국대 운동 동아리', place: '수업 끝나고 7시부터 9시까지', time: '독서/글 · 멤버 45', members: '2명 / 45명', status: '승인 거절' },
+  {
+    id: "1",
+    title: "단국대 운동 동아리",
+    place: "수업 끝나고 7시부터 9시까지",
+    time: "독서/글 · 멤버 45",
+    members: "2명 / 45명",
+    status: "승인 대기",
+  },
+  {
+    id: "2",
+    title: "단국대 운동 동아리",
+    place: "수업 끝나고 7시부터 9시까지",
+    time: "독서/글 · 멤버 45",
+    members: "2명 / 45명",
+    status: "승인 거절",
+  },
 ];
 
 /* -------- 메인 -------- */
 export default function MyPageScreen({ navigation }: Props) {
-  const { name, gender, age, department, stats } = dummyUser;
+  const { stats } = dummyUser;
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const userDataString = await AsyncStorage.getItem("user");
+
+        if (userDataString) {
+          const userData = JSON.parse(userDataString);
+          setUserProfile(userData);
+        }
+      } catch (e) {
+        console.error("저장된 유저 불러오기 실패", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadUserProfile();
+  }, []);
 
   const [likedIds, setLikedIds] = useState<string[]>([]);
   const toggleLike = (id: string) =>
-    setLikedIds(prev => (prev.includes(id) ? prev.filter(v => v !== id) : [...prev, id]));
+    setLikedIds((prev) =>
+      prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
+    );
 
   const onCancel = (id: string) => {
-    Alert.alert('신청 취소', '정말 취소하시겠어요?', [
-      { text: '아니오' },
-      { text: '예', style: 'destructive', onPress: () => console.log('cancel:', id) },
+    Alert.alert("신청 취소", "정말 취소하시겠어요?", [
+      { text: "아니오" },
+      {
+        text: "예",
+        style: "destructive",
+        onPress: () => console.log("cancel:", id),
+      },
     ]);
   };
 
-  const goFavorites = () => navigation.navigate('Favorites'); // 찜 동아리 화면
+  const goFavorites = () => navigation.navigate("Favorites"); // 찜 동아리 화면
 
   const renderItem = ({ item }: { item: ApplyItem }) => {
     const liked = likedIds.includes(item.id);
@@ -70,9 +119,9 @@ export default function MyPageScreen({ navigation }: Props) {
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons
-              name={liked ? 'heart' : 'heart-outline'}
+              name={liked ? "heart" : "heart-outline"}
               size={16}
-              color={liked ? '#FF4D4D' : '#C7C7C7'}
+              color={liked ? "#FF4D4D" : "#C7C7C7"}
             />
           </TouchableOpacity>
         </View>
@@ -85,7 +134,10 @@ export default function MyPageScreen({ navigation }: Props) {
 
         <View style={styles.applyRight}>
           <StatusBadge status={item.status} />
-          <TouchableOpacity style={styles.cancelBtn} onPress={() => onCancel(item.id)}>
+          <TouchableOpacity
+            style={styles.cancelBtn}
+            onPress={() => onCancel(item.id)}
+          >
             <Text style={styles.cancelBtnText}>신청 취소</Text>
           </TouchableOpacity>
         </View>
@@ -93,12 +145,50 @@ export default function MyPageScreen({ navigation }: Props) {
     );
   };
 
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (!userProfile) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text>사용자 정보를 불러올 수 없습니다.</Text>
+      </View>
+    );
+  }
+
+  const { userName, major } = userProfile;
+
   /* 통계 데이터 배열화 */
   const statItems = [
-    { key: 'like', label: '찜 동아리', value: stats.like, onPress: goFavorites },
-    { key: 'managed', label: '개설 모임 관리', value: stats.manage ,onPress: () => navigation.navigate('ManagedMeetings') },
-    { key: 'joined', label: '참여 모임', value: stats.joined, onPress: () => navigation.navigate('ParticipatingMeetings') },
-    { key: 'clubJoined', label: '참여 동아리', value: stats.clubJoined, onPress: () => navigation.navigate('ParticipatingClubs') },
+    {
+      key: "like",
+      label: "찜 동아리",
+      value: stats.like,
+      onPress: goFavorites,
+    },
+    {
+      key: "managed",
+      label: "개설 모임 관리",
+      value: stats.manage,
+      onPress: () => navigation.navigate("ManagedMeetings"),
+    },
+    {
+      key: "joined",
+      label: "참여 모임",
+      value: stats.joined,
+      onPress: () => navigation.navigate("ParticipatingMeetings"),
+    },
+    {
+      key: "clubJoined",
+      label: "참여 동아리",
+      value: stats.clubJoined,
+      onPress: () => navigation.navigate("ParticipatingClubs"),
+    },
   ];
 
   return (
@@ -113,22 +203,20 @@ export default function MyPageScreen({ navigation }: Props) {
 
       <FlatList
         data={dummyApplies}
-        keyExtractor={i => i.id}
+        keyExtractor={(i) => i.id}
         ListHeaderComponent={
           <>
             {/* 프로필 */}
             <View style={styles.profileSection}>
               <Image
                 style={styles.avatar}
-                source={require('../../assets/images/avatar-placeholder.png')}
+                source={require("../../assets/images/avatar-placeholder.png")}
               />
               <View style={styles.profileTextWrapper}>
-                <Text style={styles.userName}>
-                  {name} <Text style={styles.userAge}>({gender} / {age}세)</Text>
-                </Text>
+                <Text style={styles.userName}>{userName}</Text>
                 <View style={styles.deptRow}>
                   <Text style={styles.userLabel}>학과 </Text>
-                  <Text style={styles.userDept}>{department}</Text>
+                  <Text style={styles.userDept}>{major}</Text>
                 </View>
               </View>
             </View>
@@ -141,12 +229,13 @@ export default function MyPageScreen({ navigation }: Props) {
                     style={styles.statCell}
                     activeOpacity={0.6} // 항상 0.6으로 설정
                     onPress={item.onPress} // onPress를 여기서 호출
-                    
                   >
                     <Text style={styles.statValue}>{item.value}</Text>
                     <Text style={styles.statLabel}>{item.label}</Text>
                   </TouchableOpacity>
-                  {idx !== statItems.length - 1 && <View style={styles.vertDivider} />}
+                  {idx !== statItems.length - 1 && (
+                    <View style={styles.vertDivider} />
+                  )}
                 </React.Fragment>
               ))}
             </View>
@@ -165,9 +254,9 @@ export default function MyPageScreen({ navigation }: Props) {
 /* -------- 컴포넌트 -------- */
 function StatusBadge({ status }: { status: ApplyStatus }) {
   const map: Record<ApplyStatus, { bg: string; txt: string }> = {
-    '승인 대기': { bg: '#E6F0FF', txt: '#357CFF' },
-    '승인 완료': { bg: '#E9F9EF', txt: '#22A064' },
-    '승인 거절': { bg: '#FDECEC', txt: '#E24D4D' },
+    "승인 대기": { bg: "#E6F0FF", txt: "#357CFF" },
+    "승인 완료": { bg: "#E9F9EF", txt: "#22A064" },
+    "승인 거절": { bg: "#FDECEC", txt: "#E24D4D" },
   };
   const c = map[status];
   return (
@@ -178,112 +267,136 @@ function StatusBadge({ status }: { status: ApplyStatus }) {
 }
 
 /* -------- 스타일 -------- */
-const { width: W } = Dimensions.get('window');
+const { width: W } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF' },
+  container: { flex: 1, backgroundColor: "#FFF" },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
   headerWrapper: {
     height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#E4E4E4',
+    borderColor: "#E4E4E4",
     paddingHorizontal: 16,
   },
-  backBtn: { position: 'absolute', left: 16 },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: '#1C1C1C' },
+  backBtn: { position: "absolute", left: 16 },
+  headerTitle: { fontSize: 18, fontWeight: "700", color: "#1C1C1C" },
 
   profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 24,
     paddingVertical: 32,
   },
-  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#D9D9D9' },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#D9D9D9",
+  },
   profileTextWrapper: { marginLeft: 16 },
-  userName: { fontSize: 20, fontWeight: '700', color: '#1C1C1C' },
-  userAge: { fontSize: 16, fontWeight: '400', color: '#6F6F6F' },
-  deptRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  userLabel: { fontSize: 14, color: '#6F6F6F' },
-  userDept: { fontSize: 12, fontWeight: '600', color: '#1C1C1C' },
+  userName: { fontSize: 20, fontWeight: "700", color: "#1C1C1C" },
+  userAge: { fontSize: 16, fontWeight: "400", color: "#6F6F6F" },
+  deptRow: { flexDirection: "row", alignItems: "center", marginTop: 8 },
+  userLabel: { fontSize: 14, color: "#6F6F6F" },
+  userDept: { fontSize: 12, fontWeight: "600", color: "#1C1C1C" },
 
   /* 통계 카드 */
   statsCard: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
+    flexDirection: "row",
+    alignItems: "stretch",
     marginHorizontal: 24,
     borderWidth: 1,
-    borderColor: '#E4E4E4',
+    borderColor: "#E4E4E4",
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   statCell: {
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFF",
   },
-  vertDivider: { width: 1, backgroundColor: '#E4E4E4' },
-  statValue: { fontSize: 14, fontWeight: '700', color: '#1C1C1C' },
-  statLabel: { marginTop: 2, fontSize: 10, color: '#6F6F6F', textAlign: 'center' },
+  vertDivider: { width: 1, backgroundColor: "#E4E4E4" },
+  statValue: { fontSize: 14, fontWeight: "700", color: "#1C1C1C" },
+  statLabel: {
+    marginTop: 2,
+    fontSize: 10,
+    color: "#6F6F6F",
+    textAlign: "center",
+  },
 
   sectionTitle: {
     marginTop: 28,
     marginBottom: 12,
     marginHorizontal: 24,
     fontSize: 16,
-    fontWeight: '700',
-    color: '#1C1C1C',
+    fontWeight: "700",
+    color: "#1C1C1C",
   },
 
   applyCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 24,
     marginBottom: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E4E4E4',
+    borderColor: "#E4E4E4",
     borderRadius: 12,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
   },
-  thumbWrap: { marginRight: 12, position: 'relative' },
-  applyThumb: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#D9D9D9' },
+  thumbWrap: { marginRight: 12, position: "relative" },
+  applyThumb: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    backgroundColor: "#D9D9D9",
+  },
   heartBtn: {
-    position: 'absolute',
+    position: "absolute",
     left: -8,
     bottom: -8,
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#F0F0F0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F0F0F0",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   applyInfo: { flex: 1 },
-  applyTitle: { fontSize: 14, fontWeight: '700', color: '#1C1C1C' },
-  applySub: { fontSize: 11, color: '#6F6F6F', marginTop: 2 },
+  applyTitle: { fontSize: 14, fontWeight: "700", color: "#1C1C1C" },
+  applySub: { fontSize: 11, color: "#6F6F6F", marginTop: 2 },
 
-  applyRight: { alignItems: 'flex-end', justifyContent: 'space-between', height: 56 },
+  applyRight: {
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    height: 56,
+  },
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
-  badgeText: { fontSize: 11, fontWeight: '600' },
+  badgeText: { fontSize: 11, fontWeight: "600" },
 
   cancelBtn: {
     marginTop: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#357CFF',
+    backgroundColor: "#357CFF",
   },
-  cancelBtnText: { color: '#fff', fontSize: 11, fontWeight: '600' },
+  cancelBtnText: { color: "#fff", fontSize: 11, fontWeight: "600" },
 });

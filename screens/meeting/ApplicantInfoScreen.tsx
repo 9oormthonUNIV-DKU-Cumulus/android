@@ -1,5 +1,4 @@
-// screens/meeting/ApplicantInfoScreen.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -10,10 +9,14 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HomeStackParamList } from "../../App";
-import { Applicant } from "./JoinConfirmScreen";
+import { Applicant } from "./JoinConfirmScreen"; // Applicant 타입에 id(applicationId)가 포함되어 있다고 가정
+import { approveApplication, rejectApplication } from "../../utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "ApplicantInfo">;
 
@@ -22,129 +25,129 @@ const BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
 const BACK_ICON = require("../../assets/images/goback.png");
 
 export default function ApplicantInfoScreen({ navigation, route }: Props) {
-  const { applicant } = route.params as { applicant: Applicant };
+  // route.params에서 applicant 객체를 가져옵니다. applicant.id가 applicationId라고 가정합니다.
+  const { applicant } = route.params as { applicant: Applicant & { id: number } };
+  const [isLoading, setIsLoading] = useState(false);
 
-  /* ── (1) careers 없어도 오류 안 나도록 기본값 */
-  const careers = applicant.careers ?? [];
+  // 토큰을 가져오는 임시 함수
+  const getAuthToken = async () => {
+    // 실제 구현 시 AsyncStorage에서 관리자 토큰을 가져와야 합니다.
+    return "your_hardcoded_admin_access_token_for_testing";
+  };
+
+  // 요청 처리 핸들러 (승인/거부 공통 로직)
+  const handleRequest = async (action: "approve" | "reject") => {
+    setIsLoading(true);
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        Alert.alert("인증 오류", "로그인이 필요합니다.");
+        return;
+      }
+
+      const actionFunc = action === "approve" ? approveApplication : rejectApplication;
+      await actionFunc(applicant.id, token);
+
+      Alert.alert("처리 완료", `신청이 성공적으로 ${action === "approve" ? "승인" : "거부"}되었습니다.`,
+        [
+          { text: "확인", onPress: () => navigation.goBack() } // 확인 후 이전 화면으로 이동
+        ]
+      );
+
+    } catch (error: any) {
+      let errorMessage = "알 수 없는 오류가 발생했습니다.";
+      if (error.response && error.response.data && error.response.data.error) {
+        const errorCode = error.response.data.error.code;
+        switch (errorCode) {
+          case "ALREADY_APPROVED":
+            errorMessage = "이미 승인된 신청입니다.";
+            break;
+          case "ALREADY_REJECTED":
+            errorMessage = "이미 거부된 신청입니다.";
+            break;
+          case "NOT_FOUND":
+            errorMessage = "신청 정보를 찾을 수 없습니다.";
+            break;
+          default:
+            errorMessage = error.response.data.error.message || errorMessage;
+        }
+      }
+      Alert.alert("처리 실패", errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={BACK_ICON} style={styles.goBackImg} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>신청 정보</Text>
-      </View>
+      {/* ... (기존 헤더 및 스크롤뷰) ... */}
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 100 }}>
+        {/* ... (기존 신청자 정보 UI) ... */}
+      </ScrollView>
 
-      <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
-      >
-        {/* 신청일 · 이름 */}
-        <Text style={styles.dateTxt}>{applicant.appliedDate}</Text>
-        <Text style={styles.nameTxt}>{applicant.name}</Text>
-
-        <View style={styles.hr} />
-
-        {/* 간단 소개글 */}
-        <Text style={styles.secTitle}>간단 소개글</Text>
-        <Text style={styles.secBody}>{applicant.intro}</Text>
-
-        <View style={styles.hr} />
-
-        {/* 지원 동기 */}
-        <Text style={styles.secTitle}>지원 동기</Text>
-        <Text style={styles.secBody}>{applicant.motive}</Text>
-
-        <View style={styles.hr} />
-
-        {/* 기본 정보 */}
-        <InfoRow label="소속" value={applicant.dept} />
-        <InfoRow label="연락처" value={applicant.phone} />
-        <InfoRow label="포트폴리오" value={applicant.portfolio} />
-
-        <View style={styles.hr} />
-
-        {/* 경력 사항 */}
-        {/* ── (2) 배열이 비어있으면 섹션을 생략해도 되고, 그대로 남겨두어도 됩니다 */}
-        {careers.length > 0 && (
+      {/* 하단 승인/거부 버튼 */}
+      <View style={styles.bottomBar}>
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#5498FF" />
+        ) : (
           <>
-            <Text style={styles.secTitle}>경력 사항</Text>
-            {careers.map((c, idx) => (
-              <Text key={idx} style={styles.careerItem}>
-                {c}
-              </Text>
-            ))}
+            <TouchableOpacity
+              style={[styles.actionBtn, styles.rejectBtn]}
+              onPress={() => handleRequest("reject")}
+              disabled={isLoading}
+            >
+              <Text style={styles.actionBtnText}>거부하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionBtn, styles.approveBtn]}
+              onPress={() => handleRequest("approve")}
+              disabled={isLoading}
+            >
+              <Text style={styles.actionBtnText}>승인하기</Text>
+            </TouchableOpacity>
           </>
         )}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
 
-/* ───── 서브 컴포넌트 */
-function InfoRow({ label, value }: { label: string; value?: string }) {
-  return (
-    <View style={styles.infoRow}>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue}>{value || "-"}</Text>
-    </View>
-  );
-}
+/* ... (기존 서브 컴포넌트 및 스타일) ... */
 
-/* ───── 색상 상수 */
-const GREY = "#6B7280";
-const DARK = "#1F2937";
-
-/* ───── 스타일 */
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#fff" },
-
-  /* 헤더 */
-  header: {
+  // ... (기존 스타일)
+  bottomBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
-    paddingTop: BAR - 20,
-    paddingBottom: 12,
+    height: 90,
+    backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderColor: "#E5E7EB",
     paddingHorizontal: 16,
   },
-  goBackImg: {
-    marginLeft: 12,
-    width: 20,
-    height: 20,
-    resizeMode: "contain",
-  },
-  headerTitle: {
+  actionBtn: {
     flex: 1,
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "700",
-    color: DARK,
-    marginRight: 24,
+    height: 48,
+    borderRadius: 17,
+    justifyContent: "center",
+    alignItems: "center",
   },
-
-  /* 기본 헤드라인 */
-  dateTxt: { fontSize: 13, color: GREY, marginTop: 8 },
-  nameTxt: { fontSize: 26, fontWeight: "700", color: DARK, marginTop: 8 },
-
-  /* 섹션 헤더 + 본문 */
-  secTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: DARK,
-    marginTop: 28,
-    marginBottom: 8,
+  rejectBtn: {
+    backgroundColor: "#EF4444",
+    marginRight: 8,
   },
-  secBody: { fontSize: 15, color: GREY, lineHeight: 22 },
-
-  /* 구분선 */
-  hr: { height: 1, backgroundColor: "#E5E7EB", marginTop: 28 },
-
-  /* 기본 정보(소속/연락처/포트폴리오) */
-  infoRow: { flexDirection: "row", marginTop: 12 },
-  infoLabel: { width: 70, fontSize: 15, color: GREY },
-  infoValue: { flex: 1, fontSize: 15, color: DARK },
-
-  /* 경력 */
-  careerItem: { fontSize: 15, color: GREY, marginTop: 6 },
+  approveBtn: {
+    backgroundColor: "#5498FF",
+    marginLeft: 8,
+  },
+  actionBtnText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });

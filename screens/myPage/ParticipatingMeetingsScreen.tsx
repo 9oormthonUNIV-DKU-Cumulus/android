@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   SafeAreaView,
   View,
@@ -10,10 +10,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
-import { cancelApplication } from '../../utils/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { cancelApplication, fetchMyApplications } from '../../utils/api';
 
 /* ---------- 타입 ---------- */
 type Nav = NativeStackNavigationProp<RootStackParamList, 'ParticipatingMeetings'>;
@@ -27,29 +27,39 @@ interface ApplicationItem {
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
 }
 
-/* ---------- 목업 데이터 (API 연동 전 임시 사용) ---------- */
-const mockApplications: ApplicationItem[] = [
-  { id: 101, title: '농구 동아리 주말 경기', timeRange: '14~16시', dateText: '8/10(토) 오후 14:00', status: 'PENDING' },
-  { id: 102, title: '코딩 스터디 그룹', timeRange: '19~21시', dateText: '8/12(월) 오후 19:00', status: 'APPROVED' },
-  { id: 103, title: '영화 감상 모임', timeRange: '20~22시', dateText: '8/14(수) 오후 20:00', status: 'PENDING' },
-  { id: 104, title: '봉사 활동', timeRange: '09~12시', dateText: '8/17(토) 오전 09:00', status: 'REJECTED' },
-];
-
 /* ---------- 컴포넌트 ---------- */
 export default function ParticipatingMeetingsScreen({ navigation }: Props) {
   const [applications, setApplications] = useState<ApplicationItem[]>([]);
-  const [loadingId, setLoadingId] = useState<number | null>(null); // 로딩 중인 항목의 ID
-
-  useEffect(() => {
-    // TODO: 실제로는 여기서 API를 호출하여 신청 목록을 가져와야 합니다.
-    // 예: fetchMyApplications().then(data => setApplications(data));
-    setApplications(mockApplications);
-  }, []);
+  const [isLoading, setIsLoading] = useState(true); // 전체 화면 로딩 상태
+  const [cancellingId, setCancellingId] = useState<number | null>(null); // 취소 중인 항목 ID
 
   const getAuthToken = async () => {
     // 실제 구현 시 AsyncStorage에서 사용자 토큰을 가져와야 합니다.
     return "your_hardcoded_user_access_token_for_testing";
   };
+
+  const loadApplications = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        Alert.alert("인증 오류", "로그인이 필요합니다.");
+        setApplications([]);
+        return;
+      }
+      const response = await fetchMyApplications(token);
+      // API 응답의 data 필드에 실제 배열이 있다고 가정합니다.
+      setApplications(response.data.data || []);
+    } catch (error) {
+      Alert.alert("오류", "신청 내역을 불러오는 중 오류가 발생했습니다.");
+      setApplications([]); // 오류 발생 시 목록을 비웁니다.
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // 화면이 포커스될 때마다 데이터를 새로고침합니다.
+  useFocusEffect(loadApplications);
 
   const handleCancel = (item: ApplicationItem) => {
     Alert.alert(
@@ -61,15 +71,12 @@ export default function ParticipatingMeetingsScreen({ navigation }: Props) {
           text: "확인",
           style: "destructive",
           onPress: async () => {
-            setLoadingId(item.id);
+            setCancellingId(item.id);
             try {
               const token = await getAuthToken();
-              if (!token) {
-                Alert.alert("인증 오류", "로그인이 필요합니다.");
-                return;
-              }
               await cancelApplication(item.id, token);
               Alert.alert("성공", "신청이 취소되었습니다.");
+              // 성공 시 목록에서 해당 항목 제거
               setApplications(prev => prev.filter(app => app.id !== item.id));
             } catch (error: any) {
               let errorMessage = "알 수 없는 오류가 발생했습니다.";
@@ -86,7 +93,7 @@ export default function ParticipatingMeetingsScreen({ navigation }: Props) {
               }
               Alert.alert("오류", errorMessage);
             } finally {
-              setLoadingId(null);
+              setCancellingId(null);
             }
           },
         },
@@ -96,7 +103,7 @@ export default function ParticipatingMeetingsScreen({ navigation }: Props) {
 
   const renderItem = ({ item }: { item: ApplicationItem }) => {
     const isPending = item.status === 'PENDING';
-    const isLoading = loadingId === item.id;
+    const isCancelling = cancellingId === item.id;
 
     const statusInfo = {
       PENDING: { text: '승인 대기중', color: '#F59E0B' },
@@ -107,7 +114,7 @@ export default function ParticipatingMeetingsScreen({ navigation }: Props) {
 
     return (
       <View style={styles.item}>
-        <View>
+        <View style={{ flex: 1, marginRight: 8 }}>
           <Text style={styles.itemTitle}>
             {item.title} <Text style={styles.itemTime}>{item.timeRange}</Text>
           </Text>
@@ -118,20 +125,25 @@ export default function ParticipatingMeetingsScreen({ navigation }: Props) {
         </View>
         {isPending && (
           <TouchableOpacity
-            style={[styles.cancelBtn, isLoading && styles.cancelBtnDisabled]}
+            style={[styles.cancelBtn, isCancelling && styles.cancelBtnDisabled]}
             onPress={() => handleCancel(item)}
-            disabled={isLoading}
+            disabled={isCancelling}
           >
-            {isLoading ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.cancelBtnText}>취소하기</Text>}
+            {isCancelling ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.cancelBtnText}>취소하기</Text>}
           </TouchableOpacity>
         )}
       </View>
     );
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* ... (기존 헤더) ... */}
+  const renderContent = () => {
+    if (isLoading) {
+      return <ActivityIndicator style={styles.center} size="large" color="#5498FF" />;
+    }
+    if (applications.length === 0) {
+      return <Text style={styles.center}>신청 내역이 없습니다.</Text>;
+    }
+    return (
       <FlatList
         data={applications}
         keyExtractor={i => i.id.toString()}
@@ -140,6 +152,19 @@ export default function ParticipatingMeetingsScreen({ navigation }: Props) {
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
         showsVerticalScrollIndicator={false}
       />
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={navigation.goBack} hitSlop={8} style={styles.backBtn}>
+          <Ionicons name="chevron-back" size={24} color="#1C1C1C" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>참여 모임</Text>
+        <View style={{ width: 24 }} />
+      </View>
+      {renderContent()}
     </SafeAreaView>
   );
 }
@@ -147,9 +172,17 @@ export default function ParticipatingMeetingsScreen({ navigation }: Props) {
 /* ---------- 스타일 ---------- */
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  header: { /* ... 기존 스타일 ... */ },
-  backBtn: { /* ... 기존 스타일 ... */ },
-  headerTitle: { /* ... 기존 스타일 ... */ },
+  header: {
+    height: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: '#E4E4E4',
+    paddingHorizontal: 16,
+  },
+  backBtn: { position: 'absolute', left: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#1C1C1C' },
   item: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -170,6 +203,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
+    minWidth: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cancelBtnDisabled: {
     backgroundColor: '#FCA5A5',
@@ -178,5 +214,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 12,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50, 
   },
 });

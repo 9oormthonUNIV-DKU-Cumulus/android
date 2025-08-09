@@ -71,3 +71,12 @@ export const fetchMyApplications = (token: string) => {
     },
   });
 };
+
+// 내가 개최한 동아리의 신청자 목록 조회 (리더용)
+export const fetchLeaderApplications = (token: string) => {
+  return api.get("/api/club/applicants/leader", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

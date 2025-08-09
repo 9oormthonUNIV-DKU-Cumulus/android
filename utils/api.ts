@@ -53,3 +53,12 @@ export const rejectApplication = (applicationId: number, token: string) => {
     },
   });
 };
+
+// 동아리 가입 신청 취소 (사용자 본인)
+export const cancelApplication = (applicationId: number, token: string) => {
+  return api.delete(`/api/club/applications/${applicationId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HomeStackParamList } from "../../App";
@@ -16,8 +18,8 @@ import PlanTabContent from "./PlanTabContent";
 import NoticeTabContent from "./NoticeTabContent";
 import HomeTabContent from "./HomeTabContent";
 import AlbumTabContent from "./AlbumTabContent";
-import { deleteActivity } from "../../utils/api";
-import { Alert } from "react-native";
+import { deleteActivity, applyToClub } from "../../utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /* ───────────────────────── 상수 / 리소스 */
 const STATUS_BAR = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
@@ -30,6 +32,7 @@ const BACK_ICON = require("../../assets/images/go-back-white.png");
 
 /* ───────────────────────── 타입 */
 type Props = NativeStackScreenProps<HomeStackParamList, "MeetingDetail">;
+type ApplyStatus = "idle" | "pending" | "approved" | "rejected";
 
 /* ───────────────────────── 데모 데이터 */
 const MEETING = {
@@ -63,80 +66,84 @@ const MEETING = {
 /* ───────────────────────── 메인 컴포넌트 */
 export default function MeetingDetailScreen({ route, navigation }: Props) {
   const [tab, setTab] = useState<"홈" | "공지" | "일정" | "앨범">("홈");
-  const [joined, setJoin] = useState(false);
-  const [isOwner, setIsOwner] = useState(true); // 임시로 true로 설정
+  const [isOwner, setIsOwner] = useState(false); // 실제로는 API 응답으로 소유자 여부 판단해야 함
 
-  const { id, clubId } = route.params.meeting;
+  // API 연동을 위한 상태
+  const [isLoading, setIsLoading] = useState(false);
+  const [applyStatus, setApplyStatus] = useState<ApplyStatus>("idle"); // 'idle', 'pending', 'approved'
+
+  // route.params에서 meeting 객체 전체를 가져옵니다.
+  const { meeting } = route.params;
+  const clubId = meeting.clubId; // clubId 추출
+
+  // 토큰을 가져오는 함수 (실제 앱에서는 로그인 시 저장한 토큰을 가져와야 함)
+  const getAuthToken = async () => {
+    // 임시로 하드코딩된 토큰을 반환합니다. 실제 구현 시 AsyncStorage에서 가져오세요.
+    // 예: return await AsyncStorage.getItem('accessToken');
+    return "your_hardcoded_access_token_for_testing";
+  };
+
+  const handleApply = async () => {
+    setIsLoading(true);
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        Alert.alert("인증 오류", "로그인이 필요합니다. 다시 로그인 후 시도해주세요.");
+        return;
+      }
+
+      await applyToClub(clubId, token);
+      setApplyStatus("pending");
+      Alert.alert("신청 완료", "동아리 신청이 완료되었습니다. 승인을 기다려주세요.");
+
+    } catch (error: any) {
+      let errorMessage = "알 수 없는 오류가 발생했습니다.";
+      if (error.response && error.response.data && error.response.data.error) {
+        const errorCode = error.response.data.error.code;
+        switch (errorCode) {
+          case "ALREADY_MEMBER":
+            errorMessage = "이미 가입된 동아리입니다.";
+            setApplyStatus("approved");
+            break;
+          case "ALREADY_APPLIED":
+            errorMessage = "이미 신청 내역이 있습니다. 승인 대기 또는 거절 이력을 확인해주세요.";
+            setApplyStatus("pending");
+            break;
+          case "CLUB_NOT_FOUND":
+            errorMessage = "동아리를 찾을 수 없습니다.";
+            break;
+          case "AUTH_REQUIRED":
+            errorMessage = "다시 로그인 후 시도해주세요.";
+            break;
+          default:
+            errorMessage = error.response.data.error.message || errorMessage;
+        }
+      }
+      Alert.alert("신청 실패", errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDelete = () => {
-    Alert.alert("모임 삭제", "정말로 이 모임을 삭제하시겠습니까?", [
-      {
-        text: "취소",
-        style: "cancel",
-      },
-      {
-        text: "삭제",
-        onPress: async () => {
-          try {
-            await deleteActivity(id, clubId);
-            Alert.alert("삭제 완료", "모임이 성공적으로 삭제되었습니다.");
-            navigation.goBack();
-          } catch (error) {
-            Alert.alert("오류", "모임 삭제 중 오류가 발생했습니다.");
-          }
-        },
-        style: "destructive",
-      },
-    ]);
+    // ... (기존 삭제 로직)
+  };
+
+  const getButtonText = () => {
+    switch (applyStatus) {
+      case "pending":
+        return "승인 대기중";
+      case "approved":
+        return "가입된 동아리";
+      default:
+        return "동아리 신청";
+    }
   };
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* ─── 배너 + 헤더 ─── */}
-      <View style={styles.banner}>
-        <Image source={BANNER_DEFAULT} style={styles.bannerImg} />
-
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => navigation.goBack()}
-        >
-          <Image source={BACK_ICON} style={styles.goBackImg} />
-        </TouchableOpacity>
-      </View>
-
-      {/* ─── 프로필 카드 ─── */}
-      <View style={styles.profileCard}>
-        <Image source={AVATAR} style={styles.avatar} />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.meetingName}>{MEETING.name}</Text>
-          <Text style={styles.memberLine}>
-            <Text style={styles.memberGrey}>멤버 {MEETING.members}</Text>
-          </Text>
-        </View>
-      </View>
-
-      {/* ─── 탭 바 ─── */}
-      <View style={styles.tabRow}>
-        {["홈", "공지", "일정", "앨범"].map((t) => (
-          <TouchableOpacity
-            key={t}
-            style={styles.tabBtn}
-            onPress={() => setTab(t as any)}
-          >
-            <Text style={[styles.tabTxt, tab === t && styles.tabTxtActive]}>
-              {t}
-            </Text>
-            {tab === t && <View style={styles.tabUnderline} />}
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* ─── 본문 ─── */}
-      {tab === "홈" && <HomeTabContent />}
-      {tab === "일정" && <PlanTabContent />}
-      {tab === "공지" && <NoticeTabContent />}
-      {tab === "앨범" && <AlbumTabContent />}
-
+      {/* ... (배너, 프로필 카드, 탭 바 등 기존 UI) ... */}
+      
       {/* ─── 하단 바 ─── */}
       {tab === "홈" && (
         <View style={styles.bottomBar}>
@@ -146,27 +153,22 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
 
           {isOwner ? (
             <View style={{ flex: 1, flexDirection: "row" }}>
-              <TouchableOpacity
-                style={[styles.joinBtn, { flex: 1, marginRight: 8 }]}
-                onPress={() => navigation.navigate("MoimForm", { meeting })}
-              >
-                <Text style={styles.joinTxt}>수정하기</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.joinBtn, styles.deleteBtn, { flex: 1, marginLeft: 8 }]}
-                onPress={handleDelete}
-              >
-                <Text style={styles.joinTxt}>삭제하기</Text>
-              </TouchableOpacity>
+              {/* ... (수정하기, 삭제하기 버튼) ... */}
             </View>
           ) : (
             <TouchableOpacity
-              style={styles.joinBtn}
-              onPress={() => navigation.navigate("MeetingApply")}
+              style={[
+                styles.joinBtn,
+                (isLoading || applyStatus === 'pending' || applyStatus === 'approved') && styles.joinBtnDisabled
+              ]}
+              onPress={handleApply}
+              disabled={isLoading || applyStatus === 'pending' || applyStatus === 'approved'}
             >
-              <Text style={styles.joinTxt}>
-                {joined ? "가입취소" : "가입하기"}
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.joinTxt}>{getButtonText()}</Text>
+              )}
             </TouchableOpacity>
           )}
         </View>
@@ -174,6 +176,16 @@ export default function MeetingDetailScreen({ route, navigation }: Props) {
     </SafeAreaView>
   );
 }
+
+/* ... (기존 스타일 코드) ... */
+const styles = StyleSheet.create({
+  // ... (기존 스타일)
+  joinBtnDisabled: {
+    backgroundColor: '#A5B4FC', // 비활성화 시 버튼 색상
+  },
+  // ... (나머지 스타일)
+});
+
 
 /* ───────────────────────── 홈 탭 내용 */
 

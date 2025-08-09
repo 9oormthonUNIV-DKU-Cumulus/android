@@ -35,3 +35,21 @@ export const applyToClub = (clubId: number, token: string) => {
     },
   });
 };
+
+// 동아리 가입 신청 승인 (관리자)
+export const approveApplication = (applicationId: number, token: string) => {
+  return api.post(`/api/club/applications/${applicationId}/approve`, null, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// 동아리 가입 신청 거부 (관리자)
+export const rejectApplication = (applicationId: number, token: string) => {
+  return api.post(`/api/club/applications/${applicationId}/reject`, null, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

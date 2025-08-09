@@ -26,3 +26,12 @@ export const updateClub = (id: number, data: any) => {
 export const updateActivity = (id: number, data: any) => {
   return api.patch(`/api/activity/${id}`, data);
 };
+
+// 동아리 가입 신청
+export const applyToClub = (clubId: number, token: string) => {
+  return api.post(`/api/club/${clubId}/apply`, null, { // body는 없음(null)
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

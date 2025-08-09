@@ -62,3 +62,12 @@ export const cancelApplication = (applicationId: number, token: string) => {
     },
   });
 };
+
+// 내가 신청한 동아리 목록 조회
+export const fetchMyApplications = (token: string) => {
+  return api.get("/api/club/applications/applicant", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
